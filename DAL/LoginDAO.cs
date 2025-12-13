@@ -1,0 +1,42 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Data;
+using Library;
+using Microsoft.ApplicationBlocks.Data;
+using System.Security.Cryptography;
+
+namespace DAL
+{
+    public class LoginDAO
+    {
+        private SqlConnection objSqlConnection;
+
+        public LoginDAO()
+        {
+            objSqlConnection = new SqlConnection(Security.CryptTripleDES(false, ConfigurationManager.AppSettings["ConnectionString"].ToString()));
+        }
+
+        public void ReleaseResources()
+        {
+            if (objSqlConnection.State != ConnectionState.Closed)
+                objSqlConnection.Close();
+            objSqlConnection.Dispose();
+        }
+
+        public DataSet CheckAdminLogin(string username , string Password )
+        {
+            SqlParameter[] objSqlParam = new SqlParameter[2];
+            objSqlParam[0] = new SqlParameter("@LoginID", SqlDbType.VarChar, 200);
+            objSqlParam[0].Value = username;
+            objSqlParam[1] = new SqlParameter("@Password", Password);
+            return SqlHelper.ExecuteDataset(objSqlConnection, CommandType.StoredProcedure, "ValidateAdminLoginCredentails", objSqlParam);
+            //string query = $"SELECT COUNT(*) TotalCount FROM UserMaster WHERE username='{username}' AND password='{Password}'";
+            //return SqlHelper.ExecuteDataset(objSqlConnection, CommandType.Text, query);
+        }
+    }
+}

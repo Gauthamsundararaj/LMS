@@ -1,0 +1,10 @@
+﻿
+/* Background image */
+.bg-cover {
+    background-image: url('assets/css/images/bg-loginpage.png');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+

@@ -1,0 +1,9 @@
+[25-10-2025 10:43:37] Object reference not set to an instance of an object.
+   at Microsoft.ApplicationBlocks.Data.SqlHelper.PrepareCommand(SqlCommand command, SqlConnection connection, SqlTransaction transaction, CommandType commandType, String commandText, SqlParameter[] commandParameters) in C:\Projects\LMS\Library\SQLHelper.cs:line 133
+   at Microsoft.ApplicationBlocks.Data.SqlHelper.ExecuteDataset(SqlConnection connection, CommandType commandType, String commandText, SqlParameter[] commandParameters) in C:\Projects\LMS\Library\SQLHelper.cs:line 508
+   at DAL.MasterDAO.CheckUserLogin(String username, String password) in C:\Projects\LMS\DAL\MasterDAO.cs:line 42
+
+[25-10-2025 10:43:37] Cannot find table 0.
+   at System.Data.DataTableCollection.get_Item(Int32 index)
+   at LMS.Login.btnLogin_Click(Object sender, EventArgs e) in C:\Projects\LMS\Login.aspx.cs:line 31
+

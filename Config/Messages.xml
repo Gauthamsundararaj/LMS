@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Error>
+  <Message id="ERRLOG001">Please enter Login id.</Message>
+  <Message id="ERRLOG002">Please enter Password.</Message>
+  <Message id="ERRLOG003">Invalid Login id or Password.</Message>
+  <Message id="ERRLOG004">Your account has been locked. Please contact the administrator.</Message>
+  <Message id="ERRLOG005">Unauthorized login attempt.</Message>
+  <Message id="ERRLOG006">Login Successful.</Message>
+
+
+  <!-- ==========================
+     User Master Validation Messages 
+     ========================== -->
+
+  <!-- Login id -->
+  <Message id="ERRUSR001">Please enter Login id.</Message>
+  <Message id="ERRUSR002">Login id must contain only letters and numbers. Special characters are not allowed.</Message>
+  <Message id="ERRUSR003">Login id must be at least 5 characters long.</Message>
+
+  <!-- Employee Code -->
+  <Message id="ERRUSR004">Please enter Employee Code.</Message>
+  <Message id="ERRUSR005">Employee Code must contain only letters and numbers.</Message>
+
+  <!-- User Name -->
+  <Message id="ERRUSR006">Please enter User Name.</Message>
+  <Message id="ERRUSR007">User Name can only contain alphabets and spaces.</Message>
+
+  <!-- Gender -->
+  <Message id="ERRUSR008">Please select Gender.</Message>
+
+  <!-- Email -->
+  <Message id="ERRUSR009">Please enter Email.</Message>
+  <Message id="ERRUSR010">Please enter a valid Email address (e.g., example@domain.com).</Message>
+
+  <!-- Alternate Email -->
+  <Message id="ERRUSR011">Please enter a valid Alternate Email address.</Message>
+
+  <!-- Phone Number -->
+  <Message id="ERRUSR012">Please enter Phone Number.</Message>
+  <Message id="ERRUSR013">Phone Number must be 10 digits only.</Message>
+  <Message id="ERRUSR014">Phone Number must contain only numbers.</Message>
+
+  <!-- Alternate Phone -->
+  <Message id="ERRUSR015">Please enter a valid Alternate Phone Number.</Message>
+  <Message id="ERRUSR016">Alternate Phone Number must be 10 digits only.</Message>
+
+  <!-- Department -->
+  <Message id="ERRUSR017">Please select a Department from the list.</Message>
+
+  <!-- Designation -->
+  <Message id="ERRUSR018">Please Enter a Designation.</Message>
+  <Message id="ERRUSRDS018">Designation can only contain alphabets and spaces</Message>
+
+  <!-- Role Type -->
+  <Message id="ERRUSR019">Please select a Role Type.</Message>
+
+  <!-- Password -->
+  <Message id="ERRUSR020">Please enter Password.</Message>
+  <Message id="ERRUSR021">Password must be at least 6 characters long.</Message>
+  <Message id="ERRUSR022">Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.</Message>
+
+  <!-- Active Status -->
+  <Message id="ERRUSR023">Please select Active status (checked or unchecked).</Message>
+
+  <!-- Success Messages -->
+  <Message id="SUCUSR001">User details saved successfully.</Message>
+  <Message id="SUCUSR002">User details updated successfully.</Message>
+  <Message id="SUCUSR003">User deleted successfully.</Message>
+
+  <!-- Action Errors -->
+  <Message id="ERRUSR025">Please select a record to edit.</Message>
+  <Message id="ERRUSR026">Please select a record to delete.</Message>
+  <Message id="ERRUSR027">No data found for the selected record.</Message>
+
+  <!--text clear -->
+  <Message id="INFOUSR01">All fields have been cleared.</Message>
+
+
+  <!--Author Master Messages-->
+  <Message id="ERRAM01"> Author Name must contain only letters and spaces, dots(no numbers or special characters)</Message>
+  <Message id="ERRAM02">Author id not found.</Message>
+  <Message id="ERRAM03">Please enter the Author Name.</Message>
+  <Message id="ERRAM04">Author Name can only contain alphabets, spaces, dots, hyphens, and apostrophes.</Message>
+  <Message id="ERRAM05">Please select an Author Type.</Message>
+  <Message id="SUSAM01">Author Inserted Successfully</Message>
+  <Message id="SUSAM02">Author updated successfully</Message>
+  <Message id="SUSAM03">Author deleted successfully</Message>
+  
+  <!--Category Master Messages-->
+  <Message id="SUSCM01">Category Inserted Successfully</Message>
+  <Message id="SUSCM02">Category updated successfully</Message>
+  <Message id="SUSCM03">Category deleted successfully</Message>
+
+
+  <Message id="ERRCM01">Please enter Category Name.</Message>
+  <Message id="ERRCM02">Category Name can contain only alphabets, spaces, hyphens, and apostrophes.</Message>
+  <Message id="ERRCM07">Category name already exists</Message>
+  <!-- DESCRIPTION ERRORS -->
+  <Message id="ERRCM03">Please write a Description.</Message>
+  <Message id="ERRCM04">Description must be at least 5 characters long.</Message>
+  <Message id="ERRCM05">Description cannot exceed 500 characters.</Message>
+  <Message id="ERRCM06">Description contains invalid characters.</Message>
+
+
+  <!-- ================= SUCCESS MESSAGES ================ -->
+  
+
+  <!-- ================= ERROR MESSAGES ================== -->
+  <Message id="ERRBOOK01">Unable to save the book. Please try again.</Message>
+  <Message id="ERRBOOK02">Unable to update the book. Please try again.</Message>
+  <Message id="ERRBOOK03">Unable to delete the book. Please try again.</Message>
+  <Message id="ERRBOOK04">Book record not found.</Message>
+
+  <!-- ================ VALidATION ERRORS ================= -->
+
+ 
+ 
+
+    <!-- Common -->
+    
+
+    <!-- ISBN -->
+    <Message id="BKM001">ISBN is required.</Message>
+    <Message id="BKM002">Invalid ISBN format. Enter valid ISBN-10 or ISBN-13.</Message>
+    <Message id="BKM003">ISBN must be at least 10 characters.</Message>
+    <Message id="BKM004">ISBN cannot be more than 13 characters.</Message>
+
+    <!-- Title -->
+    <Message id="BKM005">Book title is required.</Message>
+    <Message id="BKM006">Invalid book title. Only letters, numbers, spaces, and basic punctuation are allowed.</Message>
+
+    <!-- Category -->
+    <Message id="BKM007">Please select a category.</Message>
+
+    <!-- Author -->
+    <Message id="BKM008">Please select at least one author.</Message>
+
+    <!-- Language -->
+    <Message id="BKM009">Please select a book language.</Message>
+
+    <!-- Publisher -->
+    <Message id="BKM010">Publisher name is required.</Message>
+    <Message id="BKM011">Invalid publisher name. Only letters, numbers, spaces and basic symbols (.,- ) are allowed.</Message>
+
+    <!-- Year Published -->
+    <Message id="BKM012">Published year is required.</Message>
+    <Message id="BKM013">Published year must be a 4-digit number.</Message>
+    <Message id="BKM014">Published year cannot be in the future.</Message>
+    <Message id="BKM015">Published year must be 1900 or later.</Message>
+
+    <!-- Edition -->
+    <Message id="BKM016">Invalid edition. Only letters, numbers, spaces, and (.- ) allowed.</Message>
+
+    <!-- Price -->
+    <Message id="BKM017">Invalid price. Please enter a valid numeric value greater than 0.</Message>
+
+    <!-- Copies -->
+    <Message id="BKM018">Enter valid total copies.</Message>
+    <Message id="BKM019">Enter valid available copies.</Message>
+
+
+
+
+  <!-- ================ SYSTEM MESSAGES =================== -->
+  <Message id="SYSBOOK01">System error occurred. Please contact administrator.</Message>
+  <Message id="SYSBOOK02">Database connection error.</Message>
+  <Message id="SUSBOOK01">Book added successfully.</Message>
+  <Message id="SUSBOOK02">Book updated successfully.</Message>
+  <Message id="SUSBOOK03">Book deleted successfully.</Message>
+  <Message id="WARBOOK01">ISBN Already exist.</Message>
+  
+</Error>
