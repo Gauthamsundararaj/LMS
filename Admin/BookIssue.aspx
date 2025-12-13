@@ -25,7 +25,6 @@
 
         .multiselect-native-select {
             width: 100%;
-            /* set height */
         }
 
         .multiselect-option {
