@@ -25,6 +25,30 @@ namespace DAL
                 objSqlConnection.Close();
             objSqlConnection.Dispose();
         }
+        public DataSet RoleMasterCRUD(
+           string action,
+           int roleID = 0,
+           string roleName = "",
+           bool active = true,
+           int adminUserID = 1
+       )
+        {
+            SqlParameter[] param =
+            {
+                new SqlParameter("@Action", action),
+                new SqlParameter("@RoleID", roleID),
+                new SqlParameter("@RoleName", roleName),
+                new SqlParameter("@Active", active),
+                new SqlParameter("@AdminUserID", adminUserID)
+            };
+
+            return SqlHelper.ExecuteDataset(
+                objSqlConnection,
+                CommandType.StoredProcedure,
+                "RoleMaster_CRUD",
+                param
+            );
+        }
 
         public DataSet UserMaster(string Action, int UserID,string LoginId, string EmpCode,string UserName,
       string Gender,string Email, string AltEmail, string Phone, string AltPhone, string Department,
@@ -76,9 +100,131 @@ namespace DAL
             };
 
             return SqlHelper.ExecuteDataset(objSqlConnection,
-                    CommandType.StoredProcedure, "dbo.getRoleMaster", objparam);
+                    CommandType.StoredProcedure, "dbo.RoleMaster_CRUD", objparam);
+        }
+        public DataSet GetRolesForDropdown()
+        {
+            SqlParameter[] objParam = new SqlParameter[]
+            {
+        new SqlParameter("@Action", "SELECT")
+            };
+
+            return SqlHelper.ExecuteDataset(
+                objSqlConnection,
+                CommandType.StoredProcedure,
+                "dbo.RoleMaster_CRUD",
+                objParam
+            );
         }
 
+        public DataSet GetBookDues(
+             string action,
+             string memberType = null,
+             string memberID = null,
+             int? issueId = null,
+             DateTime? dueDate = null,
+             DateTime? returnDate = null,
+             int adminUserID = 0
+         )
+        {
+            SqlParameter[] prms = new SqlParameter[]
+            {
+                new SqlParameter("@Action", action),
+                new SqlParameter("@MemberType", (object)memberType ?? DBNull.Value),
+                new SqlParameter("@MemberID", (object)memberID ?? DBNull.Value),
+                new SqlParameter("@IssueID", (object)issueId ?? DBNull.Value),
+                new SqlParameter("@DueDate", (object)dueDate ?? DBNull.Value),
+                new SqlParameter("@ReturnDate", (object)returnDate ?? DBNull.Value),
+                new SqlParameter("@AdminUserID", adminUserID)
+            };
 
+            return SqlHelper.ExecuteDataset(objSqlConnection, CommandType.StoredProcedure, "sp_GetBookdues", prms);
+        }
+        public DataSet GetRoleType()
+        {
+            SqlParameter[] p =
+            {
+                new SqlParameter("@Action", "GETROLE")
+            };
+
+            return SqlHelper.ExecuteDataset(objSqlConnection, CommandType.StoredProcedure,
+                "sp_RoleMenuMapping", p);
+        }
+
+        public DataSet SearchRoleMenu(int RoleID)
+        {
+            SqlParameter[] p =
+            {
+            new SqlParameter("@Action", "GET"),
+            new SqlParameter("@RoleID", RoleID)
+            };
+
+            return SqlHelper.ExecuteDataset(objSqlConnection, CommandType.StoredProcedure,
+                "sp_RoleMenuMapping", p);
+        }
+
+        // SAVE UPDATE
+        public DataSet SaveUpdateRoleMenu(int RoleID, int MenuID, int SequenceNo, int IsChecked, int AUserID)
+        {
+            SqlParameter[] p =
+            {
+                new SqlParameter("@Action", "SAVEUPDATE"),
+                new SqlParameter("@RoleID", RoleID),
+                new SqlParameter("@MenuID", MenuID),
+                new SqlParameter("@SequenceNo", SequenceNo),
+                new SqlParameter("@IsChecked", IsChecked),
+                new SqlParameter("@AUserID", AUserID)
+            };
+
+            return SqlHelper.ExecuteDataset(objSqlConnection, CommandType.StoredProcedure,
+                "sp_RoleMenuMapping", p);
+        }
+       
+        public DataSet MenuMaster(
+         string action,
+         int? menuID = null,
+         string menuName = "",
+         string pageName = "",
+         int? parentMenuID = null,
+         bool? isChildMenu = null,
+         int? sequenceNo = null,
+         bool isActive = true,
+         int adminUserID = 0,
+         string searchBy = "",
+         string searchValue = "")
+        {
+            SqlParameter[] objparam = new SqlParameter[]
+            {
+                new SqlParameter("@Action", action),
+                new SqlParameter("@MenuID", (object)menuID ?? DBNull.Value),
+                new SqlParameter("@MenuName", (object)menuName ?? DBNull.Value),
+                new SqlParameter("@PageName", (object)pageName ?? DBNull.Value),
+                new SqlParameter("@ParentMenuID", (object)parentMenuID ?? DBNull.Value),
+                new SqlParameter("@IsChildMenu", (object)isChildMenu ?? DBNull.Value),
+                new SqlParameter("@SequenceNo", (object)sequenceNo ?? DBNull.Value),
+                new SqlParameter("@IsActive", isActive),
+                new SqlParameter("@AdminUserID", adminUserID),
+                new SqlParameter("@SearchBy", (object)searchBy ?? DBNull.Value),
+                new SqlParameter("@SearchValue", (object)searchValue ?? DBNull.Value)
+            };
+
+            return SqlHelper.ExecuteDataset(
+                objSqlConnection,
+                CommandType.StoredProcedure,
+                "dbo.sp_MenuMaster",
+                objparam
+            );
+        }
+
+        public DataSet GetMenusByRole(int RoleID)
+        {
+            SqlParameter[] param =
+            {
+
+                new SqlParameter("@RoleID", RoleID)
+            };
+
+            return SqlHelper.ExecuteDataset(objSqlConnection, CommandType.StoredProcedure, "sp_GetMenusByRole", param);
+        }
     }
 }

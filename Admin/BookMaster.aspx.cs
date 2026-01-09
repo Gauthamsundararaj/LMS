@@ -3,8 +3,10 @@ using Library;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -42,6 +44,7 @@ namespace Admin
 
             }
             //lblErrorMsg = new string[50];
+            lblErrorMsg[0] = CommonFunction.GetErrorMessage("", "ERRCOM"); //NO records Found
             lblErrorMsg[1] = CommonFunction.GetErrorMessage("", "BKM001"); // ISBN required
             lblErrorMsg[2] = CommonFunction.GetErrorMessage("", "BKM002"); // Invalid ISBN
             lblErrorMsg[3] = CommonFunction.GetErrorMessage("", "BKM003"); // ISBN < 10
@@ -135,7 +138,8 @@ namespace Admin
                     {
                         divBookGrid.Visible = false;
                     }
-                    lblRecordCount.Text = ds.Tables[0].Rows.Count + " Records found";
+                    lblRecordCount.Text = "Total Books: "+ ds.Tables[0].Rows.Count;
+                    BuildPager(gvBookMaster.PageCount, gvBookMaster.PageIndex);
                 }
 
             }
@@ -595,7 +599,6 @@ namespace Admin
             txtEdition.Text = "";
             txtPrice.Text = "";
             txtTotalCopies.Text = "";
-
             txtShelfLocation.Text = "";
             chkActive.Checked = true;
             hdnBookID.Value = "0";
@@ -682,7 +685,7 @@ namespace Admin
                     gvBookMaster.DataSource = ds.Tables[0];
 
                     gvBookMaster.DataBind();
-                    lblRecordCount.Text =gvBookMaster.Rows.Count + " Records found";
+                    //lblRecordCount.Text ="Total Books:" + gvBookMaster.Rows.Count;
                 }
                 else
                 {
@@ -704,52 +707,11 @@ namespace Admin
 
             gvBookMaster.PageIndex = 0;
             BindBookGrid();
-
         }
-        private void ExportToCSV(DataTable dt, string fileName)
-        {
-            Response.Clear();
-            Response.Buffer = true;
-            Response.AddHeader("content-disposition", "attachment;filename=" + fileName);
-            Response.ContentType = "text/csv";
-
-            StringBuilder sb = new StringBuilder();
-
-            // COLUMN HEADERS
-            foreach (DataColumn col in dt.Columns)
-            {
-                sb.Append(col.ColumnName + ",");
-            }
-            sb.AppendLine();
-
-            // ROW DATA
-            foreach (DataRow row in dt.Rows)
-            {
-                for (int i = 0; i < dt.Columns.Count; i++)
-                {
-                    string cell = row[i].ToString().Replace(",", "|");
-
-                    // Detect ISBN column
-                    if (dt.Columns[i].ColumnName == "ISBN")
-                    {
-                        // Force Excel to treat ISBN as text
-                        cell = "'" + cell + "'";
-                    }
-
-                    sb.Append(cell + ",");
-                }
-                sb.AppendLine();
-            }
-
-            Response.Write(sb.ToString());
-            Response.End();
-        }
-
         protected void btnDownloadCSV_Click(object sender, EventArgs e)
         {
             try
             {
-                // 1. Get all book data using your existing BLL call
                 DataSet ds = objMasterBO.BookMaster("SELECT");
 
                 if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
@@ -758,20 +720,36 @@ namespace Admin
                     return;
                 }
 
-                DataTable dt = ds.Tables[0];
+                DataTable sourceTable = ds.Tables[0];
+                if (sourceTable.Columns.Contains("ISBN"))
+                {
+                    foreach (DataRow row in sourceTable.Rows)
+                    {
+                        row["ISBN"] = "\t" + row["ISBN"].ToString();
+                    }
+                }
+                string removeColumns = hfRemoveColumnsCSV.Value;
 
-                // 2. Create new table with ONLY specific fields
-                DataTable exportTable = dt.DefaultView.ToTable(false,
-                    "ISBN",
-                    "BookTitle",
-                    "CategoryName",
-                    "AuthorNames",
-                    "PublisherName",
-                    "TotalCopies"
-                );
+                if (!string.IsNullOrWhiteSpace(removeColumns))
+                {
+                    string[] columnsToRemove = removeColumns.Split(',');
 
-                // 3. Export CSV
-                ExportToCSV(exportTable, "BookMaster.csv");
+                    foreach (string col in columnsToRemove)
+                    {
+                        if (ds.Tables[0].Columns.Contains(col))
+                            ds.Tables[0].Columns.Remove(col);
+                    }
+                }
+                StringBuilder sb = CommonFunction.CSVFileGeneration(sourceTable, "BookMaster");
+
+                Response.Clear();
+                Response.Buffer = true;
+                Response.AddHeader("content-disposition", "attachment;filename=BookMaster.csv");
+                Response.Charset = "";
+                Response.ContentType = "text/csv";
+                Response.Write(sb.ToString());
+                Response.Flush();
+                Response.End();
             }
             catch (Exception ex)
             {
@@ -779,29 +757,64 @@ namespace Admin
                 ShowAlert("Failed to download CSV.", "error");
             }
         }
+
         private void BuildPager(int totalPages, int currentPage)
         {
             var pages = new List<object>();
+            int maxPagesToShow = 3;
 
-            for (int i = 1; i <= totalPages; i++)
+            int startPage = Math.Max(0, currentPage - 1);
+            int endPage = Math.Min(totalPages - 1, startPage + maxPagesToShow - 1);
+
+            if (endPage - startPage < maxPagesToShow - 1)
+                startPage = Math.Max(0, endPage - maxPagesToShow + 1);
+
+            // Previous
+            pages.Add(new
             {
-                pages.Add(new { PageIndex = i - 1, Text = i.ToString() });
+                PageIndex = currentPage - 1,
+                Text = "« Previous",
+                Command = "Page",
+                Enabled = currentPage > 0,
+                IsActive = false   // ✅ REQUIRED
+            });
+
+            // Page Numbers
+            for (int i = startPage; i <= endPage; i++)
+            {
+                pages.Add(new
+                {
+                    PageIndex = i,
+                    Text = (i + 1).ToString(),
+                    Command = "Page",
+                    Enabled = true,
+                    IsActive = (i == currentPage) // ✅ ONLY true for active page
+                });
             }
+
+            // Next
+            pages.Add(new
+            {
+                PageIndex = currentPage + 1,
+                Text = "Next »",
+                Command = "Page",
+                Enabled = currentPage < totalPages - 1,
+                IsActive = false   // ✅ REQUIRED
+            });
 
             rptPager.DataSource = pages;
             rptPager.DataBind();
-
         }
+
+
+
         protected void rptPager_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            if (e.CommandName == "Page")
-            {
-                int newIndex = Convert.ToInt32(e.CommandArgument);
-                gvBookMaster.PageIndex = newIndex;
+            int newIndex = Convert.ToInt32(e.CommandArgument);
 
-                BindBookGrid();
-
-            }
+            gvBookMaster.PageIndex = newIndex;
+            BindBookGrid();
         }
+
     }
 }

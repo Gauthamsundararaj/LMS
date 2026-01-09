@@ -27,54 +27,7 @@ namespace DAL
                 objSqlConnection.Close();
             objSqlConnection.Dispose();
         }
-        //public DataSet AuthorMasterSelect(string action)
-        //{
-        //    SqlParameter[] objSqlParam = new SqlParameter[1];
-        //    objSqlParam[0] = new SqlParameter("@Action", action);
-        //    return SqlHelper.ExecuteDataset(objSqlConnection,CommandType.StoredProcedure,"dbo.AuthorMaster", objSqlParam );
-        //}
-        //public DataSet AuthorMasterInsert(string action,string authorName,string authorType,bool active,int adminuserID)
-        //{
-        //    SqlParameter[] objSqlParam = new SqlParameter[6];
-        //    objSqlParam[0] = new SqlParameter("@Action", action);
-        //    objSqlParam[1] = new SqlParameter("@AuthorName", (object)authorName ?? DBNull.Value);
-        //    objSqlParam[2] = new SqlParameter("@AuthorType", (object)authorType ?? DBNull.Value);
-        //    objSqlParam[3] = new SqlParameter("@Active", active);
-        //    objSqlParam[4] = new SqlParameter("@AdminUserID", adminuserID);
-        //    return SqlHelper.ExecuteDataset(objSqlConnection, CommandType.StoredProcedure, "dbo.AuthorMaster", objSqlParam);
-        //}
-        //public DataSet AuthorMasterUpdate(string action,int authorID, string authorName, string authorType, bool active, int adminuserID)
-        //{
-        //    SqlParameter[] objSqlParam = new SqlParameter[7];
-        //    objSqlParam[0] = new SqlParameter("@Action", action);
-        //    objSqlParam[1] = new SqlParameter("@AuthorID", authorID);
-        //    objSqlParam[2] = new SqlParameter("@AuthorName", (object)authorName ?? DBNull.Value);
-        //    objSqlParam[3] = new SqlParameter("@AuthorType", (object)authorType ?? DBNull.Value);
-        //    objSqlParam[4] = new SqlParameter("@Active", active);
-        //    objSqlParam[5] = new SqlParameter("@AdminUserID", adminuserID);
-        //    return SqlHelper.ExecuteDataset(objSqlConnection, CommandType.StoredProcedure, "dbo.AuthorMaster", objSqlParam);
-        //}
-        //public DataSet AuthorMasterDelete(string action, int authorID)
-        //{
-        //    SqlParameter[] objSqlParam = new SqlParameter[2];
-        //    objSqlParam[0] = new SqlParameter("@Action", action);
-        //    objSqlParam[1] = new SqlParameter("@AuthorID",authorID);
-        //    return SqlHelper.ExecuteDataset(objSqlConnection, CommandType.StoredProcedure, "dbo.AuthorMaster", objSqlParam);
-        //}
-
-        //public DataSet AuthorMaster(string action,int authorID )
-        //{
-        //    SqlParameter[] objSqlParam = new SqlParameter[2];
-        //    objSqlParam[0] = new SqlParameter("@Action", action);
-        //    objSqlParam[1] = new SqlParameter("@AuthorID", (object)authorID ?? DBNull.Value);
-
-        //    return SqlHelper.ExecuteDataset(
-        //        objSqlConnection,
-        //        CommandType.StoredProcedure,
-        //        "dbo.AuthorMaster",
-        //        objSqlParam
-        //    );
-        //}
+       
 
         public DataSet AuthorMaster(string action, int authorID = 0, string authorName = "",
                             string authorType = "", bool active = true, int adminUserID = 0)
@@ -87,7 +40,7 @@ namespace DAL
                 new SqlParameter("@AuthorType", (object)authorType ?? DBNull.Value),
                 new SqlParameter("@Active", active),
                 new SqlParameter("@AdminUserID", adminUserID),
-       
+
             };
 
             return SqlHelper.ExecuteDataset(objSqlConnection,
@@ -112,60 +65,27 @@ namespace DAL
                     CommandType.StoredProcedure, "dbo.CategoryMaster", objparam);
         }
 
-        //public DataSet CategoryMaster(string action,
-        //    int? categoryID,
-        //    string categoryName,
-        //    string description,
-        //    bool active = true,
-        //    int createdBy = 0,
-        //    int updatedBy = 0,
-        //    bool isUpdate = false)
-        //{
-        //    SqlParameter[] objSqlParam = new SqlParameter[8];
-
-        //    objSqlParam[0] = new SqlParameter("@Action", action);
-        //    objSqlParam[1] = new SqlParameter("@CategoryID", (object)categoryID ?? DBNull.Value);
-        //    objSqlParam[2] = new SqlParameter("@CategoryName", (object)categoryName ?? DBNull.Value);
-
-        //    objSqlParam[3] = new SqlParameter("@Description", SqlDbType.VarChar, 500);
-        //    objSqlParam[3].Value = (object)description ?? DBNull.Value;
-
-        //    objSqlParam[4] = new SqlParameter("@Active", active);
-        //    objSqlParam[5] = new SqlParameter("@CreatedBy", createdBy);
-        //    objSqlParam[6] = new SqlParameter("@UpdatedBy", updatedBy);
-
-        //    // IMPORTANT FIX
-        //    objSqlParam[7] = new SqlParameter("@Update", isUpdate);
-
-        //    return SqlHelper.ExecuteDataset(
-        //        objSqlConnection,
-        //        CommandType.StoredProcedure,
-        //        "dbo.CategoryMaster",
-        //        objSqlParam
-        //    );
-        //}
-
-
+        
         public DataSet BookMaster(
-    string Action,
-    int BookID,
-    string ISBN,
-    int CategoryID,
-    string BookTitle,
-    string Language,
-    string PublisherName,
-    int YearPublished,
-    string Edition,
-    decimal Price,
-    int TotalCopies,
+           string Action,
+           int BookID,
+           string ISBN,
+           int CategoryID,
+           string BookTitle,
+           string Language,
+           string PublisherName,
+           int YearPublished,
+           string Edition,
+           decimal Price,
+           int TotalCopies,
 
-    string ShelfLocation,
-    bool Active,
-    string AuthorIDs,
-    int AdminUserID,
-    string searchBy,
-    string searchValue
-)
+           string ShelfLocation,
+           bool Active,
+           string AuthorIDs,
+           int AdminUserID,
+           string searchBy,
+           string searchValue
+       )
         {
             SqlParameter[] objParam = new SqlParameter[]
             {
@@ -180,7 +100,7 @@ namespace DAL
         new SqlParameter("@Edition", (object)Edition ?? DBNull.Value),
         new SqlParameter("@Price", Price),
         new SqlParameter("@TotalCopies", TotalCopies),
-     
+
         new SqlParameter("@ShelfLocation", (object)ShelfLocation ?? DBNull.Value),
         new SqlParameter("@Active", Active),
         new SqlParameter("@AuthorIDs", (object)AuthorIDs ?? DBNull.Value),
@@ -190,7 +110,7 @@ namespace DAL
             };
 
             return SqlHelper.ExecuteDataset(objSqlConnection,
-                        CommandType.StoredProcedure, "dbo.spBookMaster", objParam);
+                        CommandType.StoredProcedure, "dbo.BookMasterPage", objParam);
         }
 
         public DataSet BookAuthor(string action, int bookId, int? authorId = null)
@@ -205,7 +125,9 @@ namespace DAL
             return SqlHelper.ExecuteDataset(objSqlConnection,
                        CommandType.StoredProcedure, "dbo.BookAuthorMapping", objParam);
         }
-       
+
+
+
 
     }
 }

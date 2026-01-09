@@ -15854,7 +15854,7 @@ input:focus {
         border-top: 1px solid var(--border-color);
         color: var(--dropdown-menu);
         font-size: 13px;
-        opacity: .6;
+       
         padding: 6px 12px
     }
 
@@ -44146,7 +44146,7 @@ pre {
 
 .login-card {
     align-items: center;
-    background: url(images/bg-loginpage.png);
+    background:none !important;
     background-position: 50%;
     display: flex;
     justify-content: center;

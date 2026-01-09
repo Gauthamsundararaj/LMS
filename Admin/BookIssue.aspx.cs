@@ -19,6 +19,7 @@ namespace Admin
         MasterBO objMasterBO = new MasterBO();
         CommonBO objCommonBO = new CommonBO();
         int intAdminUserID;
+        private string[] lblErrorMsg = new string[30];
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -27,6 +28,22 @@ namespace Admin
             {
                 BindBookList();
             }
+            lblErrorMsg[1]  = CommonFunction.GetErrorMessage("", "ERRBI01"); // Student ID is required
+            lblErrorMsg[2]  = CommonFunction.GetErrorMessage("", "ERRBI02"); // Invalid Student ID
+            lblErrorMsg[3]  = CommonFunction.GetErrorMessage("", "ERRBI03"); // Student ID not found
+            lblErrorMsg[4]  = CommonFunction.GetErrorMessage("", "ERRBI04"); // Staff ID is required
+            lblErrorMsg[5]  = CommonFunction.GetErrorMessage("", "ERRBI05"); // Invalid Staff ID
+            lblErrorMsg[6]  = CommonFunction.GetErrorMessage("", "ERRBI06"); // Staff ID not found
+            lblErrorMsg[7]  = CommonFunction.GetErrorMessage("", "ERRBI07"); // Select at least one ISBN
+            lblErrorMsg[8]  = CommonFunction.GetErrorMessage("", "ERRBI08"); // Invalid Issue Date
+            lblErrorMsg[9]  = CommonFunction.GetErrorMessage("", "ERRBI09"); // Invalid Due Date
+            lblErrorMsg[10] = CommonFunction.GetErrorMessage("", "ERRBI10"); // Due Date must be greater than Issue Date
+            lblErrorMsg[11] = CommonFunction.GetErrorMessage("", "ERRBI11"); // Session expired
+            lblErrorMsg[12] = CommonFunction.GetErrorMessage("", "ERRBI12"); // Failed to insert Book Issue
+
+            // Success message
+            lblErrorMsg[13] = CommonFunction.GetErrorMessage("", "SUSBI01"); // Book Issue inserted successfully
+
         }
 
         protected void rblIssueType_SelectedIndexChanged(object sender, EventArgs e)
@@ -145,7 +162,7 @@ namespace Admin
                 }
                 else
                 {
-                    ShowAlert("No records found.", "warning");
+                    ShowAlert(lblErrorMsg[0], "error");
                     pnlConfirm.Visible = false;
                 }
             }
@@ -176,22 +193,17 @@ namespace Admin
                         bookIdsCsv += li.Value;
                     }
                 }
-                // 1️⃣ Issue Type
-                if (string.IsNullOrWhiteSpace(issueType))
-                {
-                    ShowAlert("Please select Issue Type.");
-                    return;
-                }
+               
                 if (issueType == "Student")
                 {
                     if (string.IsNullOrWhiteSpace(studentId))
                     {
-                        ShowAlert("Student ID is required.");
+                        ShowAlert(lblErrorMsg[1], "error");
                         return;
                     }
                     if (!Regex.IsMatch(studentId, @"^[A-Za-z0-9\-]+$"))
                     {
-                        ShowAlert("Invalid Student ID.", "error");
+                        ShowAlert(lblErrorMsg[2], "error");
                         txtStudentID.Focus();
                         return;
                     }
@@ -200,7 +212,7 @@ namespace Admin
 
                     if (MemberID == null)
                     {
-                        ShowAlert("Student ID not found or inactive.");
+                        ShowAlert(lblErrorMsg[3], "error");
                         return;
                     }
                 }
@@ -208,12 +220,12 @@ namespace Admin
                 {
                     if (string.IsNullOrWhiteSpace(staffId))
                     {
-                        ShowAlert("Staff ID is required.");
+                        ShowAlert(lblErrorMsg[4],"error");
                         return;
                     }
                     if (!Regex.IsMatch(staffId, @"^[A-Za-z0-9\-]+$"))
                     {
-                        ShowAlert("Invalid Staff ID.", "error");
+                        ShowAlert(lblErrorMsg[5], "error");
                         txtStaffID.Focus();
                         return;
                     }
@@ -221,7 +233,7 @@ namespace Admin
                     MemberID = ValidateMemberFromDB(action, staffId, "Staff");
                     if (MemberID == null)
                     {
-                        ShowAlert("Staff ID is Not found or inactive.", "warning");
+                        ShowAlert(lblErrorMsg[6], "error");
                         return;
                     }
                 }
@@ -229,14 +241,14 @@ namespace Admin
                 // 3️⃣ ISBN Validate
                 if (string.IsNullOrWhiteSpace(bookIdsCsv))
                 {
-                    ShowAlert("Select at least one ISBN.", "warning");
+                    ShowAlert(lblErrorMsg[7], "warning");
                     return;
                 }
                 DateTime issueDt;
                 if (string.IsNullOrWhiteSpace(issueDate.Value)
                     || !DateTime.TryParse(issueDate.Value, out issueDt))
                 {
-                    ShowAlert("Invalid Issue Date.");
+                    ShowAlert(lblErrorMsg[8], "error");
                     return;
                 }
 
@@ -245,13 +257,13 @@ namespace Admin
                 if (string.IsNullOrWhiteSpace(dueDate.Value)
                     || !DateTime.TryParse(dueDate.Value, out dueDt))
                 {
-                    ShowAlert("Invalid Due Date.");
+                    ShowAlert(lblErrorMsg[9], "error");
                     return;
                 }
 
                 if (dueDt <= issueDt)
                 {
-                    ShowAlert("Due Date must be greater than Issue Date.");
+                    ShowAlert(lblErrorMsg[10], "error");
                     return;
                 }
 
@@ -284,10 +296,10 @@ namespace Admin
                 if (ViewState["MemberID"] == null ||
                    ViewState["IssueType"] == null ||
                    ViewState["IssueDate"] == null ||
-                    ViewState["DueDate"] == null||
-                        ViewState["bookIdsCsv"]==null)
+                   ViewState["DueDate"] == null||
+                   ViewState["bookIdsCsv"]==null)
                 {
-                    ShowAlert("Session expired. Please click Save again.");
+                    ShowAlert(lblErrorMsg[11], "warning");
                     return;
                 }
                 string MemberID = ViewState["MemberID"].ToString();
@@ -306,12 +318,12 @@ namespace Admin
 
                         if (msgCode == 1)
                         {
-                            ShowAlert("Book Issue inserted successfully.", "success");
+                            ShowAlert(lblErrorMsg[13], "success");
                             ClearFormFields();
                         }
                         else
                         {
-                            ShowAlert("Failed to insert Book Issue.");
+                            ShowAlert(lblErrorMsg[12], "error");
                         }
                     }
                 }

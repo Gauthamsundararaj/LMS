@@ -1,6 +1,7 @@
 ﻿using BLL;
 using Library;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Text.RegularExpressions;
 using System.Web.UI;
@@ -47,7 +48,8 @@ namespace Admin
                         gvAuthor.DataSource = null;
                         gvAuthor.DataBind();
                     }
-                    lblRecordCount.Text = ds.Tables[0].Rows.Count + " Records found";
+                    lblRecordCount.Text =  "No. of Records: " + ds.Tables[0].Rows.Count;
+                    BuildPager(gvAuthor.PageCount, gvAuthor.PageIndex);
                 }
                
             }
@@ -214,15 +216,79 @@ namespace Admin
             ClearFormFields();
         }
 
+
+        private void BuildPager(int totalPages, int currentPage)
+        {
+            var pages = new List<object>();
+            int maxPagesToShow = 3;
+
+            int startPage = Math.Max(0, currentPage - 1);
+            int endPage = Math.Min(totalPages - 1, startPage + maxPagesToShow - 1);
+
+            if (endPage - startPage < maxPagesToShow - 1)
+                startPage = Math.Max(0, endPage - maxPagesToShow + 1);
+
+            // Previous
+            pages.Add(new
+            {
+                PageIndex = currentPage - 1,
+                Text = "« Previous",
+                Command = "Page",
+                Enabled = currentPage > 0,
+                IsActive = false   // ✅ REQUIRED
+            });
+
+            // Page Numbers
+            for (int i = startPage; i <= endPage; i++)
+            {
+                pages.Add(new
+                {
+                    PageIndex = i,
+                    Text = (i + 1).ToString(),
+                    Command = "Page",
+                    Enabled = true,
+                    IsActive = (i == currentPage) // ✅ ONLY true for active page
+                });
+            }
+
+            // Next
+            pages.Add(new
+            {
+                PageIndex = currentPage + 1,
+                Text = "Next »",
+                Command = "Page",
+                Enabled = currentPage < totalPages - 1,
+                IsActive = false   // ✅ REQUIRED
+            });
+
+            rptPager.DataSource = pages;
+            rptPager.DataBind();
+        }
+
+
+
+        protected void rptPager_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            int newIndex = Convert.ToInt32(e.CommandArgument);
+
+            gvAuthor.PageIndex = newIndex;
+            BindAuthorGrid();
+        }
+
         protected void gvAuthor_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
+            // 1. Set the new page index
             gvAuthor.PageIndex = e.NewPageIndex;
+
+            // 2. Re-bind the data from your source
             BindAuthorGrid();
         }
 
 
 
-        
+
+
+
 
 
 

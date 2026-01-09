@@ -22,7 +22,7 @@
             <p class="text-muted mb-4">You have been logged out of your account.</p>
 
             <!-- Link to go back to login page -->
-            <a href="Login.aspx" class="btn btn-primary w-100">Go to Login Page</a>
+            <a href="LMSLogin.aspx" class="btn btn-primary w-100">Go to Login Page</a>
         </div>
     </form>
 </body>

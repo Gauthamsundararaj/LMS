@@ -137,16 +137,13 @@
   <ItemGroup>
     <Content Include=".gitattributes" />
     <Content Include=".gitignore" />
-    <Content Include="assets\css\bootsrap-multiselect\select2-theme.css" />
     <Content Include="assets\css\bootstrap-multiselect.min.css" />
     <Content Include="assets\css\CustomMultiselect.css" />
+    <Content Include="assets\css\CustomPagination.css" />
     <Content Include="assets\css\forcefull.css" />
-    <Content Include="assets\css\login.css" />
     <Content Include="assets\css\toastr.css" />
+    <Content Include="assets\images\icons\Totalbooks.png" />
     <Content Include="assets\js\bootstrap-multiselect.min.js" />
-    <Content Include="assets\js\bootstrap-multiselect\boostrapbundle.js" />
-    <Content Include="assets\js\bootstrap-multiselect\jqueryslimin.js" />
-    <Content Include="assets\js\bootstrap-multiselect\select2min.js" />
     <Content Include="assets\js\Custom-Toasts.js" />
     <Content Include="assets\js\CustomMultiselect.js" />
     <Content Include="assets\js\JavaScript.js" />
@@ -169,11 +166,9 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
-    <Content Include="dummy.aspx" />
+    <Content Include="LMSLogin.aspx" />
     <Content Include="Error.aspx" />
     <Content Include="ForcefulBrowsing.html" />
-    <Content Include="Home.aspx" />
-    <Content Include="Login.aspx" />
     <Content Include="Logout.aspx" />
     <Content Include="packages.config" />
     <Content Include="ApplicationInsights.config" />
@@ -193,8 +188,6 @@
     <Content Include="Content\bootstrap-grid.rtl.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
-    <Content Include="assets\css\bootsrap-multiselect\bootsrapmin.css" />
-    <Content Include="assets\css\bootsrap-multiselect\select2min.css" />
     <None Include="Properties\PublishProfiles\LMS.pubxml" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -221,11 +214,12 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="dummy.aspx.cs">
-      <DependentUpon>dummy.aspx</DependentUpon>
+    <Compile Include="LMSLogin.aspx.cs">
+      <DependentUpon>LMSLogin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="dummy.aspx.designer.cs">
-      <DependentUpon>dummy.aspx</DependentUpon>
+    <Compile Include="LMSLogin.aspx.designer.cs">
+      <DependentUpon>LMSLogin.aspx</DependentUpon>
     </Compile>
     <Compile Include="Error.aspx.cs">
       <DependentUpon>Error.aspx</DependentUpon>
@@ -233,20 +227,6 @@
     </Compile>
     <Compile Include="Error.aspx.designer.cs">
       <DependentUpon>Error.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Home.aspx.cs">
-      <DependentUpon>Home.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Home.aspx.designer.cs">
-      <DependentUpon>Home.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Login.aspx.cs">
-      <DependentUpon>Login.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Login.aspx.designer.cs">
-      <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
     <Compile Include="Logout.aspx.cs">
       <DependentUpon>Logout.aspx</DependentUpon>
@@ -258,7 +238,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="assets\images\" />
     <Folder Include="ErrorLog\" />
   </ItemGroup>
   <ItemGroup>

@@ -89,12 +89,16 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AddMenu.aspx" />
     <Content Include="AuthorMaster.aspx" />
+    <Content Include="BookAvailability.aspx" />
+    <Content Include="Bookdue.aspx" />
     <Content Include="BookIssue.aspx" />
     <Content Include="BookMaster.aspx" />
     <Content Include="CategoryMaster.aspx" />
-    <Content Include="Dashboard.aspx" />
+    <Content Include="ChangePassword.aspx" />
+    <Content Include="IssueDashboard.aspx" />
+    <Content Include="MemberDashboard.aspx" />
+    <Content Include="Menumaster.aspx" />
     <Content Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -104,24 +108,34 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="RequestDetails.aspx" />
+    <Content Include="Rolemaster.aspx" />
+    <Content Include="RoleMenuMapping.aspx" />
     <Content Include="sample.html" />
     <Content Include="UserMaster.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddMenu.aspx.cs">
-      <DependentUpon>AddMenu.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="AddMenu.aspx.designer.cs">
-      <DependentUpon>AddMenu.aspx</DependentUpon>
-    </Compile>
     <Compile Include="AuthorMaster.aspx.cs">
       <DependentUpon>AuthorMaster.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="AuthorMaster.aspx.designer.cs">
       <DependentUpon>AuthorMaster.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="BookAvailability.aspx.cs">
+      <DependentUpon>BookAvailability.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="BookAvailability.aspx.designer.cs">
+      <DependentUpon>BookAvailability.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Bookdue.aspx.cs">
+      <DependentUpon>Bookdue.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Bookdue.aspx.designer.cs">
+      <DependentUpon>Bookdue.aspx</DependentUpon>
     </Compile>
     <Compile Include="BookIssue.aspx.cs">
       <DependentUpon>BookIssue.aspx</DependentUpon>
@@ -144,14 +158,56 @@
     <Compile Include="CategoryMaster.aspx.designer.cs">
       <DependentUpon>CategoryMaster.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Dashboard.aspx.cs">
-      <DependentUpon>Dashboard.aspx</DependentUpon>
+    <Compile Include="ChangePassword.aspx.cs">
+      <DependentUpon>ChangePassword.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Dashboard.aspx.designer.cs">
-      <DependentUpon>Dashboard.aspx</DependentUpon>
+    <Compile Include="ChangePassword.aspx.designer.cs">
+      <DependentUpon>ChangePassword.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IssueDashboard.aspx.cs">
+      <DependentUpon>IssueDashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IssueDashboard.aspx.designer.cs">
+      <DependentUpon>IssueDashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MemberDashboard.aspx.cs">
+      <DependentUpon>MemberDashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MemberDashboard.aspx.designer.cs">
+      <DependentUpon>MemberDashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Menumaster.aspx.cs">
+      <DependentUpon>Menumaster.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Menumaster.aspx.designer.cs">
+      <DependentUpon>Menumaster.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestDetails.aspx.cs">
+      <DependentUpon>RequestDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RequestDetails.aspx.designer.cs">
+      <DependentUpon>RequestDetails.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Rolemaster.aspx.cs">
+      <DependentUpon>Rolemaster.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Rolemaster.aspx.designer.cs">
+      <DependentUpon>Rolemaster.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="RoleMenuMapping.aspx.cs">
+      <DependentUpon>RoleMenuMapping.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RoleMenuMapping.aspx.designer.cs">
+      <DependentUpon>RoleMenuMapping.aspx</DependentUpon>
+    </Compile>
     <Compile Include="UserMaster.aspx.cs">
       <DependentUpon>UserMaster.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

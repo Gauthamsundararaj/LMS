@@ -51,5 +51,50 @@ namespace BLL
                 IssueType
                );
         }
+
+        public DataSet GetMemberDashboard(string MemberID)
+        {
+            return objCommonDAO.GetMemberDashboard(MemberID);
+        }
+
+        public DataSet BookRenewalRequest(string Action,
+    string memberId,
+    int bookIssueId,
+    int noOfDays
+)
+        {
+            return objCommonDAO.BookRenewalRequest(
+                 Action,
+                 memberId,
+                bookIssueId,
+                noOfDays
+            );
+        }
+
+        public DataSet RenewalRequestAction(
+     string action,               // APPROVE / REJECT
+     int renewalRequestId,
+     DateTime? approvedDueDate,   // Used for APPROVE
+     string rejectReason,         // Used for REJECT
+     int adminId
+ )
+        {
+            return objCommonDAO.RenewalRequestAction(
+                action,
+                renewalRequestId,
+                approvedDueDate,
+                rejectReason,
+                adminId
+            );
+        }
+        public DataSet GetBookIssueDashboard(string action)
+        {
+            return objCommonDAO.GetBookIssueDashboard(action);
+        }
+
+        public DataSet GetBookAvailability(string categoryNames, string isbn, string bookTitle, string authorName, int? yearPublished, string publisherName)
+        {
+            return objCommonDAO.GetBookAvailability(categoryNames, isbn, bookTitle, authorName, yearPublished, publisherName);
+        }
     }
 }

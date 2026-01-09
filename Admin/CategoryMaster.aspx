@@ -8,66 +8,85 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>CategoryMenu</title>
-
+    <link href="../assets/css/CustomPagination.css" rel="stylesheet" />
 </head>
 <body>
 
     <uc:header id="Header" runat="server" />
     <form id="form1" runat="server">
         <div class="page-body">
-            <div class="container-fluid mt-2">
-                <div id="divForm" class="card mb-0" runat="server" visible="true">
-                    <div class="card-header bg-primary">
+            <div class="container-fluid pt-2">
+
+                <div id="divForm" class="card mb-3" runat="server" visible="true">
+                    <div class="card-header bg-primary p-3">
                         <h3 class="card-title mb-0">Category Details</h3>
                     </div>
+
                     <asp:HiddenField ID="hdnCategoryID" runat="server" />
-                    <div class="card">
-                        <div class="card-body mt-0">
-                            <div class="row g-3 needs-validation custom-input tooltip-valid validation-forms" novalidate="">
-                                <div class="col-md-5 position-relative ">
-                                    <div>
-                                        <label class="form-label" for="validationTooltip01">Category Name<span style="color: red">*</span></label>
-                                        <asp:TextBox ID="txtCategoryName" class="form-control" Placeholder="Enter Category Name" runat="server" requried="" MaxLength="50"></asp:TextBox>
-                                        <div class="valid-tooltip">Looks good!</div>
-                                    </div>
-                                    <div class="mt-3">
-                                        <label class="form-label d-block">Status <span style="color: red">*</span></label>
-                                        <div class="form check form-check-inline">
-                                            <asp:CheckBox ID="chkActive" runat="server" Checked="true" />
-                                            <label class="form-check-label ms-2" for="chkActive">Active</label>
-                                        </div>
-                                    </div>
+
+                    <div class="card-body mt-0">
+                        <!-- Responsive grid: stack on small screens -->
+                        <div class="row g-3 needs-validation custom-input tooltip-valid validation-forms" novalidate>
+
+                            <!-- Left column: name + status -->
+                            <div class="col-12 col-md-6 col-lg-5 position-relative">
+                                <div>
+                                    <label class="form-label" for="<%= txtCategoryName.ClientID %>">
+                                        Category Name <span class="text-danger">*</span>
+                                    </label>
+                                    <asp:TextBox ID="txtCategoryName"
+                                        runat="server"
+                                        CssClass="form-control"
+                                        MaxLength="50"
+                                        placeholder="Enter Category Name"></asp:TextBox>
+                                    <div class="valid-tooltip">Looks good!</div>
                                 </div>
 
-
-                                <div class="col-7">
-                                    <label class="form-label" for="exampleFormControlTextarea1">Description</label>
-                                    <textarea class="form-control" id="txtDescription" runat="server" rows="4" required=""></textarea>
+                                <div class="mt-3">
+                                    <label class="form-label d-block">
+                                        Status <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="form check form-check-inline">
+                                        <asp:CheckBox ID="chkActive" runat="server" Checked="true" />
+                                        <label class="form-check-label ms-2" for="chkActive">Active</label>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="col-12 mb-0 mt-1">
-                                <asp:Button ID="btnAdd" class="btn btn-primary" runat="server" Text="Save" OnClick="Submit_Click" OnClientClick="return validateInput()" />
-                                <asp:Button ID="btnUpdate" runat="server" Text="Update" CssClass="btn btn-success" OnClick="Update_Click" OnClientClick="return validateInput()" Visible="false" />
-                                <asp:Button ID="btnClear" class="btn btn-danger" runat="server" Text="Clear" OnClick="Clear_Click" />
-
+                            <!-- Right column: description -->
+                            <div class="col-12 col-md-6 col-lg-7">
+                                <label class="form-label" for="<%= txtDescription.ClientID %>">Description</label>
+                                <!-- HtmlTextArea (server-side) -->
+                                <textarea id="txtDescription"
+                                    runat="server"
+                                    class="form-control"
+                                    rows="4"></textarea>
                             </div>
                         </div>
+
+                        <!-- Action Buttons -->
+                        <div class="col-12 mt-3 mb-0">
+                            <!-- Stack on xs, inline on sm+ -->
+                            <div class="d-grid gap-2 d-sm-flex">
+                                <asp:Button ID="btnAdd" runat="server" Text="Save" CssClass="btn btn-primary" OnClick="Submit_Click" OnClientClick="return validateInput()" />
+                                <asp:Button ID="btnUpdate" runat="server" Text="Update" CssClass="btn btn-success" OnClick="Update_Click" OnClientClick="return validateInput()" Visible="false" />
+                                <asp:Button ID="btnClear" runat="server" Text="Clear" CssClass="btn btn-danger" OnClick="Clear_Click" />
+                            </div>
+                        </div>
+
                     </div>
                 </div>
-
-
                 <div class="card" id="divGrid" runat="server">
-                    <div class="card-header bg-primary">
+                    <div class="card-header bg-primary p-3">
                         <h4 class="card-title mb-0 p-0">List Of Categories</h4>
                     </div>
                     <div class="card">
-                        <div class="card-body">
-                            <div class="col-md-auto d-grid">
+                        <div class="card-body pt-0">
+                            <div class="col-12 col-lg-auto ms-lg-auto text-lg-end p-1">
                                 <asp:Label ID="lblRecordCount" runat="server"
                                     CssClass="fw-bold text-primary"></asp:Label>
-
                             </div>
                             <div class="table-responsive" style="overflow-x: auto; white-space: nowrap;">
                                 <asp:GridView ID="gvCategory" runat="server"
@@ -76,7 +95,8 @@
                                     OnRowCommand="gvCategory_RowCommand"
                                     AllowPaging="True"
                                     PageSize="5"
-                                    OnPageIndexChanging="gvCategory_PageIndexChanging">
+                                    OnPageIndexChanging="gvCategory_PageIndexChanging"
+                                    PagerSettings-Visible="false">
                                     <Columns>
                                         <asp:BoundField DataField="Sno" HeaderText="Sno" />
                                         <asp:TemplateField HeaderText="CategoryID" Visible="false">
@@ -118,27 +138,21 @@
                                             </ItemTemplate>
                                         </asp:TemplateField>
                                     </Columns>
-                                    <PagerTemplate>
-                                        <div style="text-align: center; padding: 10px;">
 
-                                            <asp:LinkButton ID="lnkPrev" runat="server"
-                                                CommandName="Page" CommandArgument="Prev"
-                                                CssClass="btn btn-primary btn-sm">
-                                                     Previous
-                                            </asp:LinkButton>
-
-                                            <span style="padding: 0 15px;">Page <%# gvCategory.PageIndex + 1 %> of <%# gvCategory.PageCount %>
-                                            </span>
-
-                                            <asp:LinkButton ID="lnkNext" runat="server"
-                                                CommandName="Page" CommandArgument="Next"
-                                                CssClass="btn btn-primary btn-sm">
-                                                     Next
-                                            </asp:LinkButton>
-
-                                        </div>
-                                    </PagerTemplate>
                                 </asp:GridView>
+                            </div>
+                            <div class="pager-fixed">
+                                <asp:Repeater ID="rptPager" runat="server" OnItemCommand="rptPager_ItemCommand">
+                                    <ItemTemplate>
+                                        <asp:LinkButton ID="lnkPage" runat="server"
+                                            CssClass='<%# (bool)Eval("IsActive") ? "page-btn active" : "page-btn" %>'
+                                            CommandName='<%# Eval("Command") %>'
+                                            CommandArgument='<%# Eval("PageIndex") %>'
+                                            Enabled='<%# Eval("Enabled") %>'
+                                            Text='<%# Eval("Text") %>'>
+                                        </asp:LinkButton>
+                                    </ItemTemplate>
+                                </asp:Repeater>
                             </div>
                         </div>
                     </div>

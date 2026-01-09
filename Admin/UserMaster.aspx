@@ -6,7 +6,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>User Master</title>
+    <link href="../assets/css/CustomPagination.css" rel="stylesheet" />
     <style>
         #rblGender input[type="radio"] {
             margin-right: 6px;
@@ -14,6 +16,26 @@
             margin-top: 10px;
             margin-bottom: 10px;
             accent-color: #308e87; /* Bootstrap primary color */
+        }
+
+        .wrap-header {
+            width: 240px;
+            white-space: normal; /* allow wrapping */
+            word-break: normal;
+            overflow-wrap: normal;
+            text-align: center
+        }
+
+        /* Cell */
+        .wraping-cell {
+            width: 240px;
+            white-space: normal; /* allow wrapping */
+            word-break: normal; /* DO NOT break words */
+            overflow-wrap: normal; /* wrap only at spaces */
+
+            line-height: 1.5;
+            padding: 6px 8px;
+            vertical-align: top;
         }
     </style>
 
@@ -25,43 +47,45 @@
         <div class="page-body ">
 
             <!-- Container-fluid starts-->
-            <div class="container-fluid mt-2">
+            <div class="container-fluid pt-2">
 
                 <div class="row ">
-                    <div class="text-end mb-3">
+                    <div class="text-end mb-2">
                         <asp:Button ID="btnAddUser" runat="server" Text="Add User" CssClass="btn btn-success mt-2" OnClick="btnAddUser_Click" />
                     </div>
                 </div>
                 <!-- USER GRID SECTION -->
                 <div class="card" id="divGrid" runat="server">
-                    <div class="card-header bg-primary">
+                    <div class="card-header bg-primary p-3">
                         <h3 class="card-title mb-0 ">User Details</h3>
                     </div>
                     <div class="card">
                         <div class="card-body">
-                            <div class="row mb-3 align-items-end ">
-                                <div class="col-md-3">
-                                    <asp:DropDownList ID="ddlSearchBy" runat="server" CssClass="form-select">
-                                        <asp:ListItem Value="">---- Search By ----</asp:ListItem>
-                                        <asp:ListItem Value="UserName">User Name</asp:ListItem>
-                                        <asp:ListItem Value="Email">Email</asp:ListItem>
-                                        <asp:ListItem Value="RoleType">Role Type</asp:ListItem>
+                            <div class="row mb-3 align-items-end g-2">
+                                <div class="col-12 col-lg d-flex flex-wrap gap-2 align-items-end">
+                                    <div class="col-12 col-sm-6 col-md-3">
+                                        <asp:DropDownList ID="ddlSearchBy" runat="server" CssClass="form-select">
+                                            <asp:ListItem Value="">-------- Search By --------</asp:ListItem>
+                                            <asp:ListItem Value="UserName">User Name</asp:ListItem>
+                                            <asp:ListItem Value="Email">Email</asp:ListItem>
+                                            <asp:ListItem Value="RoleType">Role Type</asp:ListItem>
 
-                                    </asp:DropDownList>
+                                        </asp:DropDownList>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-3">
+                                        <asp:TextBox ID="txtSearchValue" runat="server" CssClass="form-control"
+                                            Placeholder="Enter search text" MaxLength="50"></asp:TextBox>
+                                    </div>
+                                    <div class="col-auto">
+                                        <asp:Button ID="btnSearch" runat="server" Text="Search"
+                                            CssClass="btn btn-primary" OnClick="btnSearch_Click" />
+                                    </div>
+                                    <div class="col-auto">
+                                        <asp:Button ID="btnClearSearch" runat="server" Text="Clear"
+                                            CssClass="btn btn-secondary" OnClick="btnClearSearch_Click" />
+                                    </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <asp:TextBox ID="txtSearchValue" runat="server" CssClass="form-control"
-                                        Placeholder="Enter search text" MaxLength="50"></asp:TextBox>
-                                </div>
-                                <div class="col-md-auto d-grid">
-                                    <asp:Button ID="btnSearch" runat="server" Text="Search"
-                                        CssClass="btn btn-primary" OnClick="btnSearch_Click"/>
-                                </div>
-                                <div class="col-md-auto d-grid">
-                                    <asp:Button ID="btnClearSearch" runat="server" Text="Clear"
-                                        CssClass="btn btn-secondary" OnClick="btnClearSearch_Click" />
-                                </div>
-                                <div class="col-md-auto d-grid">
+                                <div class="col-12 col-lg-auto ms-lg-auto text-lg-end">
                                     <asp:Label ID="lblRecordCount" runat="server"
                                         CssClass="fw-bold text-primary"></asp:Label>
                                 </div>
@@ -72,18 +96,23 @@
                                     AutoGenerateColumns="False" OnRowCommand="gvUser_RowCommand"
                                     AllowPaging="True"
                                     PageSize="5"
-                                    OnPageIndexChanging="gvUser_PageIndexChanging">
+                                    OnPageIndexChanging="gvUser_PageIndexChanging"
+                                    PagerSettings-Visible="false">
                                     <Columns>
                                         <asp:BoundField DataField="Sno" HeaderText="Sno" />
                                         <asp:BoundField DataField="UserID" Visible="false" />
                                         <asp:BoundField DataField="LoginID" HeaderText="Login ID" />
-                                        <asp:BoundField DataField="EmpCode" HeaderText="Employee Code" />
+                                      
+                                        <asp:TemplateField HeaderText="Employee Code">
+                                            <HeaderStyle CssClass="wrap-header" />
+                                            <ItemTemplate> <%# Eval("EmpCode") %> </ItemTemplate>
+                                        </asp:TemplateField>
                                         <asp:BoundField DataField="Gender" HeaderText="Gender" />
                                         <asp:BoundField DataField="UserName" HeaderText="User Name" />
                                         <asp:BoundField DataField="Email" HeaderText="Email" />
-                                        <asp:BoundField DataField="AltEmail" HeaderText="Alternate Email" />
+                                        <asp:BoundField DataField="AltEmail" HeaderText="Alternate Email" Visible="false" />
                                         <asp:BoundField DataField="Phone" HeaderText="Phone" />
-                                        <asp:BoundField DataField="AltPhone" HeaderText="Alternate Phone Number" />
+                                        <asp:BoundField DataField="AltPhone" HeaderText="Alternate Phone Number" Visible="false" />
                                         <asp:BoundField DataField="Department" HeaderText="Department" />
                                         <asp:BoundField DataField="Designation" HeaderText="Designation" />
                                         <asp:BoundField DataField="RoleName" HeaderText="Role Type" />
@@ -122,6 +151,19 @@
                                         </asp:TemplateField>
                                     </Columns>
                                 </asp:GridView>
+                            </div>
+                            <div class="pager-fixed">
+                                <asp:Repeater ID="rptPager" runat="server" OnItemCommand="rptPager_ItemCommand">
+                                    <ItemTemplate>
+                                        <asp:LinkButton ID="lnkPage" runat="server"
+                                            CssClass='<%# (bool)Eval("IsActive") ? "page-btn active" : "page-btn" %>'
+                                            CommandName='<%# Eval("Command") %>'
+                                            CommandArgument='<%# Eval("PageIndex") %>'
+                                            Enabled='<%# Eval("Enabled") %>'
+                                            Text='<%# Eval("Text") %>'>
+                                        </asp:LinkButton>
+                                    </ItemTemplate>
+                                </asp:Repeater>
                             </div>
                         </div>
                     </div>

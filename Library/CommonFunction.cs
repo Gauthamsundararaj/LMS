@@ -87,6 +87,50 @@ namespace Library
             }
             return sbCSV;
         }
+
+        public static StringBuilder DowloadCSVFile(DataTable dt, string strTableHeading)
+        {
+            StringBuilder sbCSV = new StringBuilder();
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                sbCSV.AppendLine(strTableHeading);
+                sbCSV.AppendLine();
+
+                // Header
+                for (int i = 0; i < dt.Columns.Count; i++)
+                {
+                    sbCSV.Append(dt.Columns[i].ColumnName);
+                    if (i < dt.Columns.Count - 1)
+                        sbCSV.Append(",");
+                }
+                sbCSV.AppendLine();
+
+                // Rows
+                foreach (DataRow row in dt.Rows)
+                {
+                    for (int j = 0; j < dt.Columns.Count; j++)
+                    {
+                        string strData = Convert.ToString(row[j]);
+
+                        if (strData.Contains(",") || strData.Contains("\""))
+                            strData = "\"" + strData.Replace("\"", "\"\"") + "\"";
+
+                        if (strData.Contains("\r\n"))
+                            strData = strData.Replace("\r\n", " ");
+
+                        sbCSV.Append(strData);
+
+                        if (j < dt.Columns.Count - 1)
+                            sbCSV.Append(",");
+                    }
+                    sbCSV.AppendLine();
+                }
+            }
+
+            return sbCSV;
+        }
+
         public static StringBuilder CSVFileGenerationWithoutHeader(DataTable dt, string strTableHeading)
         {
             StringBuilder sbCSV = new StringBuilder();

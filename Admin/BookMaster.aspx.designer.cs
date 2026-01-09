@@ -33,6 +33,24 @@ namespace Admin
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
+        /// hdnBookID control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputHidden hdnBookID;
+
+        /// <summary>
+        /// hfRemoveColumnsCSV control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hfRemoveColumnsCSV;
+
+        /// <summary>
         /// btnAddBooks control.
         /// </summary>
         /// <remarks>
@@ -49,6 +67,15 @@ namespace Admin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divBookGrid;
+
+        /// <summary>
+        /// btnDownloadCSV control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnDownloadCSV;
 
         /// <summary>
         /// ddlSearchBy control.
@@ -96,15 +123,6 @@ namespace Admin
         protected global::System.Web.UI.WebControls.Label lblRecordCount;
 
         /// <summary>
-        /// btnDownloadCSV control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnDownloadCSV;
-
-        /// <summary>
         /// gvBookMaster control.
         /// </summary>
         /// <remarks>
@@ -130,15 +148,6 @@ namespace Admin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divForm;
-
-        /// <summary>
-        /// hdnBookID control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputHidden hdnBookID;
 
         /// <summary>
         /// txtBookTitle control.

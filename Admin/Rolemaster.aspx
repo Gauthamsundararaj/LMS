@@ -1,0 +1,206 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="RoleMaster.aspx.cs" Inherits="Admin.RoleMaster" %>
+
+<%@ Register Src="../Controls/Header.ascx" TagPrefix="uc" TagName="Header" %>
+<%@ Register Src="../Controls/Footer.ascx" TagPrefix="uc" TagName="Footer" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Role Master</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="../assets/css/customPagination.css" rel="stylesheet" />
+
+    <style>
+       
+
+        .required {
+            color: red;
+            font-weight: bold;
+        }
+
+        #gvRoleMaster th,
+        #gvRoleMaster td {
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+
+</head>
+
+<body>
+      <uc:header id="Header" runat="server" />
+    <form id="form2" runat="server">
+      
+          
+
+            <div class="page-body">
+                <div class="container-fluid pt-2">
+
+                    <div class="card">
+                        <div class="card-header bg-primary p-3">
+                            <h3>Role Master</h3>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="row ms-0">
+
+                                <div class="col-12 col-sm-6 col-md-3 mb-3 ml-0">
+                                    <label class="form-label">User Role <span class="required">*</span></label>
+                                    <asp:TextBox ID="txtRoleName" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
+                                </div>
+
+                                                                <div class="col-12 col-sm-6 col-md-3 mb-3">
+                                    <label class="form-label d-block">
+                                        Active <span class="required">*</span>
+                                    </label>
+
+                                    <asp:CheckBox
+                                        ID="chkActive"
+                                        runat="server"
+                                       
+                                        Checked="true" />
+                                </div>
+
+                                <!-- ✅ Hidden field -->
+                                <asp:HiddenField ID="hfRoleID" runat="server" />
+                                <div class="col-3 col-md-3 col-sm-6 mt-4">
+                                    <asp:Button ID="btnSubmit" runat="server" Text="Save"
+                                        CssClass="btn btn-primary me-2"
+                                        OnClientClick="return validateRoleMaster();"
+                                        OnClick="btnSubmit_Click" />
+                                    <asp:Button ID="btnUpdate" runat="server" Text="Update"
+                                        CssClass="btn btn-warning me-2 "
+                                        OnClientClick="return validateRoleMaster();"
+                                        OnClick="btnUpdate_Click"
+                                        Visible="false" />
+                                    <asp:Button ID="btnClear" runat="server" Text="Clear"
+                                        CssClass="btn btn-secondary "
+                                        OnClick="btnClear_Click" />
+                                </div>
+
+                                <asp:Label ID="lblMessage" runat="server" CssClass="fw-bold"></asp:Label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header bg-primary p-3">
+                            <h4>Role Details</h4>
+                        </div>
+
+                        <div class="card-body pt-1">
+
+                            <div class="d-flex justify-content-center justify-content-md-end mb-2">
+                                <asp:Label ID="lblRecordCount" runat="server"
+                                    CssClass="fw-bold text-primary"></asp:Label>
+                            </div>
+                    
+                            <div class="table-responsive">
+                                <asp:GridView
+                                    ID="gvRoleMaster"
+                                    runat="server"
+                                    AutoGenerateColumns="False"
+                                    AllowPaging="true"
+                                    PagerSettings-Visible="false"
+                                    PageSize="5"
+                                    OnPageIndexChanging="gvMenu_PageIndexChanging"
+                                    DataKeyNames="RoleID"
+                                    OnRowCommand="gvRoleMaster_RowCommand"
+                                    OnRowDeleting="gvRoleMaster_RowDeleting"
+                                    CssClass="table table-bordered table-striped">
+
+                                    <Columns>
+                                        <asp:TemplateField HeaderText="S.No">
+                                            <ItemTemplate>
+                                                <%# Container.DataItemIndex + 1 %>
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
+
+                                        <asp:BoundField DataField="UserRole" HeaderText="User Role" />
+                                        <asp:TemplateField HeaderText="Active">
+                                            <ItemTemplate>
+                                                <%# Convert.ToBoolean(Eval("Active")) ? "Yes" : "No" %>
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
+
+                                        <asp:TemplateField HeaderText="Edit">
+                                            <ItemTemplate>
+                                                <asp:LinkButton
+                                                    ID="btnEdit"
+                                                    runat="server"
+                                                    CommandName="EditRole"
+                                                    CommandArgument='<%# Eval("RoleID") %>'
+                                                    CssClass="btn btn-sm btn-primary me-2"
+                                                    ToolTip="Edit">
+                                                <i class="iconly-Edit icli"></i>
+                                                </asp:LinkButton>
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
+
+                                        <asp:TemplateField HeaderText="Delete">
+                                            <ItemTemplate>
+                                                <asp:LinkButton
+                                                    ID="btnDelete"
+                                                    runat="server"
+                                                    CommandName="Delete"
+                                                    CommandArgument='<%# Eval("RoleID") %>'
+                                                    CssClass="btn btn-sm btn-danger "
+                                                    ToolTip="Delete"
+                                                    OnClientClick="return confirm('Are you sure you want to delete this role?');">
+                                            <i class="iconly-Delete icli"></i>
+                                                </asp:LinkButton>
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
+                                    </Columns>
+                                </asp:GridView>
+                            </div>
+                            <div class="pager-fixed">
+                                <asp:Repeater ID="rptPager" runat="server" OnItemCommand="rptPager_ItemCommand">
+                                    <ItemTemplate>
+                                        <asp:LinkButton ID="lnkPage" runat="server"
+                                            CssClass='<%# (bool)Eval("IsActive") ? "page-btn active" : "page-btn" %>'
+                                            CommandName='<%# Eval("Command") %>'
+                                            CommandArgument='<%# Eval("PageIndex") %>'
+                                            Enabled='<%# Eval("Enabled") %>'
+                                            Text='<%# Eval("Text") %>'>
+                                        </asp:LinkButton>
+                                    </ItemTemplate>
+                                </asp:Repeater>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+              
+            </div>
+    </form>
+      <uc:footer id="Footer2" runat="server" />
+
+    <script type="text/javascript">
+        function validateRoleMaster() {
+            var userRole = document.getElementById('<%= txtRoleName.ClientID %>').value.trim();
+            var isActiveChecked = document.getElementById('<%= chkActive.ClientID %>').checked;
+
+            if (!userRole) {
+                AlertMessage("Please enter the User Role.", "error");
+                document.getElementById('<%= txtRoleName.ClientID %>').focus();
+                return false;
+            }
+
+            if (!/^[A-Za-z' -]+$/.test(userRole)) {
+                AlertMessage("User Role must contain only alphabets and spaces.", "error");
+                document.getElementById('<%= txtRoleName.ClientID %>').focus();
+                return false;
+            }
+
+            // OPTIONAL – normally not required
+            // if (!isActiveChecked) {
+            //     AlertMessage("Role must be active.", "warning");
+            //     return false;
+            // }
+
+            return true;
+        }
+    </script>
+
+</body>
+</html>

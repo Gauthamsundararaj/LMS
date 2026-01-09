@@ -26,13 +26,50 @@
 <link id="color" rel="stylesheet" href="../assets/css/color-1.css" media="screen"/>
 
 <link href="../assets/js/toastr/toastr.min.css" rel="stylesheet" />
+<style>
+  @media (max-width: 1192px) {
+    .lms-title {
+        color: #000 !important;
+    }
+}
+</style>
+<style>
+    /* Parent menu green */
+    .sidebar-menu .sidebar-list > a,
+    .sidebar-menu .sidebar-title,
+    .sidebar-menu .sidebar-list > a span,
+    .sidebar-menu .sidebar-list > a h6 {
+        color: #1E8A75 !important;
+        font-weight: 600;
+    }
+
+    /* Parent menu icon green */
+    .sidebar-menu svg,
+    .sidebar-menu svg use {
+        stroke: #1E8A75 !important;
+        fill: #1E8A75 !important;
+    }
+
+    /* Child menu — restore original color */
+    .sidebar-submenu li a {
+        color: #2A3547 !important;   /* ORIGINAL TEXT COLOR */
+        font-weight: normal !important;
+    }
+
+    /* Hover effects */
+    .sidebar-menu .sidebar-list > a:hover {
+        color: #136754 !important;
+    }
+    .sidebar-submenu li a:hover {
+        color: #000 !important;  /* Dark on hover */
+    }
+</style>
 
 <!-- jquery-->
 <script src="../assets/js/vendors/jquery/jquery.min.js"></script>
  <script src="../assets/js/toastr/toastr.min.js"></script>
   <script src="../assets/js/Custom-Toasts.js"></script>
     
-
 
 <!-- page-wrapper Start-->
 <!-- tap on top starts-->
@@ -43,116 +80,80 @@
   <div class="loader"><span></span><span></span><span></span><span></span><span></span></div>
 </div>
 <div class="page-wrapper compact-wrapper" id="pageWrapper"> 
-  <header class="page-header row">
-    <div class="logo-wrapper d-flex align-items-center col-auto">
-        <h1 class="text-white">LMS</h1>
-        <a class="close-btn toggle-sidebar" href="javascript:void(0)">
-        <svg class="svg-color">
-          <use href="../assets/svg/iconly-sprite.svg#Category"></use>
-        </svg></a></div>
-    <div class="page-main-header col">
-      <div class="header-left">
-        
-        
-      </div>
-      <div class="nav-right">
-        <ul class="header-right"> 
-          
-       
-         
-       
-          <li class="profile-nav custom-dropdown">
-            <div class="user-wrap">
-              <div class="user-img"><img src="../assets/images/profile.png" alt="user"/></div>
-              <div class="user-content">
-                <h6>Puvan</h6>
-                <p class="mb-0">Admin<i class="fa-solid fa-chevron-down"></i></p>
-              </div>
+     <header class="page-header row">
+        <div class="logo-wrapper d-flex align-items-center col-auto">
+             <h1 class="lms-title text-white fs-1 fs-sm-5 mb-0">LMS</h1>
+            <a class="close-btn toggle-sidebar" href="javascript:void(0)">
+                <svg class="svg-color">
+                    <use href="../assets/svg/iconly-sprite.svg#Category"></use>
+                </svg></a>
+        </div>
+        <div class="page-main-header col">
+            <div class="header-left">
             </div>
-            <div class="custom-menu overflow-hidden">
-              <ul class="profile-body">
-                <li class="d-flex"> 
-                  <svg class="svg-color">
-                    <use href="../assets/svg/iconly-sprite.svg#Profile"></use>
-                  </svg><a class="ms-2" href="user-profile.html">Account</a>
-                </li>
-                <li class="d-flex"> 
-                  <svg class="svg-color">
-                    <use href="../assets/svg/iconly-sprite.svg#Login"></use>
-                  </svg><a class="ms-2" href ="">Log Out</a>
-                </li>
-              </ul>
+            <div class="nav-right">
+                <ul class="header-right">
+
+                    <li class="profile-nav custom-dropdown">
+                        <div class="user-wrap">
+                            <div class="user-img">
+                                <img src="../assets/images/profile.png" alt="user" />
+                            </div>
+                            <div class="user-content">
+                                <h6>
+                                    <asp:Literal ID="ltrUserName" runat="server"></asp:Literal><i class="fa-solid fa-chevron-down"></i></h6>
+                                   
+                            </div>
+                        </div>
+                        <div class="custom-menu overflow-hidden">
+                            <ul class="profile-body">
+                                <li class="d-flex">
+                                    <svg class="svg-color">
+                                        <use href="../assets/svg/iconly-sprite.svg#Profile"></use>
+                                    </svg><a class="ms-2" href="/LMS/Admin/ChangePassword.aspx">Change Password</a>
+                                </li>
+                                <li class="d-flex">
+                                    <svg class="svg-color">
+                                        <use href="../assets/svg/iconly-sprite.svg#Login"></use>
+                                    </svg>
+                                    <a class="ms-2" href="/LMS/Logout.aspx" onclick="return confirmLogout();">Log Out</a>
+                                </li>
+
+                                <script type="text/javascript">
+                                    function confirmLogout() {
+                                        // Show confirmation popup
+                                        return confirm("Are you sure you want to log out?");
+                                        // If user clicks "Cancel", link won't navigate
+                                    }
+                                </script>
+
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
             </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </header>
-  <!-- Page Body Start-->
-  <div class="page-body-wrapper"> 
-    <!-- Page sidebar start-->
-    <aside class="page-sidebar"> 
-      <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
-      <div class="main-sidebar" id="main-sidebar">
-          <ul class="sidebar-menu" id="simple-bar">
-              <li class="pin-title sidebar-main-title">
-                  <div>
-                      <h5 class="sidebar-title f-w-700">Pinned</h5>
-                  </div>
-              </li>
-              <li class="sidebar-main-title">
-                  <div>
-                      <h5 class="lan-1 f-w-700 sidebar-title">General</h5>
-                  </div>
-              </li>
-              <li class="sidebar-list">
-                  <i class="fa-solid fa-thumbtack"></i><a class="sidebar-link" href="javascript:void(0)">
-                      <svg class="stroke-icon">
-                          <use href="../assets/svg/iconly-sprite.svg#Home-dashboard"></use>
-                      </svg>
-                      <h6>Dashboards</h6><span class="badge">3</span><i class="iconly-Arrow-Right-2 icli"></i>
-                  </a>
-                  <ul class="sidebar-submenu">
-                      <li> <a href="../Admin/UserMaster.aspx">UserMaster</a></li>
-                    
-                      <li> <a href="dashboard-03.html">Education</a></li>
-                  </ul>
-              </li>
-              <li class="sidebar-list">
-                  <i class="fa-solid fa-thumbtack"></i><a class="sidebar-link" href="javascript:void(0)">
-                      <svg class="stroke-icon">
-                          <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
-                      </svg>
-                      <h6>Manage Books</h6><i class="iconly-Arrow-Right-2 icli"></i>
-                  </a>
-                  <ul class="sidebar-submenu">
-                      <li> <a href="../Admin/AuthorMaster.aspx">Author Master</a></li>
-                      <li> <a href="../Admin/CategoryMaster.aspx">Category Master</a></li>
-                      <li><a href="../Admin/BookMaster.aspx">Book Master</a></li>
-                      <li><a href="../Admin/BookIssue.aspx">Book Issue</a></li>
+        </div>
 
 
-                  </ul>
-              </li>
-              <li class="sidebar-list">
-                  <i class="fa-solid fa-thumbtack"></i><a class="sidebar-link" href="javascript:void(0)">
-                      <svg class="stroke-icon">
-                          <use href="../assets/svg/iconly-sprite.svg#Document"></use>
-                      </svg>
-                      <h6 class="lan-3">Page layout</h6><i class="iconly-Arrow-Right-2 icli"> </i>
-                  </a>
-                  <ul class="sidebar-submenu">
-                      <li> <a href="box-layout.html">Box Layout</a></li>
-                      <li><a href="layout-rtl.html">RTL</a></li>
-                      <li> <a href="layout-dark.html">Dark</a></li>
-                  </ul>
-              </li>
-              
-             
-          </ul>
-         
-        
-              
-      </div>
-      <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
-    </aside>
+    </header>
+    <!-- Page Body Start-->
+    <div class="page-body-wrapper">
+        <!-- Page sidebar start-->
+        <aside class="page-sidebar">
+            <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
+            <div class="main-sidebar" id="main-sidebar">
+                <ul class="sidebar-menu" id="simple-bar">
+                    <li class="pin-title sidebar-main-title">
+                        <div>
+                            <h5 class="sidebar-title f-w-700">Pinned</h5>
+                        </div>
+                    </li>
+
+                    <asp:Literal ID="ltrMenu" runat="server"></asp:Literal>
+                </ul>
+
+
+
+            </div>
+            <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
+        </aside>

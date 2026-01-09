@@ -33,8 +33,15 @@ namespace BLL
         {
             return _objLoginDAO.CheckAdminLogin(username, Password);
         }
+        public DataSet CheckLogin(int userType, string username, string Password)
+        {
+            return _objLoginDAO.CheckLogin(userType, username, Password);
+        }
+        public DataSet ChangePassword(int userId, string oldPwd, string newPwd)
+        {
+            return _objLoginDAO.ChangePassword(userId, oldPwd, newPwd);
+        }
 
-      
 
     }
 }
