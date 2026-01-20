@@ -13,16 +13,20 @@ namespace Admin
     {
         private readonly AdminBO objAdminBO = new AdminBO();
         private string[] lblErrorMsg = new string[15];
-
+        int intAdminUserID;
         protected void Page_Load(object sender, EventArgs e)
         {
             try
             {
+                intAdminUserID = Convert.ToInt32(Session["AdminUserID"]);
                 ErrorLog();
                 if (!IsPostBack)
                 {
                     BindGrid();
+                    BindPageName();
                     chkActive.Checked = true;
+                    
+
                 }
             }
             catch (Exception ex)
@@ -46,7 +50,9 @@ namespace Admin
                 lblErrorMsg[8] = CommonFunction.GetErrorMessage("", "ERRROLE009"); // Role deleted successfully  ✅ FIXED
                 lblErrorMsg[9] = CommonFunction.GetErrorMessage("", "ERRROLE010"); // General error  ✅ FIXED
                 lblErrorMsg[10] = CommonFunction.GetErrorMessage("", "ERRROLE011"); //Role Added Successfully.
-
+                lblErrorMsg[11] = CommonFunction.GetErrorMessage("", "ERRROLE012"); //Default page is Required.
+                lblErrorMsg[12] = CommonFunction.GetErrorMessage("", "ERRROLE013"); //Role updated successfully.
+                lblErrorMsg[13] = CommonFunction.GetErrorMessage("", "ERRROLE014"); //Role not found.
             }
             catch (Exception ex)
             {
@@ -59,16 +65,47 @@ namespace Admin
             gvRoleMaster.PageIndex = e.NewPageIndex;
             BindGrid();
         }
+
+        private void BindPageName()
+        {
+            try
+            {
+                using (DataSet ds = objAdminBO.PageName("SELECTPAGE"))
+                {
+                    ddlDefaultPage.Items.Clear();
+
+                    if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        ddlDefaultPage.DataSource = ds.Tables[0];
+                        ddlDefaultPage.DataTextField = "MenuName";
+                        ddlDefaultPage.DataValueField = "PageName";
+                        ddlDefaultPage.DataBind();
+                    }
+
+                    ddlDefaultPage.Items.Insert(0, new ListItem("Select PageName", ""));
+                }
+            }
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+            }
+        }
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
             try
             {
                 string strRoleName = txtRoleName.Text.Trim();
+                string strDefaultPage = ddlDefaultPage.SelectedValue.Trim();
 
                 // Validation
                 if (string.IsNullOrWhiteSpace(strRoleName))
                 {
                     ShowToastr(lblErrorMsg[0], "error");
+                    return;
+                }
+                if (string.IsNullOrWhiteSpace(strDefaultPage))
+                {
+                    ShowToastr(lblErrorMsg[11], "error");
                     return;
                 }
 
@@ -77,9 +114,9 @@ namespace Admin
                     ShowToastr(lblErrorMsg[1], "error");
                     return;
                 }
-
+               
                 bool isActive = chkActive.Checked;
-                DataSet ds = objAdminBO.GetRoleMaster("ADD", 0, strRoleName, isActive);
+                DataSet ds = objAdminBO.GetRoleMaster("ADD", 0, strRoleName,strDefaultPage, isActive,intAdminUserID);
 
                 int resultCode = Convert.ToInt32(ds.Tables[0].Rows[0]["ResultCode"]);
 
@@ -103,8 +140,8 @@ namespace Admin
                         ShowToastr(lblErrorMsg[4], "error"); // Unexpected
                         break;
                 }
+                
             }
-
             catch (Exception ex)
             {
                 MyExceptionLogger.Publish(ex);
@@ -119,8 +156,6 @@ namespace Admin
                 try
                 {
                     int roleId = Convert.ToInt32(e.CommandArgument);
-
-                    // ✅ CALL SELECT_BY_ID (NOT DELETE)
                     DataSet ds = objAdminBO.GetRoleMaster("SELECT_BY_ID", roleId);
 
                     if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
@@ -129,7 +164,20 @@ namespace Admin
 
                         hfRoleID.Value = dr["RoleID"].ToString();
                         txtRoleName.Text = dr["UserRole"].ToString();
+                       
+                       
                         chkActive.Checked = Convert.ToBoolean(dr["Active"]);
+                        string pageName = dr["PageName"].ToString().Trim();
+
+                        if (ddlDefaultPage.Items.FindByValue(pageName) != null)
+                        {
+                            ddlDefaultPage.SelectedValue = pageName;
+                        }
+                        else
+                        {
+                            ddlDefaultPage.SelectedIndex = 0;
+                        }
+
                         btnSubmit.Visible = false;
                         btnUpdate.Visible = true;
                     }
@@ -146,6 +194,7 @@ namespace Admin
             }
         }
 
+
         protected void btnUpdate_Click(object sender, EventArgs e)
         {
             try
@@ -157,7 +206,13 @@ namespace Admin
                 }
 
                 string strRoleName = txtRoleName.Text.Trim();
+                string strDefaultPage = ddlDefaultPage.SelectedValue.Trim();
 
+                if (string.IsNullOrWhiteSpace(strDefaultPage))
+                {
+                    ShowToastr(lblErrorMsg[11], "error");
+                    return;
+                }
                 if (string.IsNullOrWhiteSpace(strRoleName))
                 {
                     ShowToastr(lblErrorMsg[0], "error");
@@ -173,30 +228,35 @@ namespace Admin
                 bool isActive = chkActive.Checked;
                 int roleId = Convert.ToInt32(hfRoleID.Value);
 
-                DataSet ds = objAdminBO.GetRoleMaster("UPDATE",roleId,strRoleName,isActive);
+                DataSet ds = objAdminBO.GetRoleMaster("UPDATE",roleId,strRoleName, strDefaultPage, isActive,intAdminUserID);
 
 
                 if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                 {
-                    int msgCode = Convert.ToInt32(ds.Tables[0].Rows[0]["MsgCode"]);
-                    string message = ds.Tables[0].Rows[0]["Message"].ToString();
+                    int resultCode = Convert.ToInt32(ds.Tables[0].Rows[0]["ResultCode"]);
 
-                    if (msgCode == 1)
+                    switch (resultCode)
                     {
-                        ClearFields();
-                        BindGrid();
-                        btnSubmit.Visible = true;
-                        btnUpdate.Visible = false;
-                        ShowToastr(message, "success");
+                        case 0:
+                            ShowToastr(lblErrorMsg[12], "success");
+                            break;
+
+                        case 2:
+                            ShowToastr(lblErrorMsg[3], "warning");
+                            break;
+
+                        case 3:
+                            ShowToastr(lblErrorMsg[13], "error");
+                            break;
+
+                        default:
+                            ShowToastr(lblErrorMsg[4], "error");
+                            break;
                     }
-                    else if (msgCode == 2)
-                    {
-                        ShowToastr(lblErrorMsg[3], "warning"); // duplicate
-                    }
-                    else
-                    {
-                        ShowToastr(message, "warning");
-                    }
+                    BindGrid();
+                    btnUpdate.Visible=false;
+                    btnSubmit.Visible=true;
+                    ClearFields();
                 }
                 else
                 {
@@ -259,6 +319,7 @@ namespace Admin
 
         private void ClearFields()
         {
+            ddlDefaultPage.SelectedIndex=0;
             txtRoleName.Text = "";
             chkActive.Checked = true;
             hfRoleID.Value = "";
@@ -273,24 +334,37 @@ namespace Admin
                 if (ds != null && ds.Tables.Count > 0)
                 {
                     DataTable dt = ds.Tables[0];
+
                     gvRoleMaster.DataSource = dt;
                     gvRoleMaster.DataBind();
 
                     lblRecordCount.Text = dt.Rows.Count + " Records found";
 
+                    // ✅ SHOW / HIDE CARD BASED ON DATA
+                    divGrid.Visible = dt.Rows.Count > 0;
+
                     int totalRecords = dt.Rows.Count;
                     int pageSize = gvRoleMaster.PageSize;
                     int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
-
-                    BuildPager(totalPages, gvRoleMaster.PageIndex);
+                    if (ds.Tables[0].Rows.Count > gvRoleMaster.PageSize)
+                    {
+                        BuildPager(totalPages, gvRoleMaster.PageIndex);
+                        rptPager.Visible = true;
+                    }
+                    else
+                    {
+                        rptPager.Visible = false;
+                    }
                 }
             }
             catch (Exception ex)
             {
                 MyExceptionLogger.Publish(ex);
                 ShowToastr(lblErrorMsg[4], "error");
+                divGrid.Visible = false;
             }
         }
+
 
 
         private void BuildPager(int totalPages, int currentPage)

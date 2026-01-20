@@ -69,13 +69,22 @@ namespace Admin
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divBookGrid;
 
         /// <summary>
-        /// btnDownloadCSV control.
+        /// lnkDownloadCSV control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnDownloadCSV;
+        protected global::System.Web.UI.WebControls.LinkButton lnkDownloadCSV;
+
+        /// <summary>
+        /// imgDownload control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image imgDownload;
 
         /// <summary>
         /// ddlSearchBy control.

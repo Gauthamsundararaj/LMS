@@ -170,8 +170,16 @@ namespace Admin
                 int totalRecords = ds.Tables[0].Rows.Count;
                 int pageSize = gvbookA.PageSize;
                 int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
-
-                BuildPager(totalPages, gvbookA.PageIndex);
+                if (ds.Tables[0].Rows.Count > gvbookA.PageSize)
+                {
+                    BuildPager(totalPages, gvbookA.PageIndex);
+                    rptPager.Visible = true;
+                }
+                else
+                {
+                    rptPager.Visible = false;
+                }
+                
 
 
                 RestoreGridFilters();
@@ -246,7 +254,7 @@ namespace Admin
 
         }
 
-        protected void btnDownloadCsv_Click(object sender, EventArgs e)
+        protected void btnDownloadCSV_Click(object sender, EventArgs e)
         {
             try
             {
@@ -304,7 +312,7 @@ namespace Admin
                     }
                 }
 
-                StringBuilder sb = CommonFunction.CSVFileGeneration(sourceTable, "BookAvailability");
+                StringBuilder sb = CommonFunction.CSVFileGenerationWithoutHeader(sourceTable, "BookAvailability");
 
                 Response.Clear();
                 Response.Buffer = true;

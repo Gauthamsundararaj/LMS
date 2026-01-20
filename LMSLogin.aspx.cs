@@ -38,12 +38,12 @@ namespace LMS
                 }
                 lblErrorMsg = new string[10];
                 // Load error messages
-                lblErrorMsg[0] = CommonFunction.GetErrorMessage("", "ERRLOG001"); // UserID empty
-                lblErrorMsg[1] = CommonFunction.GetErrorMessage("", "ERRLOG002"); // Invalid format
-                lblErrorMsg[2] = CommonFunction.GetErrorMessage("", "ERRLOG003"); // Password empty
-                lblErrorMsg[3] = CommonFunction.GetErrorMessage("", "ERRLOG004"); // Invalid login
-                lblErrorMsg[4] = CommonFunction.GetErrorMessage("", "ERRLOG005"); // Extra msg
-                lblErrorMsg[5] = CommonFunction.GetErrorMessage("", "ERRLOG006"); // Success msg
+                lblErrorMsg[0] = CommonFunction.GetErrorMessage("", "ERRLOG001"); //Please enter Login id
+                lblErrorMsg[1] = CommonFunction.GetErrorMessage("", "ERRLOG002"); // Please enter Password.
+                lblErrorMsg[2] = CommonFunction.GetErrorMessage("", "ERRLOG003"); // Invalid Login id or Password
+                lblErrorMsg[3] = CommonFunction.GetErrorMessage("", "ERRLOG004"); // Your account has been locked. Please contact the administrator.
+                lblErrorMsg[4] = CommonFunction.GetErrorMessage("", "ERRLOG005"); // Unauthorized login attempt.
+               
             }
             catch (Exception ex)
             {
@@ -59,9 +59,9 @@ namespace LMS
                 strUserId: txtStudentID.Text.Trim(),
                 strPassword:txtStudentPwd.Text.Trim(),
                 loginIdEmptyMsg: lblErrorMsg[0],
-                invalidFormatMsg: lblErrorMsg[1],
-                passwordEmptyMsg: lblErrorMsg[2],
-                invalidLoginMsg: lblErrorMsg[3],
+               
+                passwordEmptyMsg: lblErrorMsg[1],
+                invalidLoginMsg: lblErrorMsg[2],
                 validateLoginIdFormat: CommonFunction.IsAlphaNumeric
             );
         }
@@ -72,16 +72,16 @@ namespace LMS
                 strUserId: txtAdminID.Text.Trim(),
                 strPassword: txtAdminPwd.Text.Trim(),
                 loginIdEmptyMsg: lblErrorMsg[0],
-                invalidFormatMsg: lblErrorMsg[1],
-                passwordEmptyMsg: lblErrorMsg[2],
-                invalidLoginMsg: lblErrorMsg[3],
+               
+                passwordEmptyMsg: lblErrorMsg[1],
+                invalidLoginMsg: lblErrorMsg[2],
                 validateLoginIdFormat: CommonFunction.IsAlphaNumeric
             );
         }
 
         private void SignInUser(int userType,
             string strUserId, string strPassword,
-            string loginIdEmptyMsg, string invalidFormatMsg,
+            string loginIdEmptyMsg, 
             string passwordEmptyMsg, string invalidLoginMsg,
             Func<string, bool> validateLoginIdFormat)
         {
@@ -97,7 +97,7 @@ namespace LMS
                 // 2️⃣ UserID must be alphanumeric
                 if (!validateLoginIdFormat(strUserId))
                 {
-                    ShowAlert(invalidFormatMsg, "error");
+                    ShowAlert(invalidLoginMsg, "error");
                     return;
                 }
 
@@ -119,10 +119,12 @@ namespace LMS
                             Session["AdminUserName"] = strUserId;
                             if (userType == 1)
                             {
-                                
+                                int roleType = Convert.ToInt32(ds.Tables[0].Rows[0]["RoleType"]);
+                                string redirectPage = ds.Tables[0].Rows[0]["RedirectPage"].ToString(); 
                                 Session["AdminUserID"] = ds.Tables[0].Rows[0]["StudentUserID"];
                                 Session["MemberID"] = ds.Tables[0].Rows[0]["StudentID"].ToString();
-
+                                Session["AdminUserRoleID"] = roleType;
+                                Session["RedirectPage"] = redirectPage;
                                 FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(
                                     1, strUserId,
                                     DateTime.Now,
@@ -136,7 +138,7 @@ namespace LMS
                                     new HttpCookie(FormsAuthentication.FormsCookieName, encTicket)
                                 );
 
-                                Response.Redirect("~/admin/MemberDashboard.aspx", true);
+                                Response.Redirect(redirectPage, true);
                                 return;
                             }
 
@@ -144,18 +146,16 @@ namespace LMS
                             if (userType == 2)
                             {
                                 int roleType = Convert.ToInt32(ds.Tables[0].Rows[0]["RoleType"]);
-
+                                string redirectPage = ds.Tables[0].Rows[0]["RedirectPage"].ToString();
                                 Session["AdminUserID"] = ds.Tables[0].Rows[0]["UserID"];
                                 Session["MemberID"] = ds.Tables[0].Rows[0]["EmployeeCode"].ToString();
                                 Session["AdminUserRoleID"] = roleType;
-
-                                bool isAdminRole = (roleType == 1 || roleType == 12);
-
+                                Session["RedirectPage"] = redirectPage;
                                 FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(
                                     1, strUserId,
                                     DateTime.Now,
                                     DateTime.Now.AddMinutes(Session.Timeout),
-                                    false, isAdminRole ? "Admin" : "Member",
+                                    false,"Admin",
                                     FormsAuthentication.FormsCookiePath
                                 );
 
@@ -165,10 +165,8 @@ namespace LMS
                                 );
 
                                 // 🔀 Redirect based on RoleType
-                                if (isAdminRole)
-                                    Response.Redirect("~/admin/RequestDetails.aspx", true);
-                                else
-                                    Response.Redirect("~/admin/MemberDashboard.aspx", true);
+                               Response.Redirect(redirectPage, true);
+                                return;
                             }
                         }
                         else

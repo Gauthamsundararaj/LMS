@@ -139,7 +139,15 @@ namespace Admin
                         divBookGrid.Visible = false;
                     }
                     lblRecordCount.Text = "Total Books: "+ ds.Tables[0].Rows.Count;
-                    BuildPager(gvBookMaster.PageCount, gvBookMaster.PageIndex);
+                    if (ds.Tables[0].Rows.Count > gvBookMaster.PageSize)
+                    {
+                        BuildPager(gvBookMaster.PageCount, gvBookMaster.PageIndex);
+                        rptPager.Visible = true;
+                    }
+                    else
+                    {
+                        rptPager.Visible = false;
+                    }
                 }
 
             }
@@ -162,204 +170,160 @@ namespace Admin
 
             return list;
         }
+        private bool ValidateUserInputs(string title, string isbn, int categoryId, string language, string publisher, string yearText,
+    string edition, string priceText, string totalCopiesText, string authorIdsCsv)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                ShowAlert(lblErrorMsg[5], "error");
+                txtBookTitle.Focus();
+                return false;
+            }
+
+            string titlePattern = @"^[A-Za-z0-9 ,.:'\-]+$";
+            if (!Regex.IsMatch(title, titlePattern))
+            {
+                ShowAlert(lblErrorMsg[6], "error");
+                txtBookTitle.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(isbn))
+            {
+                ShowAlert(lblErrorMsg[1], "error");
+                txtISBN.Focus();
+                return false;
+            }
+
+            string isbnPattern = @"^(?:\d[\- ]?){9}[\dX]$|^(?:\d[\- ]?){13}$";
+            if (!Regex.IsMatch(isbn, isbnPattern))
+            {
+                ShowAlert(lblErrorMsg[2], "error");
+                txtISBN.Focus();
+                return false;
+            }
+
+            if (isbn.Length < 10 || isbn.Length > 13)
+            {
+                ShowAlert(lblErrorMsg[3], "error");
+                txtISBN.Focus();
+                return false;
+            }
+
+            if (categoryId == 0)
+            {
+                ShowAlert(lblErrorMsg[7], "error");
+                ddlCategory.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(authorIdsCsv))
+            {
+                ShowAlert(lblErrorMsg[8], "error");
+                return false;
+            }
+
+            if (ddlLanguage.SelectedIndex == 0)
+            {
+                ShowAlert(lblErrorMsg[9], "error");
+                ddlLanguage.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(publisher))
+            {
+                ShowAlert(lblErrorMsg[10], "error");
+                txtPublisher.Focus();
+                return false;
+            }
+
+            string publisherPattern = @"^[A-Za-z0-9 .,&\-]+$";
+            if (!Regex.IsMatch(publisher, publisherPattern))
+            {
+                ShowAlert(lblErrorMsg[11], "error");
+                txtPublisher.Focus();
+                return false;
+            }
+
+            if (!Regex.IsMatch(yearText, @"^\d{4}$"))
+            {
+                ShowAlert(lblErrorMsg[13], "error");
+                txtYearPublished.Focus();
+                return false;
+            }
+
+            int publishedYear = int.Parse(yearText);
+            if (publishedYear > DateTime.Now.Year || publishedYear < 1900)
+            {
+                ShowAlert(lblErrorMsg[14], "error");
+                txtYearPublished.Focus();
+                return false;
+            }
+
+            string editionPattern = @"^[A-Za-z0-9 .\-]+$";
+            if (string.IsNullOrWhiteSpace(edition) || !Regex.IsMatch(edition, editionPattern))
+            {
+                ShowAlert(lblErrorMsg[16], "error");
+                txtEdition.Focus();
+                return false;
+            }
+            decimal price;
+            if (!decimal.TryParse(priceText, out price) || price <= 0 || decimal.Round(price, 2) != price)
+            {
+                ShowAlert("Enter a valid decimal price (up to 2 digits).", "error");
+                txtPrice.Focus();
+                return false;
+            }
+            int totalCopies = 0;
+            if (!int.TryParse(totalCopiesText, out totalCopies) || totalCopies <= 0)
+            {
+                ShowAlert(lblErrorMsg[18], "error");
+                txtTotalCopies.Focus();
+                return false;
+            }
+
+            return true;
+        }
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            string selectedValues = string.Join(",", GetSelectedAuthors());
+            string authorIdsCsv = string.Join(",", GetSelectedAuthors());
+            string title = txtBookTitle.Text.Trim();
+            string isbn = txtISBN.Text.Trim();
+            int categoryId = string.IsNullOrEmpty(ddlCategory.SelectedValue) ? 0 : Convert.ToInt32(ddlCategory.SelectedValue);
+            string language = ddlLanguage.SelectedValue;
+            string publisher = txtPublisher.Text.Trim();
+            string yearText = txtYearPublished.Text.Trim();
+            string edition = txtEdition.Text.Trim();
+            string priceText = txtPrice.Text.Trim();
+            string totalCopiesText = txtTotalCopies.Text.Trim();
+            string shelfLocation = txtShelfLocation.Text.Trim();
+            bool active = chkActive.Checked;
 
-            //bool isUpdate = btnSave.Text == "Update";
+            if (!ValidateUserInputs(title, isbn, categoryId, language, publisher,
+                yearText, edition, priceText, totalCopiesText, authorIdsCsv))
+            {
+                return;
+            }
+
+            int publishedYear = int.Parse(yearText);
+            decimal price = decimal.Parse(priceText);
+            int totalCopies = int.Parse(totalCopiesText);
+
             try
             {
-                // Collect fields
-                string title = txtBookTitle.Text.Trim();
-                string isbn = txtISBN.Text.Trim();
-                int categoryId = string.IsNullOrEmpty(ddlCategory.SelectedValue) ? 0 : Convert.ToInt32(ddlCategory.SelectedValue);
-                string language = ddlLanguage.SelectedValue;
-                string publisher = txtPublisher.Text.Trim();
-                string yearText = txtYearPublished.Text.Trim();
-                string edition = txtEdition.Text.Trim();
-                string priceText = txtPrice.Text.Trim();
-                string totalCopiesText = txtTotalCopies.Text.Trim();
-
-                string shelfLocation = txtShelfLocation.Text.Trim();
-                bool Active = chkActive.Checked;
-
-                // Authors selected -> build CSV of IDs
-                string authorIdsCsv = "";
-                foreach (ListItem li in lstAuthor.Items)
-                {
-                    if (li.Selected)
-                    {
-                        if (!string.IsNullOrEmpty(authorIdsCsv)) authorIdsCsv += ",";
-                        authorIdsCsv += li.Value;
-                    }
-                }
-
-
-                if (string.IsNullOrEmpty(title))
-                {
-                    ShowAlert(lblErrorMsg[5], "error");
-                    txtBookTitle.Focus();
-                    return;
-                }
-
-                // Only letters, numbers, space, and basic punctuation allowed
-                string titlePattern = @"^[A-Za-z0-9 ,.:'\-]+$";
-                if (!Regex.IsMatch(title, titlePattern))
-                {
-                    ShowAlert(lblErrorMsg[6], "error");
-                    txtBookTitle.Focus();
-                    return;
-                }
-                // Client-like validations on server side (same rules you used for AuthorMaster)
-                if (string.IsNullOrWhiteSpace(isbn))
-                {
-                    ShowAlert(lblErrorMsg[1], "error");
-                    txtISBN.Focus();
-                    return;
-                }
-                // ISBN pattern: allow letters, numbers, hyphen
-                string pattern = @"^(?:\d[\- ]?){9}[\dX]$|^(?:\d[\- ]?){13}$";
-                if (!Regex.IsMatch(isbn, pattern))
-                {
-                    ShowAlert(lblErrorMsg[2], "error");
-                    txtISBN.Focus();
-                    return;
-                }
-                if (isbn.Length < 10)
-                {
-                    ShowAlert(lblErrorMsg[3], "error");
-                    txtISBN.Focus();
-                    return;
-                }
-                // Optional: Maximum length check (ISBN-13)
-                if (isbn.Length > 13)
-                {
-                    ShowAlert(lblErrorMsg[4], "error");
-                    txtISBN.Focus();
-                    return;
-                }
-
-
-
-                if (categoryId == 0)
-                {
-                    ShowAlert(lblErrorMsg[7], "error");
-                    ddlCategory.Focus();
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(authorIdsCsv))
-                {
-                    ShowAlert(lblErrorMsg[8], "error");
-                    return;
-                }
-                if (ddlLanguage.SelectedIndex == 0 || ddlLanguage.SelectedValue == "0")
-                {
-                    ShowAlert(lblErrorMsg[9], "error");
-                    ddlLanguage.Focus();
-                    return;
-                }
-                if (string.IsNullOrEmpty(publisher))
-                {
-                    ShowAlert(lblErrorMsg[10], "error");
-                    txtPublisher.Focus();
-                    return;
-                }
-
-                // Allowed: letters, numbers, spaces, dot, comma, hyphen, ampersand
-                string publisherpattern = @"^[A-Za-z0-9 .,&\-]+$";
-                if (!Regex.IsMatch(publisher, publisherpattern))
-                {
-                    ShowAlert(lblErrorMsg[11], "error");
-                    txtPublisher.Focus();
-                    return;
-                }
-                // 2️⃣ Year Published
-                // 1️⃣ Year Published
-
-                if (string.IsNullOrEmpty(yearText))
-                {
-                    ShowAlert(lblErrorMsg[12], "error");
-                    txtYearPublished.Focus();
-                    return;
-                }
-                // Must be 4 digits
-                if (!Regex.IsMatch(yearText, @"^\d{4}$"))
-                {
-                    ShowAlert(lblErrorMsg[13], "error");
-                    txtYearPublished.Focus();
-                    return;
-                }
-                // Convert to integer
-                int publishedYear = int.Parse(yearText);
-                // Year cannot be in the future
-                if (publishedYear > DateTime.Now.Year)
-                {
-                    ShowAlert(lblErrorMsg[14], "error");
-                    txtYearPublished.Focus();
-                    return;
-                }
-                // Optional: Minimum year (example: 1900)
-                if (publishedYear < 1900)
-                {
-                    ShowAlert(lblErrorMsg[15], "error");
-                    txtYearPublished.Focus();
-                    return;
-                }
-                string editonpattern = @"^[A-Za-z0-9 .\-]+$";
-                if (string.IsNullOrWhiteSpace(edition) || !Regex.IsMatch(edition, editonpattern))
-                {
-                    ShowAlert(lblErrorMsg[16], "error");
-                    txtEdition.Focus();
-                    return;
-                }
-                decimal price;
-                if (string.IsNullOrWhiteSpace(priceText) || !decimal.TryParse(priceText, out price) || price <= 0 ||
-                  decimal.Round(price, 2) != price)
-                {
-                    ShowAlert("Enter a valid decimal price (up to 2 digits).", "error");
-                    txtPrice.Focus();
-                    return;
-                }
-
-                // 3️⃣ Total Copies
-                int totalCopies = 0;
-                if (!int.TryParse(totalCopiesText, out totalCopies) || totalCopies <= 0)
-                {
-                    ShowAlert(lblErrorMsg[18], "error");
-                    txtTotalCopies.Focus();
-                    return;
-                }
-
-
-
-
-
-                // Call BLL -> DAL via MasterBO (INSERT)
-                // Note: param order below should match your MasterBO.BookMaster signature
                 using (DataSet ds = objMasterBO.BookMaster("INSERT", 0, isbn, categoryId, title, language, publisher, publishedYear, edition, price,
-                    totalCopies, shelfLocation, Active, authorIdsCsv, intAdminUserID))
+                    totalCopies, shelfLocation, active, authorIdsCsv, intAdminUserID))
                 {
-                    if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    int msgCode = Convert.ToInt32(ds.Tables[0].Rows[0]["MsgCode"]);
+                    if (msgCode == 1)
                     {
-                        int msgCode = Convert.ToInt32(ds.Tables[0].Rows[0]["MsgCode"]);
-                        if (msgCode == 2)
-                        {
-                            ShowAlert(lblErrorMsg[23], "error");
-                        }
-
-                        if (msgCode == 1)
-                        {
-                            ShowAlert(lblErrorMsg[20], "success"); // insert success
-                            ClearFormFields();
-                            divBookGrid.Visible = true;
-                            divForm.Visible = false;
-                            btnAddBooks.Visible = true;
-                            BindBookGrid();
-
-
-                        }
-
+                        ShowAlert(lblErrorMsg[20], "success");
+                        ClearFormFields();
+                        BindBookGrid();
+                    }
+                    else if (msgCode == 2)
+                    {
+                        ShowAlert(lblErrorMsg[23], "error");
                     }
                 }
             }
@@ -369,6 +333,71 @@ namespace Admin
                 ShowAlert("Failed to save book", "error");
             }
         }
+
+        //      protected void btnSave_Click(object sender, EventArgs e)
+        //      {
+        //          string selectedValues = string.Join(",", GetSelectedAuthors());
+        //          try
+        //          {
+        //              // Collect fields
+        //              string title = txtBookTitle.Text.Trim();
+        //              string isbn = txtISBN.Text.Trim();
+        //              int categoryId = string.IsNullOrEmpty(ddlCategory.SelectedValue) ? 0 : Convert.ToInt32(ddlCategory.SelectedValue);
+        //              string language = ddlLanguage.SelectedValue;
+        //              string publisher = txtPublisher.Text.Trim();
+        //              string yearText = txtYearPublished.Text.Trim();
+        //              string edition = txtEdition.Text.Trim();
+        //              string priceText = txtPrice.Text.Trim();
+        //              string totalCopies = txtTotalCopies.Text.Trim();
+        //              string shelfLocation = txtShelfLocation.Text.Trim();
+        //              bool Active = chkActive.Checked;
+
+        //              // Authors selected -> build CSV of IDs
+        //              string authorIdsCsv = "";
+        //              foreach (ListItem li in lstAuthor.Items)
+        //              {
+        //                  if (li.Selected)
+        //                  {
+        //                      if (!string.IsNullOrEmpty(authorIdsCsv)) authorIdsCsv += ",";
+        //                      authorIdsCsv += li.Value;
+        //                  }
+        //              }
+        //              if(!ValidateUserInputs( title,isbn,categoryId,language,publisher,yearText,edition,priceText,
+        //totalCopies, authorIdsCsv = ""))
+
+
+        //              using (DataSet ds = objMasterBO.BookMaster("INSERT", 0, isbn, categoryId, title, language, publisher, publishedYear, edition, price,
+        //                  totalCopies, shelfLocation, Active, authorIdsCsv, intAdminUserID))
+        //              {
+        //                  if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+        //                  {
+        //                      int msgCode = Convert.ToInt32(ds.Tables[0].Rows[0]["MsgCode"]);
+        //                      if (msgCode == 2)
+        //                      {
+        //                          ShowAlert(lblErrorMsg[23], "error");
+        //                      }
+
+        //                      if (msgCode == 1)
+        //                      {
+        //                          ShowAlert(lblErrorMsg[20], "success"); // insert success
+        //                          ClearFormFields();
+        //                          divBookGrid.Visible = true;
+        //                          divForm.Visible = false;
+        //                          btnAddBooks.Visible = true;
+        //                          BindBookGrid();
+
+
+        //                      }
+
+        //                  }
+        //              }
+        //          }
+        //          catch (Exception ex)
+        //          {
+        //              MyExceptionLogger.Publish(ex);
+        //              ShowAlert("Failed to save book", "error");
+        //          }
+        //      }
 
         protected void gvBookMaster_RowCommand(object sender, GridViewCommandEventArgs e)
         {
@@ -438,38 +467,22 @@ namespace Admin
                 string totalCopiesText = txtTotalCopies.Text.Trim();
                 string shelfLocation = txtShelfLocation.Text.Trim();
                 bool Active = chkActive.Checked;
+                string authorIdsCsv = string.Join(",", GetSelectedAuthors());
 
-                // Authors CSV
-                string authorIdsCsv = "";
-                foreach (ListItem li in lstAuthor.Items)
+                if (!ValidateUserInputs(title, isbn, categoryId, language, publisher,
+                    yearText, edition, priceText, totalCopiesText, authorIdsCsv))
                 {
-                    if (li.Selected)
-                    {
-                        if (!string.IsNullOrEmpty(authorIdsCsv)) authorIdsCsv += ",";
-                        authorIdsCsv += li.Value;
-                    }
+                    return;
                 }
 
+                int publishedYear = int.Parse(yearText);
+                decimal price = decimal.Parse(priceText);
+                int totalCopies = int.Parse(totalCopiesText);
 
-
-                // Update via BLL
                 using (DataSet ds = objMasterBO.BookMaster(
-                    "UPDATE",
-                    bookID,
-                    isbn,
-                    categoryId,
-                    title,
-                    language,
-                    publisher,
-                    Convert.ToInt32(yearText),
-                    edition,
-                    Convert.ToDecimal(priceText),
-                    Convert.ToInt32(totalCopiesText),
-
-                    shelfLocation,
-                    Active,
-                    authorIdsCsv,
-                    intAdminUserID))
+                    "UPDATE", bookID, isbn, categoryId, title, language, publisher, Convert.ToInt32(yearText),
+                    edition, Convert.ToDecimal(priceText), Convert.ToInt32(totalCopiesText), shelfLocation,
+                    Active, authorIdsCsv, intAdminUserID))
                 {
                     if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
@@ -487,17 +500,14 @@ namespace Admin
                             btnAddBooks.Visible = true;
                             BindBookGrid();
                         }
-                        else
-                        {
-                            ShowAlert(lblErrorMsg[0], "error");
-                        }
+
                     }
                 }
             }
             catch (Exception ex)
             {
                 MyExceptionLogger.Publish(ex);
-                ShowAlert("Failed to update book", "error");
+
             }
         }
 
@@ -621,8 +631,9 @@ namespace Admin
 
         protected void btnCancel_Click(object sender, EventArgs e)
         {
-            divBookGrid.Visible=true;
+            ClearFormFields();
             divForm.Visible=false;
+            divBookGrid.Visible=true;
             btnAddBooks.Visible=true;
         }
 
@@ -699,7 +710,6 @@ namespace Admin
             }
         }
 
-
         protected void btnClearSearch_Click(object sender, EventArgs e)
         {
             ddlSearchBy.SelectedIndex = 0;
@@ -740,7 +750,7 @@ namespace Admin
                             ds.Tables[0].Columns.Remove(col);
                     }
                 }
-                StringBuilder sb = CommonFunction.CSVFileGeneration(sourceTable, "BookMaster");
+                StringBuilder sb = CommonFunction.CSVFileGenerationWithoutHeader(sourceTable, "BookMaster");
 
                 Response.Clear();
                 Response.Buffer = true;

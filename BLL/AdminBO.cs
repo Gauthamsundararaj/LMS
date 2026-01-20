@@ -25,11 +25,12 @@ namespace BLL
           string action,
           int roleID = 0,
           string roleName = "",
+          string DefaultPage = "",
           bool active = true,
-          int adminUserID = 1
+          int adminUserID = 0
       )
         {
-            return objAdminDAO.RoleMasterCRUD(action, roleID, roleName, active, adminUserID);
+            return objAdminDAO.RoleMasterCRUD(action, roleID, roleName, DefaultPage, active, adminUserID);
         }
 
 
@@ -57,6 +58,10 @@ namespace BLL
         {
             return objAdminDAO.RoleType(action, roleId, strRoleName, active);
         }
+        public DataSet PageName(string action)
+        {
+            return objAdminDAO.PageName(action);
+        }
 
         public DataSet BookDueMaster(
             string action,
@@ -81,7 +86,7 @@ namespace BLL
             );
         }
 
-        public DataSet MarkBookReturned(int issueId, int adminUserID)
+        public DataSet MarkBookReturned(int issueId,DateTime returnDate,int adminUserID)
         {
             return BookDueMaster(
                 "UPDATE_RETURN",
@@ -89,7 +94,7 @@ namespace BLL
                 null,
                 issueId,
                 null,             // DueDate = null
-                DateTime.Now,     // ReturnDate
+                returnDate,     // ReturnDate
                 adminUserID
             );
         }
@@ -127,7 +132,7 @@ namespace BLL
             return objAdminDAO.SaveUpdateRoleMenu(RoleID, MenuID, SequenceNo, IsChecked, AUserID);
         }
 
-      
+
 
         public DataSet MenuMaster(
        string action,
@@ -136,6 +141,7 @@ namespace BLL
        string pageName = "",
        int parentMenuID = 0,
        bool isChildMenu = false,
+       bool IsDefaultPage= false,
        int sequenceNo = 0,
        bool isActive = true,
        int adminUserID = 0,
@@ -150,6 +156,7 @@ namespace BLL
                 pageName,
                 parentMenuID,
                 isChildMenu,
+                IsDefaultPage,
                 sequenceNo,
                 isActive,
                 adminUserID,

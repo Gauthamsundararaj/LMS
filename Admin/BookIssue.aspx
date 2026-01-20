@@ -149,7 +149,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="table-responsive" style="overflow-x: auto; white-space: nowrap;">
-                                <asp:GridView ID="gvSelectedBooks" runat="server" AutoGenerateColumns="False" DataKeyNames="ISBN" CssClass="table table-bordered">
+                                <asp:GridView ID="gvSelectedBooks" runat="server" AutoGenerateColumns="False" DataKeyNames="ISBN" CssClass="table table-bordered text-center">
                                     <Columns>
                                         <asp:BoundField DataField="ISBN" HeaderText="ISBN" />
                                         <asp:BoundField DataField="BookTitle" HeaderText="Book Title" />

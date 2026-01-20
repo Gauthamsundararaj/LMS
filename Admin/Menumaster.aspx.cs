@@ -27,6 +27,7 @@ namespace Admin
                   
                     parentMenuDiv.Visible = false;
                     BindGrid();
+                    IsDefault.Checked = false;
                     BindParentMenus();
                 }
 
@@ -62,6 +63,7 @@ namespace Admin
                 lblErrorMsg[16]= CommonFunction.GetErrorMessage("", "ERRMENU021"); // Enter Search Value.
                 lblErrorMsg[17]= CommonFunction.GetErrorMessage("", "ERRMENU022"); // No Record Found
                 lblErrorMsg[18]= CommonFunction.GetErrorMessage("", "ERRMENU023"); // Select Parent Menu.
+                lblErrorMsg[19]= CommonFunction.GetErrorMessage("", "ERRMENU024"); // PageName is Required to check Default Page.
             }
             catch (Exception ex)
             {
@@ -94,10 +96,14 @@ namespace Admin
                 ShowToastr(lblErrorMsg[9] + ": " + ex.Message, "error");
             }
         }
+        protected void IsDefault_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
 
         private int GetNextSequenceNo(int parentMenuID)
         {
-            DataTable dt = objAdminBO.MenuMaster ("SELECT_CHILD", 0, "", "", parentMenuID, true, 0, true, intAdminUserID ).Tables[0];
+            DataTable dt = objAdminBO.MenuMaster ("SELECT_CHILD", 0, "", "", parentMenuID, true, false,0, true, intAdminUserID ).Tables[0];
 
             if (dt.Rows.Count == 0)
                 return 1;
@@ -107,7 +113,7 @@ namespace Admin
 
         private int GetNextParentSequence()
         {
-            DataTable dt = objAdminBO.MenuMaster("SELECT_PARENT", 0, "", "", 0, false, 0, true, intAdminUserID).Tables[0];
+            DataTable dt = objAdminBO.MenuMaster("SELECT_PARENT", 0, "", "", 0, false, false, 0, true, intAdminUserID).Tables[0];
 
             if (dt.Rows.Count == 0)
                 return 1;
@@ -124,7 +130,7 @@ namespace Admin
                 ddlParentMenu.Items.Clear();
                 ddlParentMenu.Items.Add(new ListItem("-- Select Parent Menu --", "0"));
 
-                DataSet ds = objAdminBO.MenuMaster ("SELECT_PARENT", 0, "", "", 0, false, 0, true, intAdminUserID);
+                DataSet ds = objAdminBO.MenuMaster ("SELECT_PARENT", 0, "", "", 0, false, false, 0, true, intAdminUserID);
 
                 DataTable dt = ds.Tables[0];
 
@@ -144,6 +150,42 @@ namespace Admin
         }
 
 
+        //private void BindGrid()
+        //{
+        //    try
+        //    {
+        //        string searchBy = ddlSearchBy.SelectedValue;
+        //        string searchValue = txtSearchValue.Text.Trim();
+
+        //        DataTable dt;
+
+
+        //        if (!string.IsNullOrEmpty(searchBy) && !string.IsNullOrEmpty(searchValue))
+        //        {
+        //            dt = objAdminBO.SearchMenuMaster(searchBy, searchValue);
+        //        }
+        //        else
+        //        {
+        //            dt = objAdminBO.GetMenuMasterGrid();
+
+        //        }
+
+        //        gvMenu.DataSource = dt;
+        //        gvMenu.DataBind();
+        //        lblRecordCount.Text = dt.Rows.Count + " Records found";
+        //        int totalRecords = dt.Rows.Count;
+        //        int pageSize = gvMenu.PageSize;
+        //        int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+
+        //        BuildPager(totalPages, gvMenu.PageIndex);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MyExceptionLogger.Publish(ex);
+        //        ShowToastr(lblErrorMsg[4] + ": " + ex.Message, "error");
+        //    }
+        //}
+
         private void BindGrid()
         {
             try
@@ -151,9 +193,9 @@ namespace Admin
                 string searchBy = ddlSearchBy.SelectedValue;
                 string searchValue = txtSearchValue.Text.Trim();
 
-                DataTable dt;
+                DataTable dt = null;
 
-
+                // ---------- SEARCH OR LOAD ----------
                 if (!string.IsNullOrEmpty(searchBy) && !string.IsNullOrEmpty(searchValue))
                 {
                     dt = objAdminBO.SearchMenuMaster(searchBy, searchValue);
@@ -163,14 +205,39 @@ namespace Admin
                     dt = objAdminBO.GetMenuMasterGrid();
                 }
 
-                gvMenu.DataSource = dt;
-                gvMenu.DataBind();
-                lblRecordCount.Text = dt.Rows.Count + " Records found";
-                int totalRecords = dt.Rows.Count;
-                int pageSize = gvMenu.PageSize;
-                int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+                // ---------- SHOW / HIDE CARD ----------
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    gvMenu.DataSource = dt;
+                    gvMenu.DataBind();
 
-                BuildPager(totalPages, gvMenu.PageIndex);
+                    divGrid.Visible = true;   // ✅ SHOW CARD
+                    lblRecordCount.Text =  "No. of Records" + dt.Rows.Count;
+
+                    int totalRecords = dt.Rows.Count;
+                    int pageSize = gvMenu.PageSize;
+                    int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+
+                    if (dt.Rows.Count > gvMenu.PageSize)
+                    {
+                        BuildPager(totalPages, gvMenu.PageIndex);
+                        rptPager.Visible = true;
+                    }
+                    else
+                    {
+                        rptPager.Visible = false;
+                    }
+                }
+                else
+                {
+                    gvMenu.DataSource = null;
+                    gvMenu.DataBind();
+
+                    divGrid.Visible = false;  // ✅ HIDE CARD
+                    lblRecordCount.Text = "0 Records found";
+
+                    BuildPager(0, 0);
+                }
             }
             catch (Exception ex)
             {
@@ -178,113 +245,11 @@ namespace Admin
                 ShowToastr(lblErrorMsg[4] + ": " + ex.Message, "error");
             }
         }
+
         #endregion
 
         #region Insert / Update
-        //protected void btnSubmit_Click(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        string menuName = txtMenuName.Text.Trim();
-        //        string pageName = txtPageName.Text.Trim();
-        //        bool isChild = chkIsChild.Checked;
-        //        int parentId = 0;
-        //        int.TryParse(ddlParentMenu.SelectedValue, out parentId);
-        //        bool isActive = chkIsActive.Checked;
 
-
-        //        if (string.IsNullOrWhiteSpace(menuName))
-        //        {
-        //            ShowToastr(lblErrorMsg[0], "error");
-        //            return;
-        //        }
-
-        //        if (!Regex.IsMatch(menuName, @"^[A-Za-z\s]+$"))
-        //        {
-        //            ShowToastr(lblErrorMsg[1], "error");
-        //            return;
-        //        }
-
-        //        if (isChild)
-        //        {
-        //            if (string.IsNullOrWhiteSpace(pageName))
-        //            {
-        //                ShowToastr(lblErrorMsg[11], "error"); // Please enter Page Name
-        //                return;
-        //            }
-
-        //            if (!Regex.IsMatch(pageName, @"^[A-Za-z0-9_]+\.aspx$", RegexOptions.IgnoreCase))
-        //            {
-        //                ShowToastr(lblErrorMsg[10], "error"); // Invalid Page Name
-        //                return;
-        //            }
-
-        //            if (parentId==0)
-        //            {
-        //                ShowToastr(lblErrorMsg[18], "error"); //Select Parent Menu
-        //                return;
-        //            }
-
-        //        }
-        //        else
-        //        {
-        //            if (txtPageName.Text.Length > 0)
-        //            {
-        //                if (!Regex.IsMatch(txtPageName.Text.Trim(), @"^[A-Za-z0-9_]+\.aspx$", RegexOptions.IgnoreCase))
-        //                {
-        //                    ShowToastr(lblErrorMsg[10], "error");
-        //                    return;
-        //                }
-        //            }
-
-        //        }
-
-        //        int sequenceNo;
-
-        //        if (isChild)
-        //        {
-        //            sequenceNo = GetNextSequenceNo(parentId);
-        //        }
-        //        else
-        //        {
-        //            sequenceNo = GetNextParentSequence();
-        //        }
-        //        int createdBy = Convert.ToInt32(Session["UserName"] != null ? Session["UserName"].ToString() : "0");
-
-        //        DataSet ds = objAdminBO.MenuMaster ("INSERT", 0, menuName, pageName, parentId, isChild, sequenceNo, isActive, intAdminUserID);
-
-        //        if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
-        //        {
-        //            int msgCode = Convert.ToInt32(ds.Tables[0].Rows[0]["MsgCode"]);
-        //            string message = ds.Tables[0].Rows[0]["Message"].ToString();
-
-        //            if (msgCode == 11 || msgCode == 1)
-        //            {
-        //                ClearFields();
-        //                BindGrid();
-        //                BindParentMenus();
-        //                ShowToastr(message ?? lblErrorMsg[8], "success");
-        //            }
-        //            else if (msgCode == 14 || msgCode == 2)
-        //            {
-        //                ShowToastr(lblErrorMsg[3], "warning");
-        //            }
-        //            else
-        //            {
-        //                ShowToastr(message ?? lblErrorMsg[4], "warning");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            ShowToastr(lblErrorMsg[4], "error");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MyExceptionLogger.Publish(ex);
-        //        ShowToastr(lblErrorMsg[9] + ": " + ex.Message, "error");
-        //    }
-        //}
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
             try
@@ -292,9 +257,16 @@ namespace Admin
                 string menuName = txtMenuName.Text.Trim();
                 string pageName = txtPageName.Text.Trim();
                 bool isChild = chkIsChild.Checked;
+                bool IsDefaultPage = IsDefault.Checked;
                 bool isActive = chkIsActive.Checked;
 
                 int parentId = Convert.ToInt32(ddlParentMenu.SelectedValue);
+                // ✅ Default page validation
+                if (IsDefaultPage && string.IsNullOrWhiteSpace(pageName))
+                {
+                    ShowToastr(lblErrorMsg[19], "error"); // "Page name is required to check DeafaultPage."
+                    return;
+                }
 
                 // ===== VALIDATION =====
                 if (string.IsNullOrWhiteSpace(menuName))
@@ -316,11 +288,29 @@ namespace Admin
                         ShowToastr(lblErrorMsg[11], "error");
                         return;
                     }
+                    // PageName validation (only .aspx allowed)
+                    if (!Regex.IsMatch(pageName, @"^[A-Za-z0-9_]+\.aspx$", RegexOptions.IgnoreCase))
+                    {
+                        ShowToastr(lblErrorMsg[10], "error"); // Invalid Page Name
+                        return;
+                    }
 
                     if (parentId == 0)
                     {
                         ShowToastr(lblErrorMsg[18], "error");
                         return;
+                    }
+                }
+                else
+                {
+
+                    if (txtPageName.Text.Length > 0)
+                    {
+                        if (!Regex.IsMatch(txtPageName.Text.Trim(), @"^[A-Za-z0-9_]+\.aspx$", RegexOptions.IgnoreCase))
+                        {
+                            ShowToastr(lblErrorMsg[10], "error");
+                            return;
+                        }
                     }
                 }
 
@@ -335,6 +325,7 @@ namespace Admin
                     pageName,
                     parentId,
                     isChild,
+                    IsDefaultPage,
                     sequenceNo,
                     isActive,
                     intAdminUserID
@@ -385,10 +376,19 @@ namespace Admin
                 string menuName = txtMenuName.Text.Trim();
                 string pageName = txtPageName.Text.Trim();
                 bool isChild = chkIsChild.Checked;
+                bool IsDefaultPage = IsDefault.Checked;
                 int parentId = 0;
                 int.TryParse(ddlParentMenu.SelectedValue, out parentId);
                 bool isActive = chkIsActive.Checked;
                 int menuId = Convert.ToInt32(hfMenuID.Value);
+
+                // ✅ Default page validation
+                if (IsDefaultPage && string.IsNullOrWhiteSpace(pageName))
+                {
+                    ShowToastr(lblErrorMsg[19], "error"); // "Page name is required to check Default Page."
+                    return;
+                }
+
 
                 if (string.IsNullOrWhiteSpace(menuName))
                 {
@@ -396,7 +396,7 @@ namespace Admin
                     return;
                 }
 
-                if (!Regex.IsMatch(menuName, @"^[A-Za-z\s]+$"))
+                if (!Regex.IsMatch(menuName, @"^[A-Za-z\s&/]+$"))
                 {
                     ShowToastr(lblErrorMsg[1], "error");
                     return;
@@ -410,11 +410,11 @@ namespace Admin
                         return;
                     }
 
-                    if (!Regex.IsMatch(pageName, @"^[A-Za-z0-9_]+\.aspx$", RegexOptions.IgnoreCase))
-                    {
-                        ShowToastr(lblErrorMsg[10], "error"); // Invalid Page Name
-                        return;
-                    }
+                    //if (!Regex.IsMatch(pageName, @"^[A-Za-z0-9_]+\.aspx$", RegexOptions.IgnoreCase))
+                    //{
+                    //    ShowToastr(lblErrorMsg[10], "error"); // Invalid Page Name
+                    //    return;
+                    //}
 
                     if (parentId==0)
                     {
@@ -422,18 +422,18 @@ namespace Admin
                         return;
                     }
                 }
-                else
-                {
+                //else
+                //{
 
-                    if (txtPageName.Text.Length > 0)
-                    {
-                        if (!Regex.IsMatch(txtPageName.Text.Trim(), @"^[A-Za-z0-9_]+\.aspx$", RegexOptions.IgnoreCase))
-                        {
-                            ShowToastr(lblErrorMsg[10], "error");
-                            return;
-                        }
-                    }
-                }
+                //    if (txtPageName.Text.Length > 0)
+                //    {
+                //        if (!Regex.IsMatch(txtPageName.Text.Trim(), @"^[A-Za-z0-9_]+\.aspx$", RegexOptions.IgnoreCase))
+                //        {
+                //            ShowToastr(lblErrorMsg[10], "error");
+                //            return;
+                //        }
+                //    }
+                //}
 
                 int sequenceNo;
 
@@ -454,11 +454,12 @@ namespace Admin
     pageName,
     parentId,
     isChild,
+    IsDefaultPage,
     sequenceNo,
     isActive,
     intAdminUserID
 );
-
+                chkIsActive.Checked = true;
                 int resultCode = Convert.ToInt32(ds.Tables[0].Rows[0]["ResultCode"]);
 
                 switch (resultCode)
@@ -632,7 +633,7 @@ namespace Admin
         {
             ddlSearchBy.SelectedIndex = 0;
             txtSearchValue.Text = "";
-
+            chkIsActive.Checked = true;
             gvMenu.PageIndex = 0;
             BindGrid();
 
@@ -678,8 +679,9 @@ namespace Admin
         {
             txtMenuName.Text = "";
             txtPageName.Text = "";
-            chkIsActive.Checked = false;
+            chkIsActive.Checked = true;
             chkIsChild.Checked = false;
+            IsDefault.Checked = false;
             parentMenuDiv.Visible = false;
             if (ddlParentMenu.Items.FindByValue("0") != null)
                 ddlParentMenu.SelectedValue = "0";

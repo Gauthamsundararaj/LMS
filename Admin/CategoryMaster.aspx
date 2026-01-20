@@ -28,7 +28,7 @@
 
                     <div class="card-body mt-0">
                         <!-- Responsive grid: stack on small screens -->
-                        <div class="row g-3 needs-validation custom-input tooltip-valid validation-forms" novalidate>
+                        <div class="row g-3 needs-validation  validation-forms" novalidate>
 
                             <!-- Left column: name + status -->
                             <div class="col-12 col-md-6 col-lg-5 position-relative">
@@ -41,7 +41,7 @@
                                         CssClass="form-control"
                                         MaxLength="50"
                                         placeholder="Enter Category Name"></asp:TextBox>
-                                    <div class="valid-tooltip">Looks good!</div>
+                             
                                 </div>
 
                                 <div class="mt-3">
@@ -72,7 +72,7 @@
                             <div class="d-grid gap-2 d-sm-flex">
                                 <asp:Button ID="btnAdd" runat="server" Text="Save" CssClass="btn btn-primary" OnClick="Submit_Click" OnClientClick="return validateInput()" />
                                 <asp:Button ID="btnUpdate" runat="server" Text="Update" CssClass="btn btn-success" OnClick="Update_Click" OnClientClick="return validateInput()" Visible="false" />
-                                <asp:Button ID="btnClear" runat="server" Text="Clear" CssClass="btn btn-danger" OnClick="Clear_Click" />
+                                <asp:Button ID="btnClear" runat="server" Text="Clear" CssClass="btn btn-warning" OnClick="Clear_Click" />
                             </div>
                         </div>
 
@@ -90,7 +90,7 @@
                             </div>
                             <div class="table-responsive" style="overflow-x: auto; white-space: nowrap;">
                                 <asp:GridView ID="gvCategory" runat="server"
-                                    CssClass="table table-bordered table-striped"
+                                    CssClass="table table-bordered table-striped text-center"
                                     AutoGenerateColumns="False"
                                     OnRowCommand="gvCategory_RowCommand"
                                     AllowPaging="True"

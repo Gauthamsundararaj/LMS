@@ -10,7 +10,7 @@
     <title>AdminDashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="../assets/css/customPagination.css" rel="stylesheet" />
-   
+
     <style>
         .required {
             color: red;
@@ -109,7 +109,7 @@
             }
 
 
-        .clear-btn {
+         .clear-btn-inside {
             position: absolute;
             right: 8px;
             top: 50%;
@@ -119,9 +119,10 @@
             display: none;
         }
 
-            .clear-btn:hover {
+            .clear-btn-inside:hover {
                 color: #a71d2a;
             }
+
 
         .clear-filter-btn {
             cursor: pointer;
@@ -163,7 +164,7 @@
                                         </h2>
                                     </div>
                                     <div class="icon-box">
-                                       <img src="../assets/images/icons/Totalbooks.png" class="icon" />
+                                        <img src="../assets/images/icons/Totalbooks.png" class="icon" />
                                     </div>
                                 </div>
                             </div>
@@ -231,18 +232,31 @@
 
 
             </div>
+            <asp:LinkButton
+                ID="btnFilterPostBack"
+                runat="server"
+                OnClick="btnSearch_Click"
+                Style="display: none" />
 
             <div class="card" id="divGrid" runat="server" visible="true">
-                <div class="card-header bg-primary p-3 d-flex justify-content-between align-items-center">
+                <div class="card-header bg-primary p-2 d-flex justify-content-between align-items-center">
                     <h4 class="card-title mb-0 text-white" id="lblGridTitle" runat="server">All Renewals
                     </h4>
 
-                    <asp:Button ID="btnDownloadCsv"
+                    <asp:LinkButton
+                        ID="lnkDownloadCSV"
                         runat="server"
-                        Text="Download CSV"
-                        CssClass="btn btn-info btn-sm"
-                        ToolTip="Download file"
-                        OnClick="btnDownloadCsv_Click" />
+                        OnClick="btnDownloadCSV_Click"
+                        ToolTip="Download CSV">
+
+                        <asp:Image
+                            ID="imgDownload"
+                            runat="server"
+                            ImageUrl="~/assets/images/icons/csvdownload.png"
+                            AlternateText="Download"
+                            CssClass="img-fluid"
+                            Width="35" Height="35" />
+                    </asp:LinkButton>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive align-items-center" style="overflow-x: auto; white-space: nowrap;">
@@ -288,7 +302,7 @@
                                                 ToolTip="Apply Filter"
                                                 OnClientClick="toggleClearFilterIcon();"
                                                 OnClick="btnSearch_Click">
-                                            <i class="bi bi-funnel-fill"></i>
+                                             <i class="fa-solid fa-filter"></i>
                                             </asp:LinkButton>
 
                                             <asp:LinkButton ID="btnClearFilter"
@@ -297,7 +311,7 @@
                                                 Style="display: none;"
                                                 ToolTip="Clear Filter"
                                                 OnClick="btnRefresh_Click">
-                                            <i class="bi bi-x-circle-fill"></i>
+                                             <i class="fa-solid fa-circle-xmark"></i>
                                             </asp:LinkButton>
                                         </div>
                                     </HeaderTemplate>
@@ -325,8 +339,7 @@
                                                 MaxLength="13"
                                                 onkeypress="return allowOnlyNumbers(event);"
                                                 onkeyup="toggleClearIcon(this);" />
-                                            <span class="clear-btn clear-btn-inside"
-                                                onclick="clearSearch(this)">✖</span>
+                                            <span class="clear-btn-inside" onclick="clearSearch(this)">✖</span>
                                         </div>
 
                                     </HeaderTemplate>
@@ -346,8 +359,8 @@
                                                 AutoPostBack="false"
                                                 onkeypress="return allowAlphaNumeric(event);"
                                                 onkeyup="toggleClearIcon(this);" />
-                                            <span class="clear-btn clear-btn-inside"
-                                                onclick="clearSearch(this)">✖</span>
+                                           
+                                            <span class="clear-btn-inside" onclick="clearSearch(this)">✖</span>
                                         </div>
                                     </HeaderTemplate>
                                     <ItemTemplate>
@@ -367,8 +380,7 @@
                                                 placeholder="Search Member ID"
                                                 AutoPostBack="false"
                                                 onkeyup="toggleClearIcon(this);" />
-                                            <span class="clear-btn clear-btn-inside"
-                                                onclick="clearSearch(this)">✖</span>
+                                            <span class="clear-btn-inside" onclick="clearSearch(this)">✖</span>
                                         </div>
                                     </HeaderTemplate>
                                     <ItemTemplate>
@@ -387,8 +399,7 @@
                                                 AutoPostBack="false"
                                                 onkeypress="return allowAlphaNumeric(event);"
                                                 onkeyup="toggleClearIcon(this);" />
-                                            <span class="clear-btn clear-btn-inside"
-                                                onclick="clearSearch(this)">✖</span>
+                                            <span class="clear-btn-inside" onclick="clearSearch(this)">✖</span>
                                         </div>
                                     </HeaderTemplate>
                                     <ItemTemplate>
@@ -423,23 +434,23 @@
                             </Columns>
                         </asp:GridView>
 
-                        </div>
-                            <div class="pager-fixed">
-                                <asp:Repeater ID="rptPager" runat="server" OnItemCommand="rptPager_ItemCommand">
-                                    <ItemTemplate>
-                                        <asp:LinkButton ID="lnkPage" runat="server"
-                                            CssClass='<%# (bool)Eval("IsActive") ? "page-btn active" : "page-btn" %>'
-                                            CommandName='<%# Eval("Command") %>'
-                                            CommandArgument='<%# Eval("PageIndex") %>'
-                                            Enabled='<%# Eval("Enabled") %>'
-                                            Text='<%# Eval("Text") %>'>
-                                        </asp:LinkButton>
-                                    </ItemTemplate>
-                                </asp:Repeater>
-                            </div>
-                      
                     </div>
-       
+                    <div class="pager-fixed">
+                        <asp:Repeater ID="rptPager" runat="server" OnItemCommand="rptPager_ItemCommand">
+                            <ItemTemplate>
+                                <asp:LinkButton ID="lnkPage" runat="server"
+                                    CssClass='<%# (bool)Eval("IsActive") ? "page-btn active" : "page-btn" %>'
+                                    CommandName='<%# Eval("Command") %>'
+                                    CommandArgument='<%# Eval("PageIndex") %>'
+                                    Enabled='<%# Eval("Enabled") %>'
+                                    Text='<%# Eval("Text") %>'>
+                                </asp:LinkButton>
+                            </ItemTemplate>
+                        </asp:Repeater>
+                    </div>
+
+                </div>
+
             </div>
         </div>
     </form>
@@ -463,6 +474,7 @@
             input.focus();
 
             toggleClearFilterIcon();
+            __doPostBack('<%=btnFilterPostBack.ClientID%>', '');
         }
 
         /* Allow only numbers */

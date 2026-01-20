@@ -92,20 +92,20 @@
                             </div>
                             <div class="table-responsive" style="overflow-x: auto; white-space: nowrap;">
                                 <asp:GridView ID="gvUser" runat="server"
-                                    CssClass="table table-bordered table-striped"
+                                    CssClass="table table-bordered table-striped text-center"
                                     AutoGenerateColumns="False" OnRowCommand="gvUser_RowCommand"
                                     AllowPaging="True"
                                     PageSize="5"
                                     OnPageIndexChanging="gvUser_PageIndexChanging"
                                     PagerSettings-Visible="false">
                                     <Columns>
-                                        <asp:BoundField DataField="Sno" HeaderText="Sno" />
+                                        <asp:BoundField DataField="Sno" HeaderText="SNo" />
                                         <asp:BoundField DataField="UserID" Visible="false" />
                                         <asp:BoundField DataField="LoginID" HeaderText="Login ID" />
-                                      
+
                                         <asp:TemplateField HeaderText="Employee Code">
                                             <HeaderStyle CssClass="wrap-header" />
-                                            <ItemTemplate> <%# Eval("EmpCode") %> </ItemTemplate>
+                                            <ItemTemplate><%# Eval("EmpCode") %> </ItemTemplate>
                                         </asp:TemplateField>
                                         <asp:BoundField DataField="Gender" HeaderText="Gender" />
                                         <asp:BoundField DataField="UserName" HeaderText="User Name" />
@@ -211,25 +211,27 @@
                                                 <!-- Email -->
                                                 <div class="col-md-4 mb-3">
                                                     <label class="form-label">Email <span style="color: red">*</span></label>
-                                                    <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" placeholder="Enter Email"></asp:TextBox>
+                                                    <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" placeholder="Enter Email" MaxLength="50"></asp:TextBox>
                                                 </div>
 
                                                 <!-- Alternate Email -->
                                                 <div class="col-md-4 mb-3">
                                                     <label class="form-label">Alternate Email</label>
-                                                    <asp:TextBox ID="txtAlternateEmail" runat="server" CssClass="form-control" placeholder="Enter Alternate Email"></asp:TextBox>
+                                                    <asp:TextBox ID="txtAlternateEmail" runat="server" CssClass="form-control" placeholder="Enter Alternate Email" MaxLength="50"></asp:TextBox>
                                                 </div>
 
                                                 <!-- Phone Number -->
                                                 <div class="col-md-4 mb-3">
                                                     <label class="form-label">Phone Number <span style="color: red">*</span></label>
-                                                    <asp:TextBox ID="TxtPhone" runat="server" CssClass="form-control" placeholder="Enter Phone Number" MaxLength="10"></asp:TextBox>
+                                                    <asp:TextBox ID="TxtPhone" runat="server" CssClass="form-control" onkeypress="return allowOnlyNumbers(event)"
+                                                        oninput="removeNonNumeric(this)" placeholder="Enter Phone Number" MaxLength="10" TextMode="Phone"></asp:TextBox>
                                                 </div>
 
                                                 <!-- Alternate Phone -->
                                                 <div class="col-md-4 mb-3">
                                                     <label class="form-label">Alternate Number</label>
-                                                    <asp:TextBox ID="txtAlternatePhone" runat="server" CssClass="form-control" placeholder="Enter Alternate Number" MaxLength="10"></asp:TextBox>
+                                                    <asp:TextBox ID="txtAlternatePhone" runat="server" CssClass="form-control" placeholder="Enter Alternate Number" onkeypress="return allowOnlyNumbers(event)"
+                                                        oninput="removeNonNumeric(this)" MaxLength="10" TextMode="Phone"></asp:TextBox>
                                                 </div>
 
                                                 <!-- Department -->
@@ -257,14 +259,6 @@
                                                 <div class="col-md-4 mb-3">
                                                     <label class="form-label">Role Type <span style="color: red">*</span></label>
                                                     <asp:DropDownList ID="ddlRoleType" runat="server" CssClass="form-select">
-                                                        <%-- <asp:ListItem Value="" Selected="True" Disabled="True">Select Role Type</asp:ListItem>
-                                                        <asp:ListItem Value="1">Main Admin</asp:ListItem>
-                                                        <asp:ListItem Value="2">Admin</asp:ListItem>
-
-                                                        <asp:ListItem Value="3">Sub Admin</asp:ListItem>
-                                                        <asp:ListItem Value="4">Worker Admin</asp:ListItem>
-                                                        <asp:ListItem Value="5">Staff</asp:ListItem>
-                                                        <asp:ListItem Value="6">Student</asp:ListItem>--%>
                                                     </asp:DropDownList>
                                                 </div>
 
@@ -308,7 +302,26 @@
 
         </div>
         <script type="text/javascript">
+            function allowOnlyNumbers(evt) {
+                var charCode = evt.which ? evt.which : evt.keyCode;
 
+                // Allow Backspace, Delete, Arrow keys, Tab
+                if (charCode === 8 || charCode === 9 || charCode === 37 || charCode === 39 || charCode === 46) {
+                    return true;
+                }
+
+                // Allow only numbers (0–9)
+                if (charCode < 48 || charCode > 57) {
+                    evt.preventDefault();
+                    return false;
+                }
+
+                return true;
+            }
+
+            function removeNonNumeric(input) {
+                input.value = input.value.replace(/[^0-9]/g, '');
+            }
 
             function showUserForm() {
                 document.getElementById('<%= divGrid.ClientID %>').style.display = 'none';
@@ -342,6 +355,7 @@
                 var department = document.getElementById('<%= ddlDepartment.ClientID %>').value.trim();
                 var designation = document.getElementById('<%= txtDesignation.ClientID %>').value.trim();
                 var roleType = document.getElementById('<%= ddlRoleType.ClientID %>').value.trim();
+
                 var password = document.getElementById('<%= txtPassword.ClientID %>').value.trim();
                 var active = document.getElementById('<%= chkActive.ClientID %>').checked;
 
@@ -399,8 +413,20 @@
                 }
 
                 // --- Gender ---
-                if (!rbMale && !rbFemale && !rbOther) {
-                    AlertMessage("Please select Gender.", "error");
+                //if (!rbMale && !rbFemale && !rbOther) {
+                //    AlertMessage("Please select Gender.", "error");
+                //    return false;
+                //}
+                function isGenderSelected() {
+                    var radios = document.querySelectorAll(
+        '#<%= rblGender.ClientID %> input[type=radio]'
+                    );
+
+                    for (var i = 0; i < radios.length; i++) {
+                        if (radios[i].checked) {
+                            return true;
+                        }
+                    }
                     return false;
                 }
 
@@ -501,6 +527,7 @@
                     AlertMessage("Are you sure the user is decactive.", "error");
 
                 }
+            }
 
         </script>
     </form>

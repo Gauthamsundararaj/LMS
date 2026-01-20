@@ -71,6 +71,29 @@
             padding: 6px 8px;
             vertical-align: top;
         }
+
+        .icon-btn {
+    width: 38px;
+    height: 38px;
+    background-color: #0ea5a0; /* teal matching header */
+    border-radius: 8px;
+    color: #ffffff;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.icon-btn i {
+    font-size: 18px;
+}
+
+/*.icon-btn:hover {
+    background-color: #0c8b87;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+}*/
+
     </style>
 
 </head>
@@ -87,160 +110,173 @@
                     </div>
                 </div>
                 <div class="card" id="divBookGrid" runat="server" visible="false">
-                    <div class="card-header bg-primary p-3 ">
+                    <div class="card-header bg-primary p-2">
                         <div class="row align-items-center justify-content-between">
                             <div class="col-auto">
                                 <h4 class="card-title mb-0">Book Details</h4>
                             </div>
-                            <div class="col-auto">
-                                <asp:Button ID="btnDownloadCSV" runat="server" Text="Download CSV" CssClass="btn btn-info btn-sm"
-                                    OnClick="btnDownloadCSV_Click" />
-                            </div>
+                            <div class="col-auto text-end">
+    <asp:LinkButton
+        ID="lnkDownloadCSV"
+        runat="server"
+       
+        OnClick="btnDownloadCSV_Click"
+        ToolTip="Download CSV">
+
+        <asp:Image
+            ID="imgDownload"
+            runat="server"
+            ImageUrl="../assets/images/icons/csvdownload.png"
+            AlternateText="Download"
+            CssClass="icon img-fluid"
+            Width="35" Height="35" />
+    </asp:LinkButton>
+</div>
                         </div>
                     </div>
 
-                <div class="card-body p-3">
+                    <div class="card-body p-3">
 
-                    <!-- ---------- SEARCH AREA (Not Scrollable) ---------- -->
-                    <div class="row mb-3 align-items-end g-2">
+                        <!-- ---------- SEARCH AREA (Not Scrollable) ---------- -->
+                        <div class="row mb-3 align-items-end g-2">
 
-                        <!-- Left controls -->
-                        <div class="col-12 col-lg d-flex flex-wrap gap-2 align-items-end">
+                            <!-- Left controls -->
+                            <div class="col-12 col-lg d-flex flex-wrap gap-2 align-items-end">
 
-                            <div class="col-12 col-sm-6 col-md-3">
-                                <asp:DropDownList ID="ddlSearchBy" runat="server" CssClass="form-select w-100">
-                                    <asp:ListItem Value="">------- Search By -------</asp:ListItem>
-                                    <asp:ListItem Value="Category">Category Name</asp:ListItem>
-                                    <asp:ListItem Value="BookTitle">Book Title</asp:ListItem>
-                                </asp:DropDownList>
+                                <div class="col-12 col-sm-6 col-md-3">
+                                    <asp:DropDownList ID="ddlSearchBy" runat="server" CssClass="form-select w-100">
+                                        <asp:ListItem Value="">------- Search By -------</asp:ListItem>
+                                        <asp:ListItem Value="Category">Category Name</asp:ListItem>
+                                        <asp:ListItem Value="BookTitle">Book Title</asp:ListItem>
+                                    </asp:DropDownList>
+                                </div>
+
+                                <div class="col-12 col-sm-6 col-md-3">
+                                    <asp:TextBox ID="txtSearchValue" runat="server"
+                                        CssClass="form-control w-100"
+                                        Placeholder="Enter search text"
+                                        MaxLength="50"></asp:TextBox>
+                                </div>
+
+                                <div class="col-auto">
+                                    <asp:Button ID="btnSearch" runat="server"
+                                        Text="Search"
+                                        CssClass="btn btn-primary w-100"
+                                        OnClick="btnSearch_Click" />
+                                </div>
+
+                                <div class="col-auto">
+                                    <asp:Button ID="btnClearSearch" runat="server"
+                                        Text="Clear"
+                                        CssClass="btn btn-secondary w-100"
+                                        OnClick="btnClearSearch_Click" />
+                                </div>
                             </div>
 
-                            <div class="col-12 col-sm-6 col-md-3">
-                                <asp:TextBox ID="txtSearchValue" runat="server"
-                                    CssClass="form-control w-100"
-                                    Placeholder="Enter search text"
-                                    MaxLength="50"></asp:TextBox>
+                            <!-- Right record count -->
+                            <div class="col-12 col-lg-auto ms-lg-auto text-lg-end">
+                                <asp:Label ID="lblRecordCount" runat="server"
+                                    CssClass="fw-bold text-primary"></asp:Label>
                             </div>
 
-                            <div class="col-auto">
-                                <asp:Button ID="btnSearch" runat="server"
-                                    Text="Search"
-                                    CssClass="btn btn-primary w-100"
-                                    OnClick="btnSearch_Click" />
-                            </div>
-
-                            <div class="col-auto">
-                                <asp:Button ID="btnClearSearch" runat="server"
-                                    Text="Clear"
-                                    CssClass="btn btn-secondary w-100"
-                                    OnClick="btnClearSearch_Click" />
-                            </div>
                         </div>
 
-                        <!-- Right record count -->
-                        <div class="col-12 col-lg-auto ms-lg-auto text-lg-end">
-                            <asp:Label ID="lblRecordCount" runat="server"
-                                CssClass="fw-bold text-primary"></asp:Label>
-                        </div>
 
-                    </div>
+                        <!-- ---------- ONLY GRIDVIEW SCROLLS ---------- -->
+                        <div class="table-responsive" style="overflow-y: auto; white-space: nowrap;">
+                            <asp:GridView ID="gvBookMaster" runat="server"
+                                CssClass="table table-bordered table-striped text-center"
+                                AutoGenerateColumns="False"
+                                OnRowCommand="gvBookMaster_RowCommand"
+                                AllowPaging="True"
+                                PageSize="5"
+                                OnPageIndexChanging="gvBookMaster_PageIndexChanging"
+                                PagerSettings-Visible="false">
+                                <Columns>
+                                    <asp:BoundField DataField="Sno" HeaderText="Sno" />
+                                    <asp:BoundField DataField="BookID" Visible="false" />
+                                    <asp:BoundField DataField="ISBN" HeaderText="ISBN" />
+                                    <asp:TemplateField HeaderText="Book Title">
+                                        <ItemStyle CssClass="wraping-cell" />
+                                        <ItemTemplate>
+                                            <%# Eval("Book Title") %>
+                                        </ItemTemplate>
+                                    </asp:TemplateField>
+                                    <asp:BoundField DataField="Category" HeaderText="Category" />
 
+                                    <asp:TemplateField HeaderText="Authors">
+                                        <ItemStyle CssClass="wraping-cell" />
+                                        <ItemTemplate>
+                                            <%# Eval("Authors") %>
+                                        </ItemTemplate>
+                                    </asp:TemplateField>
 
-                    <!-- ---------- ONLY GRIDVIEW SCROLLS ---------- -->
-                    <div class="table-responsive" style="overflow-y: auto; white-space: nowrap;">
-                        <asp:GridView ID="gvBookMaster" runat="server"
-                            CssClass="table table-bordered table-striped"
-                            AutoGenerateColumns="False"
-                            OnRowCommand="gvBookMaster_RowCommand"
-                            AllowPaging="True"
-                            PageSize="5"
-                            OnPageIndexChanging="gvBookMaster_PageIndexChanging"
-                            PagerSettings-Visible="false">
-                            <Columns>
-                                <asp:BoundField DataField="Sno" HeaderText="Sno" />
-                                <asp:BoundField DataField="BookID" Visible="false" />
-                                <asp:BoundField DataField="ISBN" HeaderText="ISBN" />
-                                <asp:TemplateField HeaderText="Book Title">
-                                    <ItemStyle CssClass="wraping-cell" />
-                                    <ItemTemplate>
-                                        <%# Eval("Book Title") %>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-                                <asp:BoundField DataField="Category" HeaderText="Category" />
-
-                                <asp:TemplateField HeaderText="Authors">
-                                    <ItemStyle CssClass="wraping-cell" />
-                                    <ItemTemplate>
-                                        <%# Eval("Authors") %>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-
-                                <asp:BoundField DataField="Publisher" HeaderText="Publisher" />
+                                    <asp:BoundField DataField="Publisher" HeaderText="Publisher" />
 
 
-                                <asp:TemplateField HeaderText="Total Copies">
-                                    <HeaderStyle CssClass="wrap-header" />
-                                    <ItemTemplate>
-                                        <%# Eval("Total Copies") %>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
-                                <asp:BoundField DataField="ActiveStatus" HeaderText="Status" />
-                                <asp:BoundField DataField="Active" Visible="false" />
-                                <asp:TemplateField HeaderText="Edit">
-                                    <ItemTemplate>
-                                        <asp:LinkButton ID="lnkEdit" runat="server"
-                                            CommandName="EditBook"
-                                            CommandArgument='<%# Eval("BookID") %>'
-                                            CssClass="btn btn-sm btn-primary me-2"
-                                            ToolTip="Edit Book">
+                                    <asp:TemplateField HeaderText="Total Copies">
+                                        <HeaderStyle CssClass="wrap-header" />
+                                        <ItemTemplate>
+                                            <%# Eval("Total Copies") %>
+                                        </ItemTemplate>
+                                    </asp:TemplateField>
+                                    <asp:BoundField DataField="ActiveStatus" HeaderText="Status" />
+                                    <asp:BoundField DataField="Active" Visible="false" />
+                                    <asp:TemplateField HeaderText="Edit">
+                                        <ItemTemplate>
+                                            <asp:LinkButton ID="lnkEdit" runat="server"
+                                                CommandName="EditBook"
+                                                CommandArgument='<%# Eval("BookID") %>'
+                                                CssClass="btn btn-sm btn-primary me-2"
+                                                ToolTip="Edit Book">
                                     <i class="iconly-Edit icli"></i>
-                                        </asp:LinkButton>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
+                                            </asp:LinkButton>
+                                        </ItemTemplate>
+                                    </asp:TemplateField>
 
 
-                                <asp:TemplateField HeaderText="Delete">
-                                    <ItemTemplate>
-                                        <asp:LinkButton ID="lnkDelete" runat="server"
-                                            CommandName="DeleteBook"
-                                            CommandArgument='<%# Eval("BookID") %>'
-                                            CssClass='<%# Convert.ToBoolean(Eval("Active"))
+                                    <asp:TemplateField HeaderText="Delete">
+                                        <ItemTemplate>
+                                            <asp:LinkButton ID="lnkDelete" runat="server"
+                                                CommandName="DeleteBook"
+                                                CommandArgument='<%# Eval("BookID") %>'
+                                                CssClass='<%# Convert.ToBoolean(Eval("Active"))
                                             ? "btn btn-sm btn-danger"
                                             : "btn btn-sm btn-secondary disabled" %>'
-                                            ToolTip='<%# Convert.ToBoolean(Eval("Active"))
+                                                ToolTip='<%# Convert.ToBoolean(Eval("Active"))
                                             ? "Click to deactivate"
                                             : "Already inactive" %>'
-                                            OnClientClick='<%# Convert.ToBoolean(Eval("Active"))
+                                                OnClientClick='<%# Convert.ToBoolean(Eval("Active"))
                                                 ? "return confirm(\"Are you sure you want to deactivate this book?\");"
                                                 : "return false;" %>'>
                                 <i class="iconly-Delete icli"></i>
-                                        </asp:LinkButton>
-                                    </ItemTemplate>
-                                </asp:TemplateField>
+                                            </asp:LinkButton>
+                                        </ItemTemplate>
+                                    </asp:TemplateField>
 
-                            </Columns>
+                                </Columns>
 
 
-                        </asp:GridView>
+                            </asp:GridView>
+
+                        </div>
+
+
+                        <div class="pager-fixed">
+                            <asp:Repeater ID="rptPager" runat="server" OnItemCommand="rptPager_ItemCommand">
+                                <ItemTemplate>
+                                    <asp:LinkButton ID="lnkPage" runat="server"
+                                        CssClass='<%# (bool)Eval("IsActive") ? "page-btn active" : "page-btn" %>'
+                                        CommandName='<%# Eval("Command") %>'
+                                        CommandArgument='<%# Eval("PageIndex") %>'
+                                        Enabled='<%# Eval("Enabled") %>'
+                                        Text='<%# Eval("Text") %>'>
+                                    </asp:LinkButton>
+                                </ItemTemplate>
+                            </asp:Repeater>
+                        </div>
 
                     </div>
-
-
-                    <div class="pager-fixed">
-                        <asp:Repeater ID="rptPager" runat="server" OnItemCommand="rptPager_ItemCommand">
-                            <ItemTemplate>
-                                <asp:LinkButton ID="lnkPage" runat="server"
-                                    CssClass='<%# (bool)Eval("IsActive") ? "page-btn active" : "page-btn" %>'
-                                    CommandName='<%# Eval("Command") %>'
-                                    CommandArgument='<%# Eval("PageIndex") %>'
-                                    Enabled='<%# Eval("Enabled") %>'
-                                    Text='<%# Eval("Text") %>'>
-                                </asp:LinkButton>
-                            </ItemTemplate>
-                        </asp:Repeater>
-                    </div>
-
-                </div>
 
                 </div>
 
@@ -255,7 +291,7 @@
                                     Book Title <span
                                         style="color: red">*</span></label>
                                 <asp:TextBox ID="txtBookTitle" runat="server"
-                                    CssClass="form-control" placeholder="Enter Book Title"></asp:TextBox>
+                                    CssClass="form-control" placeholder="Enter Book Title" MaxLength="50"></asp:TextBox>
                             </div>
                             <!-- ISBN -->
                             <div class="col-md-4 ">
@@ -312,7 +348,7 @@
                                     Publisher Name <span
                                         style="color: red">*</span></label>
                                 <asp:TextBox ID="txtPublisher" runat="server"
-                                    CssClass="form-control" placeholder="Enter Publisher Name" MaxLength="100"></asp:TextBox>
+                                    CssClass="form-control" placeholder="Enter Publisher Name" MaxLength="50"></asp:TextBox>
                             </div>
                             <!-- Year Published -->
                             <div class="col-md-4 mb-3">
@@ -320,7 +356,7 @@
                                     Year Published <span
                                         style="color: red">*</span></label>
                                 <asp:TextBox ID="txtYearPublished" runat="server"
-                                    CssClass="form-control" MaxLength="4" placeholder="Enter Year (YYYY)"></asp:TextBox>
+                                    CssClass="form-control" MaxLength="4" placeholder="Enter Year (YYYY)"  onkeypress="return event.charCode >= 48 && event.charCode <= 57;"></asp:TextBox>
                             </div>
                             <!-- Edition -->
                             <div class="col-md-4 mb-3">
@@ -334,18 +370,18 @@
                                     Price
                                 </label>
                                 <asp:TextBox ID="txtPrice" runat="server"
-                                    CssClass="form-control" placeholder="Enter Price"></asp:TextBox>
-                            </div>
+                                    CssClass="form-control" placeholder="Enter Price" MaxLength="20"  onkeypress="return allowPriceChars(event);"
+       onpaste="return false;"></asp:TextBox>
+                            </div> 
                             <!-- Total Copies -->
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">
                                     Total Copies <span
                                         style="color: red">*</span></label>
                                 <asp:TextBox ID="txtTotalCopies" runat="server"
-                                    CssClass="form-control" placeholder="Enter Total Copies"></asp:TextBox>
+                                    CssClass="form-control" placeholder="Enter Total Copies" MaxLength="10"
+                                     onkeypress="return event.charCode >= 48 && event.charCode <= 57;"></asp:TextBox>
                             </div>
-
-
 
                             <!-- Shelf Location -->
                             <div class="col-md-4 mb-3">
@@ -376,7 +412,7 @@
                         <asp:Button ID="btnClear" runat="server" Text="Clear" OnClick="Clear_Click"
                             CssClass="btn btn-warning me-2" OnClientClick="clearForm(); return false;" />
                         <asp:Button ID="btnCancel" runat="server" Text="Cancel"
-                            CssClass="btn btn-danger" OnClientClick="window.history.back(); return false;" OnClick="btnCancel_Click" />
+                            CssClass="btn btn-danger" OnClick="btnCancel_Click" />
                     </div>
                 </div>
             </div>
@@ -428,10 +464,13 @@
             var year = document.getElementById('<%= txtYearPublished.ClientID %>').value.trim();
             if (year === "" || !/^\d{4}$/.test(year)) return showErr("Enter valid Year (YYYY).", '<%= txtYearPublished.ClientID %>');
 
-            var price = document.getElementById('<%= txtPrice.ClientID %>').value.trim();
-            if (price === "" || !/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) <= 0) {
-                return showErr("Enter valid Price.", '<%= txtPrice.ClientID %>');
-            }
+
+            //var pricePattern = /^(?:\d+|\d+\.\d{1,2})$/;
+
+            //if (price === "" || !pricePattern.test(price) ||Number.isNaN(parseFloat(price)) || parseFloat(price) <= 0 ) {
+            //////    return showErr("Enter a valid Price (positive number, up to 2 decimals).", '<%= txtPrice.ClientID %>');
+            //}
+
 
             var total = document.getElementById('<%= txtTotalCopies.ClientID %>').value.trim();
             if (!/^[0-9]+$/.test(total)) return showErr("Total Copies must be whole number.", '<%= txtTotalCopies.ClientID %>');
@@ -439,6 +478,22 @@
 
             return true;
         }
+        function allowPriceChars(evt) {
+            const key = evt.key;
+
+            // Allow control keys
+            if (key === "Backspace" || key === "Delete" || key === "Tab") {
+                return true;
+            }
+
+            // Allow digits, dot, comma
+            if (/[\d.,]/.test(key)) {
+                return true;s
+            }
+
+            return false;
+        }
+
 
     </script>
 </body>

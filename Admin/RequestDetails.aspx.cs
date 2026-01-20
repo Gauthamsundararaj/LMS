@@ -22,6 +22,7 @@ namespace Admin
             {
                 LoadRenewals();
             }
+
             lblErrorMsg[1] = CommonFunction.GetErrorMessage("", "ERRRR01");
             lblErrorMsg[2] = CommonFunction.GetErrorMessage("", "ERRRR02");
             lblErrorMsg[3] = CommonFunction.GetErrorMessage("", "SUSRR01");
@@ -108,10 +109,11 @@ namespace Admin
             if (filteredTable.Rows.Count > gvRenewals.PageSize) 
             {
                 
-                BuildPager(gvRenewals.PageCount, gvRenewals.PageIndex); rptPager.Visible = true;
+                BuildPager(gvRenewals.PageCount, gvRenewals.PageIndex);
+                rptPager.Visible = true;
             } 
             else 
-            { 
+            {
                 rptPager.Visible = false;
             }
            
@@ -478,7 +480,7 @@ namespace Admin
             }
         }
 
-        protected void btnDownloadCSV_Click1(object sender, EventArgs e)
+        protected void btnDownloadCSV_Click(object sender, EventArgs e)
         {
             try
             {
@@ -529,7 +531,7 @@ namespace Admin
                 }
 
                 // ✅ GENERATE CSV
-                StringBuilder sb = CommonFunction.CSVFileGeneration(csvTable, "Renewals");
+                StringBuilder sb = CommonFunction.CSVFileGenerationWithoutHeader(csvTable, "Renewals");
 
                 Response.Clear();
                 Response.Buffer = true;

@@ -29,8 +29,9 @@ namespace DAL
            string action,
            int roleID = 0,
            string roleName = "",
+           string DefaultPage ="",
            bool active = true,
-           int adminUserID = 1
+           int adminUserID = 0
        )
         {
             SqlParameter[] param =
@@ -38,6 +39,7 @@ namespace DAL
                 new SqlParameter("@Action", action),
                 new SqlParameter("@RoleID", roleID),
                 new SqlParameter("@RoleName", roleName),
+                new SqlParameter("@DefaultPage", DefaultPage),
                 new SqlParameter("@Active", active),
                 new SqlParameter("@AdminUserID", adminUserID)
             };
@@ -52,7 +54,7 @@ namespace DAL
 
         public DataSet UserMaster(string Action, int UserID,string LoginId, string EmpCode,string UserName,
       string Gender,string Email, string AltEmail, string Phone, string AltPhone, string Department,
-      string Designation,int RoleType,string Password, bool Active, int AdminUserID, string searchBy,
+      string Designation,int RoleType, string Password, bool Active, int AdminUserID, string searchBy,
       string searchValue )
         {
             SqlParameter[] objParam = new SqlParameter[]
@@ -95,12 +97,26 @@ namespace DAL
                 new SqlParameter("@Action", action),
                 new SqlParameter("@RoleID", roleId),
                 new SqlParameter("@RoleName", (object)strRoleName ?? DBNull.Value),
+               
                 new SqlParameter("@Active", active),
 
             };
 
             return SqlHelper.ExecuteDataset(objSqlConnection,
                     CommandType.StoredProcedure, "dbo.RoleMaster_CRUD", objparam);
+        }
+        public DataSet PageName(string action)
+        {
+            SqlParameter[] objparam = new SqlParameter[]
+            {
+                new SqlParameter("@Action", action),
+
+
+
+            };
+
+            return SqlHelper.ExecuteDataset(objSqlConnection,
+                    CommandType.StoredProcedure, "sp_MenuMaster", objparam);
         }
         public DataSet GetRolesForDropdown()
         {
@@ -116,6 +132,7 @@ namespace DAL
                 objParam
             );
         }
+
 
         public DataSet GetBookDues(
              string action,
@@ -187,6 +204,7 @@ namespace DAL
          string pageName = "",
          int? parentMenuID = null,
          bool? isChildMenu = null,
+         bool? IsDefaultPage = null,
          int? sequenceNo = null,
          bool isActive = true,
          int adminUserID = 0,
@@ -201,6 +219,7 @@ namespace DAL
                 new SqlParameter("@PageName", (object)pageName ?? DBNull.Value),
                 new SqlParameter("@ParentMenuID", (object)parentMenuID ?? DBNull.Value),
                 new SqlParameter("@IsChildMenu", (object)isChildMenu ?? DBNull.Value),
+                new SqlParameter("@IsDefaultPage", (object)IsDefaultPage ?? DBNull.Value),
                 new SqlParameter("@SequenceNo", (object)sequenceNo ?? DBNull.Value),
                 new SqlParameter("@IsActive", isActive),
                 new SqlParameter("@AdminUserID", adminUserID),

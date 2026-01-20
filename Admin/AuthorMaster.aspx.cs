@@ -29,6 +29,8 @@ namespace Admin
             lblErrorMsg[3] = CommonFunction.GetErrorMessage("", "SUSAM03");
             lblErrorMsg[4] = CommonFunction.GetErrorMessage("", "ERRAM03");
             lblErrorMsg[5] = CommonFunction.GetErrorMessage("", "ERRAM05");
+            lblErrorMsg[6] = CommonFunction.GetErrorMessage("", "ERRAM06");
+            lblErrorMsg[7] = CommonFunction.GetErrorMessage("", "ERRAM07");
 
 
         }
@@ -49,7 +51,15 @@ namespace Admin
                         gvAuthor.DataBind();
                     }
                     lblRecordCount.Text =  "No. of Records: " + ds.Tables[0].Rows.Count;
-                    BuildPager(gvAuthor.PageCount, gvAuthor.PageIndex);
+                    if (ds.Tables[0].Rows.Count > gvAuthor.PageSize)
+                    {
+                        BuildPager(gvAuthor.PageCount, gvAuthor.PageIndex);
+                        rptPager.Visible = true;
+                    }
+                    else
+                    {
+                        rptPager.Visible = false;
+                    }
                 }
                
             }
@@ -102,6 +112,13 @@ namespace Admin
                             ClearFormFields();
                             BindAuthorGrid();
 
+                        }if(msgCode == 2)
+                        {
+                            ShowAlert(lblErrorMsg[6], "error");
+                        }
+                        if (msgCode == 3)
+                        {
+                            ShowAlert(lblErrorMsg[7], "error");
                         }
                     }
                         
@@ -209,11 +226,14 @@ namespace Admin
         {
             txtAuthorName.Text = "";
             ddlAuthorType.SelectedIndex = 0;
+         
         }
         protected void Clear_Click(object sender, EventArgs e)
         {
-            // Clear TextBox
+            chkActive.Checked=true;
             ClearFormFields();
+            btnAdd.Visible=true;
+            btnUpdate.Visible= false;
         }
 
 

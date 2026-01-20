@@ -27,17 +27,6 @@ namespace DAL
                 objSqlConnection.Close();
             objSqlConnection.Dispose();
         }
-
-        public DataSet CheckAdminLogin(string username , string Password )
-        {
-            SqlParameter[] objSqlParam = new SqlParameter[2];
-            objSqlParam[0] = new SqlParameter("@LoginID", SqlDbType.VarChar, 200);
-            objSqlParam[0].Value = username;
-            objSqlParam[1] = new SqlParameter("@Password", Password);
-            return SqlHelper.ExecuteDataset(objSqlConnection, CommandType.StoredProcedure, "ValidateAdminLoginCredentails", objSqlParam);
-            //string query = $"SELECT COUNT(*) TotalCount FROM UserMaster WHERE username='{username}' AND password='{Password}'";
-            //return SqlHelper.ExecuteDataset(objSqlConnection, CommandType.Text, query);
-        }
         public DataSet CheckLogin(int userType, string username, string Password)
         {
             SqlParameter[] objSqlParam = new SqlParameter[3];

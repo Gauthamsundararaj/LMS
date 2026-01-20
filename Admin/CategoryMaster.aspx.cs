@@ -12,7 +12,7 @@ namespace Admin
     public partial class CategoryMaster : System.Web.UI.Page
     {
         MasterBO objMasterBO = new MasterBO();
-       
+
         private string[] lblErrorMsg = new string[10];
         int intAdminUserID;
         protected void Page_Load(object sender, EventArgs e)
@@ -21,13 +21,13 @@ namespace Admin
             if (!IsPostBack)
             {
                 BindCategoryGrid();
-                
+
             }
             lblErrorMsg = new string[30];
             lblErrorMsg[0] = CommonFunction.GetErrorMessage("", "SUSCM01");
             lblErrorMsg[1] = CommonFunction.GetErrorMessage("", "SUSCM02");
             lblErrorMsg[2] = CommonFunction.GetErrorMessage("", "SUSCM03");
-           
+
             lblErrorMsg[3] = CommonFunction.GetErrorMessage("", "ERRCM01");
             lblErrorMsg[4] = CommonFunction.GetErrorMessage("", "ERRCM02");
             lblErrorMsg[5] = CommonFunction.GetErrorMessage("", "ERRCM03");
@@ -44,25 +44,33 @@ namespace Admin
             {
                 using (DataSet ds = objMasterBO.CategoryMaster("SELECT"))
                 {
-                    
-                        if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
-                        {
-                            gvCategory.DataSource = ds.Tables[0];
-                            gvCategory.DataBind();
-                      
+
+                    if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        gvCategory.DataSource = ds.Tables[0];
+                        gvCategory.DataBind();
+
 
                     }
-                        else
-                        {
-                            gvCategory.DataSource = null;
-                            gvCategory.DataBind();
-                        
+                    else
+                    {
+                        gvCategory.DataSource = null;
+                        gvCategory.DataBind();
+
 
                     }
                     lblRecordCount.Text = "No. of Records: " + ds.Tables[0].Rows.Count;
-                    BuildPager(gvCategory.PageCount, gvCategory.PageIndex);
+                    if (ds.Tables[0].Rows.Count > gvCategory.PageSize)
+                    {
+                        BuildPager(gvCategory.PageCount, gvCategory.PageIndex);
+                        rptPager.Visible = true;
+                    }
+                    else
+                    {
+                        rptPager.Visible = false;
+                    }
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -98,8 +106,8 @@ namespace Admin
                     txtDescription.Focus();
                     return;
                 }
-                if(Description.Length < 5)
-{
+                if (Description.Length < 5)
+                {
                     ShowAlert(lblErrorMsg[6], "error");
                     txtDescription.Focus();
                     return;
@@ -118,7 +126,7 @@ namespace Admin
                     txtDescription.Focus();
                     return;
                 }
-              
+
                 using (DataSet ds = objMasterBO.CategoryMaster("INSERT", 0, CategoryName, Description, true, intAdminUserID))
                 {
                     if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
@@ -133,7 +141,7 @@ namespace Admin
                             ShowAlert(lblErrorMsg[0], "success");
                             ClearFormFields();
                             BindCategoryGrid();
-                            
+
                         }
                     }
                 }
@@ -174,7 +182,7 @@ namespace Admin
                         {
                             ShowAlert(lblErrorMsg[2], "success");
                             BindCategoryGrid();
-                            
+
                         }
                     }
                 }
@@ -193,9 +201,9 @@ namespace Admin
                 string Description = txtDescription.InnerText;
                 bool isUpdate = btnAdd.Text == "Save";
                 bool Active = chkActive.Checked;
-              
 
-                using (DataSet ds = objMasterBO.CategoryMaster("UPDATE", Convert.ToInt32(hdnCategoryID.Value),CategoryName, Description, chkActive.Checked, intAdminUserID))
+
+                using (DataSet ds = objMasterBO.CategoryMaster("UPDATE", Convert.ToInt32(hdnCategoryID.Value), CategoryName, Description, chkActive.Checked, intAdminUserID))
                 {
                     int msgCode = Convert.ToInt32(ds.Tables[0].Rows[0]["MsgCode"]);
                     if (msgCode == 2)
@@ -210,7 +218,7 @@ namespace Admin
                         btnAdd.Visible = true;
                         btnUpdate.Visible = false;
                         btnAdd.Text = "Save";
-                       
+
                     }
                     else
                     {
@@ -241,15 +249,17 @@ namespace Admin
         }
         protected void Clear_Click(object sender, EventArgs e)
         {
-            // Clear TextBox
+            chkActive.Checked=true;
             ClearFormFields();
+            btnAdd.Visible=true;
+            btnUpdate.Visible= false;
         }
 
         protected void gvCategory_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             gvCategory.PageIndex = e.NewPageIndex;
             BindCategoryGrid();
-         
+
         }
 
         private void BuildPager(int totalPages, int currentPage)

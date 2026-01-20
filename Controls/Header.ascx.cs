@@ -65,7 +65,9 @@ namespace Controls
             {
                 int menuId = Convert.ToInt32(row["MenuID"]);
                 string menuName = row["MenuName"].ToString();
-                string pageUrl = row["PageName"] == DBNull.Value ? "" : row["PageName"].ToString();
+                string pageUrl =(row["PageName"]).ToString(); 
+
+                //string pageUrl = row["PageName"] == DBNull.Value ? "" : row["PageName"].ToString();
 
                 bool hasChild = dtChildren.Select("ParentMenuID=" + menuId).Length > 0;
 
@@ -78,7 +80,7 @@ namespace Controls
         <svg class='stroke-icon'>
             <use href='../assets/svg/iconly-sprite.svg#Category'></use>
         </svg>
-        <span>{menuName}</span>
+        <span>{menuName}</span><i class=""iconly-Arrow-Right-2 icli""></i>
     </a>";
 
                     html += GenerateChildMenu(dtChildren, menuId);
@@ -113,7 +115,7 @@ namespace Controls
             {
                 html += $@"
 <li class='sidebar-list'>
-    <a class='sidebar-link' href='{row["PageName"]}'>
+    <a class='sidebar-link' href='{(row["PageName"])}'>
         <svg class='stroke-icon'>
             <use href='../assets/svg/iconly-sprite.svg#Category'></use>
         </svg>
@@ -124,6 +126,7 @@ namespace Controls
 
             return html;
         }
+
 
 
         private string GenerateChildMenu(DataTable dtChildren, int parentId)
@@ -139,7 +142,11 @@ namespace Controls
                 foreach (DataRow row in rows)
                 {
                     submenu += $@"
-                <li><a href='{row["PageName"]}'>{row["MenuName"]}</a></li>";
+<li>
+    <a href='{row["PageName"]}'>
+        {row["MenuName"]}
+    </a>
+</li>";
                 }
 
                 submenu += "</ul>";
@@ -147,6 +154,5 @@ namespace Controls
 
             return submenu;
         }
-
     }
 }

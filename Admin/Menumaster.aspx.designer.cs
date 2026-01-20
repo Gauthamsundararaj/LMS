@@ -60,6 +60,15 @@ namespace Admin
         protected global::System.Web.UI.WebControls.TextBox txtPageName;
 
         /// <summary>
+        /// IsDefault control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox IsDefault;
+
+        /// <summary>
         /// chkIsChild control.
         /// </summary>
         /// <remarks>
@@ -121,6 +130,15 @@ namespace Admin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnClear;
+
+        /// <summary>
+        /// divGrid control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divGrid;
 
         /// <summary>
         /// ddlSearchBy control.

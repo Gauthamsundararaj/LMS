@@ -120,7 +120,7 @@ namespace Admin
             RestoreGridFilters();
 
             // Custom pager
-            if (gvBooks.PageCount > 1)
+            if (ds.Tables[0].Rows.Count > gvBooks.PageSize)
             {
                 BuildPager(gvBooks.PageCount, gvBooks.PageIndex);
                 rptPager.Visible = true;
@@ -338,7 +338,7 @@ namespace Admin
             }
         }
 
-        protected void btnDownloadCsv_Click(object sender, EventArgs e)
+        protected void btnDownloadCSV_Click(object sender, EventArgs e)
         {
             try
             {

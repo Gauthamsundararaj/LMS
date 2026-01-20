@@ -87,6 +87,15 @@ namespace Admin
         protected global::System.Web.UI.WebControls.Label lblReturnedBooks;
 
         /// <summary>
+        /// btnFilterPostBack control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnFilterPostBack;
+
+        /// <summary>
         /// divGrid control.
         /// </summary>
         /// <remarks>
@@ -105,13 +114,22 @@ namespace Admin
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl lblGridTitle;
 
         /// <summary>
-        /// btnDownloadCsv control.
+        /// lnkDownloadCSV control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnDownloadCsv;
+        protected global::System.Web.UI.WebControls.LinkButton lnkDownloadCSV;
+
+        /// <summary>
+        /// imgDownload control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image imgDownload;
 
         /// <summary>
         /// gvBooks control.

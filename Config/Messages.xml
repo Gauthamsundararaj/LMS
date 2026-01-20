@@ -5,7 +5,7 @@
   <Message id="ERRLOG003">Invalid Login id or Password.</Message>
   <Message id="ERRLOG004">Your account has been locked. Please contact the administrator.</Message>
   <Message id="ERRLOG005">Unauthorized login attempt.</Message>
-  <Message id="ERRLOG006">Login Successful.</Message>
+ 
 
   <Message id="ERRCOM">No Records Found</Message>
   <!-- ==========================
@@ -61,6 +61,13 @@
 
   <!-- Active Status -->
   <Message id="ERRUSR023">Please select Active status (checked or unchecked).</Message>
+  <Message id="ERRUSR028">Login ID already exists.</Message>
+  <Message id="ERRUSR029">Employee Code already exists.</Message>
+  <Message id="ERRUSR030">Email already exists.</Message>
+  <Message id="ERRUSR031">Alternate Email already exists.</Message>
+  <Message id="ERRUSR032">Phone Number already exists.</Message>
+  <Message id="ERRUSR033">Alternate Phone Number already exists.</Message>
+
 
   <!-- Success Messages -->
   <Message id="SUCUSR001">User details saved successfully.</Message>
@@ -82,6 +89,10 @@
   <Message id="ERRAM03">Please enter the Author Name.</Message>
   <Message id="ERRAM04">Author Name can only contain alphabets, spaces, dots, hyphens, and apostrophes.</Message>
   <Message id="ERRAM05">Please select an Author Type.</Message>
+  <Message id="ERRAM06">Author Name already Exists in this Author Type</Message>
+  <Message id="ERRAM07">Invalid AuthorType</Message>
+
+
   <Message id="SUSAM01">Author Inserted Successfully</Message>
   <Message id="SUSAM02">Author updated successfully</Message>
   <Message id="SUSAM03">Author deleted successfully</Message>
@@ -199,6 +210,10 @@
   <Message id="ERRROLE009">Role deleted successfully.</Message>
   <Message id="ERRROLE010">An unexpected error occurred.</Message>
   <Message id="ERRROLE011">Role Added Successfully.</Message>
+  <Message id="ERRROLE012">Default page is Required.</Message>
+  <Message id="ERRROLE013">Role Updated Succesfully.</Message>
+  <Message id="ERRROLE014">Role not found.</Message>
+  
 
   <!--Menu Master Validation Messages-->
 
@@ -223,6 +238,8 @@
   <Message id="ERRMENU007">Form cleared.</Message>
   <Message id="ERRMENU008">Please enter Page Name for Child Menu..</Message>
   <Message id="ERRMENU023">Select Parent Menu.</Message>
+  <Message id="ERRMENU024">PageName is Required to check Default Page.</Message>
+  
 
 
   <!--Search BY and Search Value-->

@@ -33,9 +33,9 @@
     <form id="form1" runat="server">
         <uc:header id="Header" runat="server" />
         <div class="page-body">
-            <div class="container-fluid mt-3">
+            <div class="container-fluid pt-2">
                 <div class="card">
-                    <div class="card-header bg-primary text-white">
+                    <div class="card-header bg-primary p-3">
                         <h3>Book Dues</h3>
                     </div>
 
@@ -75,7 +75,7 @@
                                 AllowPaging="true"
 
                                 PagerSettings-Visible="false"
-                                CssClass="table table-bordered table-striped">
+                                CssClass="table table-bordered table-striped text-center">
                                 <Columns>
                                     <asp:TemplateField HeaderText="S.No">
                                         <ItemTemplate>

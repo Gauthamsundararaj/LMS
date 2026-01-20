@@ -196,15 +196,34 @@
                         </asp:LinkButton>
                     </div>
                 </div>
+                <asp:LinkButton
+                    ID="btnFilterPostBack"
+                    runat="server"
+                    OnClick="btnSearch_Click"
+                    Style="display: none" />
+
 
                 <div class="card" id="divGrid" runat="server" visible="true">
-                    <div class="card-header bg-primary p-3">
+                    <div class="card-header bg-primary p-2">
                         <div class="row align-items-center justify-content-between">
                             <div class="col-auto">
                                 <h4 class="card-title mb-0" id="lblGridTitle" runat="server">All Renewals</h4>
                             </div>
-                            <div class="col-auto">
-                                <asp:Button ID="btnDownloadCSV" runat="server" Text="Download CSV" CssClass="btn btn-info btn-sm" OnClick="btnDownloadCSV_Click1" />
+                            <div class="col-auto text-end">
+                                <asp:LinkButton
+                                    ID="lnkDownloadCSV"
+                                    runat="server"
+                                    OnClick="btnDownloadCSV_Click"
+                                    ToolTip="Download CSV">
+
+                                    <asp:Image
+                                        ID="imgDownload"
+                                        runat="server"
+                                        ImageUrl="~/assets/images/icons/csvdownload.png"
+                                        AlternateText="Download"
+                                        CssClass="img-fluid"
+                                        Width="35" Height="35" />
+                                </asp:LinkButton>
                             </div>
                         </div>
                     </div>
@@ -266,7 +285,7 @@
                                                         Style="display: none;"
                                                         OnClick="btnRefresh_Click">
                                                         <i class="fa-solid fa-circle-xmark"></i>
-                                                        </asp:LinkButton>
+                                                    </asp:LinkButton>
 
                                                 </div>
                                             </HeaderTemplate>
@@ -576,6 +595,7 @@
             input.focus();
 
             toggleClearFilterIcon();
+            __doPostBack('<%= btnFilterPostBack.ClientID %>', '');
         }
 
         function allowOnlyNumbers(evt) {

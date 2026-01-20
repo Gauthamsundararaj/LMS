@@ -78,10 +78,11 @@
 
                             <asp:GridView ID="gvRoleMenu" runat="server"
                                 AutoGenerateColumns="False"
-                                CssClass="table table-striped table-bordered  pt-1"
+                                CssClass="table table-striped table-bordered text-center pt-1"
                                 DataKeyNames="MenuID"
                                 AllowPaging="true"
                                 PageSize="10"
+                                AutoPostBack="true"
                                 PagerSettings-Visible="false"
                                 OnPageIndexChanging="gvMenu_PageIndexChanging">
 

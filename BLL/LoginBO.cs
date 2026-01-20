@@ -28,11 +28,6 @@ namespace BLL
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
-
-        public DataSet CheckAdminLogin(string username, string Password)
-        {
-            return _objLoginDAO.CheckAdminLogin(username, Password);
-        }
         public DataSet CheckLogin(int userType, string username, string Password)
         {
             return _objLoginDAO.CheckLogin(userType, username, Password);

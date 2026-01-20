@@ -42,13 +42,22 @@ namespace Admin
         protected global::System.Web.UI.WebControls.HiddenField hfIsFirstTime;
 
         /// <summary>
-        /// Button1 control.
+        /// lnkDownloadCSV control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Button1;
+        protected global::System.Web.UI.WebControls.LinkButton lnkDownloadCSV;
+
+        /// <summary>
+        /// imgDownload control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image imgDownload;
 
         /// <summary>
         /// hfRemoveColumnsCSV control.

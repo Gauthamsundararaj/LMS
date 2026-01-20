@@ -18,7 +18,7 @@ namespace Admin
     public partial class UserMaster : System.Web.UI.Page
     {
         AdminBO objAdminBO = new AdminBO();
-        private string[] lblErrorMsg = new string[10];
+        private string[] lblErrorMsg = new string[35];
         int intAdminUserID;
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -29,13 +29,13 @@ namespace Admin
                 {
                     BindRoleType();
                     BindUserGrid();
-
+                   
                     //divForm.Style["display"] = "none";
                     //divGrid.Style["display"] = "block";
                 }
 
                 // Load all user messages
-                lblErrorMsg = new string[30];
+                lblErrorMsg = new string[40];
                 lblErrorMsg[0] = CommonFunction.GetErrorMessage("", "ERRUSR001");
                 lblErrorMsg[1] = CommonFunction.GetErrorMessage("", "ERRUSR002");
                 lblErrorMsg[2] = CommonFunction.GetErrorMessage("", "ERRUSR003");
@@ -63,6 +63,18 @@ namespace Admin
                 lblErrorMsg[24] = CommonFunction.GetErrorMessage("", "ERRUSRDS018");
                 lblErrorMsg[25] = CommonFunction.GetErrorMessage("", "SUCUSR002");
                 lblErrorMsg[26] = CommonFunction.GetErrorMessage("", "SUCUSR003");
+                lblErrorMsg[27] = CommonFunction.GetErrorMessage("", "ERRUSR023");
+                lblErrorMsg[28] = CommonFunction.GetErrorMessage("", "ERRUSR024");
+                lblErrorMsg[29] = CommonFunction.GetErrorMessage("", "ERRUSR025");
+                lblErrorMsg[30] = CommonFunction.GetErrorMessage("", "ERRUSR026");
+                lblErrorMsg[31] = CommonFunction.GetErrorMessage("", "ERRUSR027");
+                lblErrorMsg[32] = CommonFunction.GetErrorMessage("", "ERRUSR028");
+                lblErrorMsg[33] = CommonFunction.GetErrorMessage("", "ERRUSR029");
+                lblErrorMsg[34] = CommonFunction.GetErrorMessage("", "ERRUSR030");
+                lblErrorMsg[35] = CommonFunction.GetErrorMessage("", "ERRUSR031");
+                lblErrorMsg[36] = CommonFunction.GetErrorMessage("", "ERRUSR032");
+                lblErrorMsg[37] = CommonFunction.GetErrorMessage("", "ERRUSR033");
+
 
             }
             catch (Exception ex)
@@ -74,7 +86,7 @@ namespace Admin
         {
             try
             {
-                using (DataSet ds = objAdminBO.RoleType("SELECT"))
+                using (DataSet ds = objAdminBO.RoleType("SELECTROLE"))
                 {
                     if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
@@ -92,12 +104,13 @@ namespace Admin
 
             }
         }
+      
+        
         private void BindUserGrid()
         {
             try
             {
-
-                using (DataSet ds = objAdminBO.UserMaster("SELECT"))
+  using (DataSet ds = objAdminBO.UserMaster("SELECT"))
                 {
                     if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
@@ -111,7 +124,15 @@ namespace Admin
                         divGrid.Visible = false;
                     }
                     lblRecordCount.Text = "No. of Records: " + ds.Tables[0].Rows.Count;
-                    BuildPager(gvUser.PageCount, gvUser.PageIndex);
+                    if (ds.Tables[0].Rows.Count > gvUser.PageSize)
+                    {
+                        BuildPager(gvUser.PageCount, gvUser.PageIndex);
+                        rptPager.Visible = true;
+                    }
+                    else
+                    {
+                        rptPager.Visible = false;
+                    }
                 }
             }
             catch (Exception ex)
@@ -120,157 +141,455 @@ namespace Admin
             }
         }
 
+        //private bool ValidateUserInputs()
+        //{
+            
+        //    if (!string.IsNullOrWhiteSpace(hdnUserID.Value))
+        //    {
+        //        userId = Convert.ToInt32(hdnUserID.Value);
+        //    }
+        //    // Login ID
+        //    if (string.IsNullOrWhiteSpace(strLoginId))
+        //    {
+        //        ShowAlert(lblErrorMsg[0], "error"); return false;
+        //    }
+        //    if (!CommonFunction.IsAlphaNumeric(strLoginId))
+        //    {
+        //        ShowAlert(lblErrorMsg[1], "error"); return false;
+        //    }
+        //    if (strLoginId.Length < 5)
+        //    {
+        //        ShowAlert(lblErrorMsg[2], "error"); return false;
+        //    }
+
+        //    // Employee Code
+        //    if (string.IsNullOrWhiteSpace(strEmpCode))
+        //    {
+        //        ShowAlert(lblErrorMsg[3], "error"); return false;
+        //    }
+        //    if (!CommonFunction.IsAlphaNumeric(strEmpCode))
+        //    {
+        //        ShowAlert(lblErrorMsg[4], "error"); return false;
+        //    }
+
+        //    // User Name
+        //    if (string.IsNullOrWhiteSpace(strUserName))
+        //    {
+        //        ShowAlert(lblErrorMsg[5], "error"); return false;
+        //    }
+        //    if (!System.Text.RegularExpressions.Regex.IsMatch(strUserName, @"^[A-Za-z .]+$"))
+        //    {
+        //        ShowAlert(lblErrorMsg[6], "error"); return false;
+        //    }
+
+        //    // Gender
+        //    if (string.IsNullOrWhiteSpace(strGender))
+        //    {
+        //        ShowAlert(lblErrorMsg[7], "error"); return false;
+        //    }
+
+        //    // Email
+        //    if (string.IsNullOrWhiteSpace(strEmail))
+        //    {
+        //        ShowAlert(lblErrorMsg[8], "error"); return false;
+        //    }
+        //    if (!CommonFunction.CheckEmail(strEmail))
+        //    {
+        //        ShowAlert(lblErrorMsg[9], "error"); return false;
+        //    }
+
+        //    // Alternate Email
+        //    if (!string.IsNullOrWhiteSpace(strAltEmail) && !CommonFunction.CheckEmail(strAltEmail))
+        //    {
+        //        ShowAlert(lblErrorMsg[10], "error"); return false; 
+        //    }
+
+        //    // Phone
+        //    if (string.IsNullOrWhiteSpace(strPhone))
+        //    {
+        //        ShowAlert(lblErrorMsg[11], "error"); return false;
+        //    }
+        //    if (!Regex.IsMatch(strPhone, @"^\d{10}$"))
+        //    {
+        //        ShowAlert(lblErrorMsg[12], "error"); return false;
+        //    }
+
+        //    // Alternate Phone
+        //    if (!string.IsNullOrWhiteSpace(strAltPhone) && !Regex.IsMatch(strAltPhone, @"^\d{10}$"))
+        //    {
+        //        ShowAlert(lblErrorMsg[15], "error"); return false;
+        //    }
+
+        //    // Department
+        //    if (string.IsNullOrWhiteSpace(strDepartment))
+        //    {
+        //        ShowAlert(lblErrorMsg[16], "error"); return false;
+        //    }
+
+        //    // Designation
+        //    if (string.IsNullOrWhiteSpace(strDesignation))
+        //    {
+        //        ShowAlert(lblErrorMsg[17], "error"); return false;
+        //    }
+        //    if (!Regex.IsMatch(strDesignation, @"^[A-Za-z' -]+$"))
+        //    {
+        //        ShowAlert(lblErrorMsg[24], "error"); return false;
+        //    }
+        //    // Role Type
+        //    if (roleID == 0)
+        //    {
+        //        ShowAlert(lblErrorMsg[18], "error");
+        //        return false;
+        //    }
+
+        //    // Password
+        //    if (string.IsNullOrWhiteSpace(strPassword))
+        //    {
+        //        ShowAlert(lblErrorMsg[19], "error"); return false;
+        //    }
+        //    if (!System.Text.RegularExpressions.Regex.IsMatch(strPassword, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$"))
+        //    {
+        //        ShowAlert(lblErrorMsg[21], "error"); return false;
+        //    }
+        //    return true;
+        //}
+
+        //protected void btnSave_Click(object sender, EventArgs e)
+        //{
+        //    //bool isUpdate = btnSave.Text == "Update";
+        //    try
+        //    {
+        //        string strLoginId = txtLoginId.Text.Trim();
+        //        string strEmpCode = txtEmpCode.Text.Trim();
+        //        string strUserName = txtUsername.Text.Trim();
+        //        string strEmail = txtEmail.Text.Trim();
+        //        string strAltEmail = txtAlternateEmail.Text.Trim();
+        //        string strDepartment = ddlDepartment.SelectedValue.Trim();
+        //        string strDesignation = txtDesignation.Text.Trim();
+        //        int roleID = string.IsNullOrEmpty(ddlRoleType.SelectedValue) ? 0 : Convert.ToInt32(ddlRoleType.SelectedValue);
+        //        // ✅ PageName string
+
+        //        string strPassword = txtPassword.Text.Trim();
+
+        //        bool boolIsActive = chkActive.Checked;
+        //        string strGender = rblGender.SelectedValue;
+
+        //        string strPhone = TxtPhone.Text.Trim();
+        //        string strAltPhone = txtAlternatePhone.Text.Trim();
+
+        //        // ===== Validations =====
+        //        int userId = 0;
+        //        if (!ValidateUserInputs())
+        //        {
+        //            return; // stop if validation fails
+        //        }
+        //        using (DataSet ds = objAdminBO.UserMaster("INSERT", 0, strLoginId, strEmpCode, strUserName,
+        //            strGender, strEmail, strAltEmail, strPhone, strAltPhone, strDepartment, strDesignation, roleID,
+        //           Security.CryptTripleDES(true, strPassword), boolIsActive, intAdminUserID))
+        //        {
+        //            if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+        //            {
+        //                int msgCode = Convert.ToInt32(ds.Tables[0].Rows[0]["MsgCode"]);
+        //                switch (msgCode)
+        //                {
+        //                    case 0:
+        //                        ShowAlert(lblErrorMsg[22], "success"); // Insert / Update success
+        //                        ClearFormFields();
+        //                        divGrid.Visible = true;
+        //                        divForm.Visible = false;
+        //                        btnAddUser.Visible = true;
+        //                        BindUserGrid();
+        //                        break;
+
+        //                    case 1:
+        //                        ShowAlert(lblErrorMsg[32], "error"); // Login ID already exists
+        //                        break;
+
+        //                    case 2:
+        //                        ShowAlert(lblErrorMsg[33], "error"); // Employee Code already exists
+        //                        break;
+
+        //                    case 3:
+        //                        ShowAlert(lblErrorMsg[34], "error"); // Email already exists
+        //                        break;
+
+        //                    case 4:
+        //                        ShowAlert(lblErrorMsg[35], "error"); // Alternate Email already exists
+        //                        break;
+
+        //                    case 5:
+        //                        ShowAlert(lblErrorMsg[36], "error"); // Phone Number already exists
+        //                        break;
+
+        //                    case 6:
+        //                        ShowAlert(lblErrorMsg[37], "error"); // Alternate Phone Number already exists
+        //                        break;
+
+        //                    default:
+        //                        ShowAlert("Unknown Error", "error");
+        //                        break;
+        //                }
+
+                        
+
+
+        //            }
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MyExceptionLogger.Publish(ex);
+        //        ShowAlert("An unexpected error occurred. Please try again.", "error");
+        //    }
+        //}
+
+
+
+        private bool ValidateUserInputs(
+            string strLoginId,
+            string strEmpCode,
+            string strUserName,
+            string strGender,
+            string strEmail,
+            string strAltEmail,
+            string strPhone,
+            string strAltPhone,
+            string strDepartment,
+            string strDesignation,
+            int roleID,
+            string strPassword)
+        {
+            // Login ID
+            if (string.IsNullOrWhiteSpace(strLoginId))
+            {
+                ShowAlert(lblErrorMsg[0], "error"); return false;
+            }
+            if (!CommonFunction.IsAlphaNumeric(strLoginId))
+            {
+                ShowAlert(lblErrorMsg[1], "error"); return false;
+            }
+            if (strLoginId.Length < 5)
+            {
+                ShowAlert(lblErrorMsg[2], "error"); return false;
+            }
+
+            // Employee Code
+            if (string.IsNullOrWhiteSpace(strEmpCode))
+            {
+                ShowAlert(lblErrorMsg[3], "error"); return false;
+            }
+            if (!CommonFunction.IsAlphaNumeric(strEmpCode))
+            {
+                ShowAlert(lblErrorMsg[4], "error"); return false;
+            }
+
+            // User Name (letters, spaces, dot)
+            if (string.IsNullOrWhiteSpace(strUserName))
+            {
+                ShowAlert(lblErrorMsg[5], "error"); return false;
+            }
+            if (!System.Text.RegularExpressions.Regex.IsMatch(strUserName, @"^[A-Za-z .]+$"))
+            {
+                ShowAlert(lblErrorMsg[6], "error"); return false;
+            }
+
+            // Gender
+            if (string.IsNullOrWhiteSpace(strGender))
+            {
+                ShowAlert(lblErrorMsg[7], "error"); return false;
+            }
+
+            // Email
+            if (string.IsNullOrWhiteSpace(strEmail))
+            {
+                ShowAlert(lblErrorMsg[8], "error"); return false;
+            }
+            if (!CommonFunction.CheckEmail(strEmail))
+            {
+                ShowAlert(lblErrorMsg[9], "error"); return false;
+            }
+
+            // Alternate Email (optional)
+            if (!string.IsNullOrWhiteSpace(strAltEmail) && !CommonFunction.CheckEmail(strAltEmail))
+            {
+                ShowAlert(lblErrorMsg[10], "error"); return false;
+            }
+
+            // Phone (exactly 10 digits)
+            if (string.IsNullOrWhiteSpace(strPhone))
+            {
+                ShowAlert(lblErrorMsg[11], "error"); return false;
+            }
+            if (!System.Text.RegularExpressions.Regex.IsMatch(strPhone, @"^\d{10}$"))
+            {
+                ShowAlert(lblErrorMsg[12], "error"); return false;
+            }
+
+            // Alternate Phone (optional - exactly 10 digits)
+            if (!string.IsNullOrWhiteSpace(strAltPhone) &&
+                !System.Text.RegularExpressions.Regex.IsMatch(strAltPhone, @"^\d{10}$"))
+            {
+                ShowAlert(lblErrorMsg[15], "error"); return false;
+            }
+
+            // Department
+            if (string.IsNullOrWhiteSpace(strDepartment))
+            {
+                ShowAlert(lblErrorMsg[16], "error"); return false;
+            }
+
+            // Designation (letters, space, hyphen, apostrophe)
+            if (string.IsNullOrWhiteSpace(strDesignation))
+            {
+                ShowAlert(lblErrorMsg[17], "error"); return false;
+            }
+            if (!System.Text.RegularExpressions.Regex.IsMatch(strDesignation, @"^[A-Za-z' -]+$"))
+            {
+                ShowAlert(lblErrorMsg[24], "error"); return false;
+            }
+
+            // Role Type
+            if (roleID == 0)
+            {
+                ShowAlert(lblErrorMsg[18], "error");
+                return false;
+            }
+
+            // Password (min 6, with lowercase, uppercase, digit, special char)
+            if (string.IsNullOrWhiteSpace(strPassword))
+            {
+                ShowAlert(lblErrorMsg[19], "error"); return false;
+            }
+            if (!System.Text.RegularExpressions.Regex.IsMatch(
+                    strPassword,
+                    @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$"))
+            {
+                ShowAlert(lblErrorMsg[21], "error"); return false;
+            }
+
+            return true;
+        }
+
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            //bool isUpdate = btnSave.Text == "Update";
             try
             {
-                // ===== Trim and collect all values =====
+               
                 string strLoginId = txtLoginId.Text.Trim();
                 string strEmpCode = txtEmpCode.Text.Trim();
                 string strUserName = txtUsername.Text.Trim();
                 string strEmail = txtEmail.Text.Trim();
                 string strAltEmail = txtAlternateEmail.Text.Trim();
-                string strDepartment = ddlDepartment.SelectedValue.Trim();
+                string strDepartment = ddlDepartment.SelectedValue?.Trim();
                 string strDesignation = txtDesignation.Text.Trim();
-                int roleID = string.IsNullOrEmpty(ddlRoleType.SelectedValue) ? 0 : Convert.ToInt32(ddlRoleType.SelectedValue);
-
                 string strPassword = txtPassword.Text.Trim();
+                string strGender = rblGender.SelectedValue;
 
                 bool boolIsActive = chkActive.Checked;
-                string strGender = rblGender.SelectedValue;
 
                 string strPhone = TxtPhone.Text.Trim();
                 string strAltPhone = txtAlternatePhone.Text.Trim();
+               
 
-                // ===== Validations =====
+                int roleID = 0;
+                if (!string.IsNullOrEmpty(ddlRoleType.SelectedValue))
+                {
+                    int parsedRole;
+                    if (int.TryParse(ddlRoleType.SelectedValue, out parsedRole))
+                    {
+                        roleID = parsedRole;
+                    }
+                }
                 int userId = 0;
                 if (!string.IsNullOrWhiteSpace(hdnUserID.Value))
                 {
                     userId = Convert.ToInt32(hdnUserID.Value);
                 }
-                // Login ID
-                if (string.IsNullOrWhiteSpace(strLoginId))
+                // ===== Validations =====
+                if (!ValidateUserInputs(strLoginId, strEmpCode, strUserName, strGender, strEmail, strAltEmail,
+                        strPhone,strAltPhone,strDepartment,strDesignation,roleID,strPassword))
                 {
-                    ShowAlert(lblErrorMsg[0], "error"); return;
-                }
-                if (!CommonFunction.IsAlphaNumeric(strLoginId))
-                {
-                    ShowAlert(lblErrorMsg[1], "error"); return;
-                }
-                if (strLoginId.Length < 5)
-                {
-                    ShowAlert(lblErrorMsg[2], "error"); return;
+                    return; // stop if validation fails
                 }
 
-                // Employee Code
-                if (string.IsNullOrWhiteSpace(strEmpCode))
-                {
-                    ShowAlert(lblErrorMsg[3], "error"); return;
-                }
-                if (!CommonFunction.IsAlphaNumeric(strEmpCode))
-                {
-                    ShowAlert(lblErrorMsg[4], "error"); return;
-                }
-
-                // User Name
-                if (string.IsNullOrWhiteSpace(strUserName))
-                {
-                    ShowAlert(lblErrorMsg[5], "error"); return;
-                }
-                if (!System.Text.RegularExpressions.Regex.IsMatch(strUserName, @"^[A-Za-z .]+$"))
-                {
-                    ShowAlert(lblErrorMsg[6], "error"); return;
-                }
-
-                // Gender
-                if (string.IsNullOrWhiteSpace(strGender))
-                {
-                    ShowAlert(lblErrorMsg[7], "error"); return;
-                }
-
-                // Email
-                if (string.IsNullOrWhiteSpace(strEmail))
-                {
-                    ShowAlert(lblErrorMsg[8], "error"); return;
-                }
-                if (!CommonFunction.CheckEmail(strEmail))
-                {
-                    ShowAlert(lblErrorMsg[9], "error"); return;
-                }
-
-                // Alternate Email
-                if (!string.IsNullOrWhiteSpace(strAltEmail) && !CommonFunction.CheckEmail(strAltEmail))
-                {
-                    ShowAlert(lblErrorMsg[10], "error"); return;
-                }
-
-                // Phone
-                if (string.IsNullOrWhiteSpace(strPhone))
-                {
-                    ShowAlert(lblErrorMsg[11], "error"); return;
-                }
-                if (!Regex.IsMatch(strPhone, @"^\d{10}$"))
-                {
-                    ShowAlert(lblErrorMsg[12], "error"); return;
-                }
-
-                // Alternate Phone
-                if (!string.IsNullOrWhiteSpace(strAltPhone) && !Regex.IsMatch(strAltPhone, @"^\d{10}$"))
-                {
-                    ShowAlert(lblErrorMsg[15], "error"); return;
-                }
-
-                // Department
-                if (string.IsNullOrWhiteSpace(strDepartment))
-                {
-                    ShowAlert(lblErrorMsg[16], "error"); return;
-                }
-
-                // Designation
-                if (string.IsNullOrWhiteSpace(strDesignation))
-                {
-                    ShowAlert(lblErrorMsg[17], "error"); return;
-                }
-                if (!Regex.IsMatch(strDesignation, @"^[A-Za-z' -]+$"))
-                {
-                    ShowAlert(lblErrorMsg[24], "error"); return;
-                }
-                // Role Type
-                if (roleID == 0)
-                {
-                    ShowAlert(lblErrorMsg[18], "error");
-                    return;
-                }
-
-                // Password
-                if (string.IsNullOrWhiteSpace(strPassword))
-                {
-                    ShowAlert(lblErrorMsg[19], "error"); return;
-                }
-                if (!System.Text.RegularExpressions.Regex.IsMatch(strPassword, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$"))
-                {
-                    ShowAlert(lblErrorMsg[21], "error"); return;
-                }
-                using (DataSet ds = objAdminBO.UserMaster("INSERT", 0, strLoginId, strEmpCode, strUserName,
-                    strGender, strEmail, strAltEmail, strPhone, strAltPhone, strDepartment, strDesignation, roleID,
-                   Security.CryptTripleDES(true, strPassword), boolIsActive, intAdminUserID))
+                // Proceed with insert
+                using (DataSet ds = objAdminBO.UserMaster(
+                    "INSERT",
+                    0,
+                    strLoginId,
+                    strEmpCode,
+                    strUserName,
+                    strGender,
+                    strEmail,
+                    strAltEmail,
+                    strPhone,
+                    strAltPhone,
+                    strDepartment,
+                    strDesignation,
+                    roleID,
+                    Security.CryptTripleDES(true, strPassword),
+                    boolIsActive,
+                    intAdminUserID))
                 {
                     if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
-                        int msgCode = Convert.ToInt32(ds.Tables[0].Rows[0]["MsgCode"]);
-                        if (msgCode == 1)
+                        int msgCode = 0;
+                        // Safely read MsgCode
+
+                        object raw = ds.Tables[0].Rows[0]["MsgCode"];
+                        int code;
+                        if (raw != null && int.TryParse(raw.ToString(), out code))
                         {
-                            ShowAlert(lblErrorMsg[22], "success"); // insert success
-                            ClearFormFields();
-                            divGrid.Visible = true;
-                            divForm.Visible = false;
-                            btnAddUser.Visible = true;
-                            BindUserGrid();
+                            msgCode = code;
+                        }
+
+
+                        switch (msgCode)
+                        {
+                            case 0:
+                                ShowAlert(lblErrorMsg[22], "success"); // Insert / Update success
+                                ClearFormFields();
+                                divGrid.Visible = true;
+                                divForm.Visible = false;
+                                btnAddUser.Visible = true;
+                                BindUserGrid();
+                                break;
+
+                            case 1:
+                                ShowAlert(lblErrorMsg[32], "error"); // Login ID already exists
+                                break;
+
+                            case 2:
+                                ShowAlert(lblErrorMsg[33], "error"); // Employee Code already exists
+                                break;
+
+                            case 3:
+                                ShowAlert(lblErrorMsg[34], "error"); // Email already exists
+                                break;
+
+                            case 4:
+                                ShowAlert(lblErrorMsg[35], "error"); // Alternate Email already exists
+                                break;
+
+                            case 5:
+                                ShowAlert(lblErrorMsg[36], "error"); // Phone Number already exists
+                                break;
+
+                            case 6:
+                                ShowAlert(lblErrorMsg[37], "error"); // Alternate Phone Number already exists
+                                break;
+
+                            default:
+                                ShowAlert("Unknown Error", "error");
+                                break;
                         }
                     }
+                    else
+                    {
+                        ShowAlert("No response from server.", "error");
+                    }
                 }
-
             }
             catch (Exception ex)
             {
@@ -278,6 +597,7 @@ namespace Admin
                 ShowAlert("An unexpected error occurred. Please try again.", "error");
             }
         }
+
         protected void gvUser_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             try
@@ -310,6 +630,7 @@ namespace Admin
                     {
                         if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                         {
+
                             int msgCode = Convert.ToInt32(ds.Tables[0].Rows[0]["MsgCode"]);
                             if (msgCode == 1)
                             {
@@ -318,7 +639,7 @@ namespace Admin
                             }
                             else
                             {
-                                ShowAlert(lblErrorMsg[0], "error");
+                                ShowAlert("UNKNOWN ERROR", "error");
                             }
                         }
                     }
@@ -386,6 +707,7 @@ namespace Admin
         {
             try
             {
+
                 int userID = Convert.ToInt32(hdnUserID.Value);
                 string strLoginId = txtLoginId.Text.Trim();
                 string strEmpCode = txtEmpCode.Text.Trim();
@@ -404,20 +726,29 @@ namespace Admin
                 string strPhone = TxtPhone.Text.Trim();
                 string strAltPhone = txtAlternatePhone.Text.Trim();
 
-                using (DataSet ds = objAdminBO.UserMaster(
-           "UPDATE",
-           userID,
-           strLoginId,
-           strEmpCode,
-           strUserName,
-           strGender,
-           strEmail,
-           strAltEmail,
-           strPhone,
-           strAltPhone,
-           strDepartment,
-           strDesignation,
-           roleID,
+                // ===== Validations =====
+                if (!ValidateUserInputs(
+                        
+                        strLoginId,
+                        strEmpCode,
+                        strUserName,
+                        strGender,
+                        strEmail,
+                        strAltEmail,
+                        strPhone,
+                        strAltPhone,
+                        strDepartment,
+                        strDesignation,
+                        roleID,
+                        strPassword))
+                {
+                    return; // stop if validation fails
+                }
+
+
+                using (DataSet ds = objAdminBO.UserMaster( "UPDATE", userID, strLoginId, strEmpCode, strUserName, strGender,
+           strEmail, strAltEmail, strPhone,strAltPhone,strDepartment, strDesignation,roleID,
+         
            Security.CryptTripleDES(true, strPassword),
            boolIsActive,
            intAdminUserID
@@ -427,22 +758,47 @@ namespace Admin
                     if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
                         int msgCode = Convert.ToInt32(ds.Tables[0].Rows[0]["MsgCode"]);
-                        if (msgCode == 1)
+                        switch (msgCode)
                         {
-                            ShowAlert(lblErrorMsg[25], "success");
+                            case 0:
+                                ShowAlert(lblErrorMsg[22], "success"); // Insert / Update success
+                                ClearFormFields();
+                                divGrid.Visible = true;
+                                divForm.Visible = false;
+                                btnAddUser.Visible = true;
+                                BindUserGrid();
+                                break;
 
-                            ClearFormFields();
+                            case 1:
+                                ShowAlert(lblErrorMsg[32], "error"); // Login ID already exists
+                                break;
 
-                            divGrid.Visible = true;
-                            divForm.Visible = false;
-                            btnAddUser.Visible = true;
+                            case 2:
+                                ShowAlert(lblErrorMsg[33], "error"); // Employee Code already exists
+                                break;
 
-                            BindUserGrid();
+                            case 3:
+                                ShowAlert(lblErrorMsg[34], "error"); // Email already exists
+                                break;
+
+                            case 4:
+                                ShowAlert(lblErrorMsg[35], "error"); // Alternate Email already exists
+                                break;
+
+                            case 5:
+                                ShowAlert(lblErrorMsg[36], "error"); // Phone Number already exists
+                                break;
+
+                            case 6:
+                                ShowAlert(lblErrorMsg[37], "error"); // Alternate Phone Number already exists
+                                break;
+
+                            default:
+                                ShowAlert("Unknown Error", "error");
+                                break;
                         }
-                        else
-                        {
-                            ShowAlert(lblErrorMsg[0], "error");
-                        }
+                      
+                      
                     }
                 }
             }
@@ -464,8 +820,9 @@ namespace Admin
             ddlDepartment.SelectedIndex = 0;
             txtDesignation.Text = "";
             ddlRoleType.SelectedIndex = 0;
+          
             txtPassword.Text = "";
-            chkActive.Checked = false;
+          
             rblGender.ClearSelection();
         }
 
@@ -479,19 +836,11 @@ namespace Admin
         }
         protected void btnClear_Click(object sender, EventArgs e)
         {
-            try
-            {
-                ClearFormFields();
-                ShowAlert(lblErrorMsg[23], "info");
-            }
-            catch (Exception ex)
-            {
-                MyExceptionLogger.Publish(ex);
-                ShowAlert("An error occurred while clearing fields.", "error");
-            }
+            ClearFormFields();
         }
         protected void btnAddUser_Click(object sender, EventArgs e)
         {
+            ClearFormFields();
             divGrid.Visible=false;
             divForm.Visible=true;
             btnAddUser.Visible=false;
@@ -512,74 +861,7 @@ namespace Admin
             BindUserGrid();
         }
 
-        //protected void btnSearch_Click(object sender, EventArgs e)
-        //{
-        //    string searchBy = ddlSearchBy.SelectedValue;
-        //    string searchValue = txtSearchValue.Text.Trim();
-
-        //    // Validate dropdown
-        //    if (string.IsNullOrEmpty(searchBy))
-        //    {
-        //        ShowAlert("Please select a search option.", "warning");
-        //        return;
-        //    }
-
-        //    // Validate input
-        //    if (string.IsNullOrEmpty(searchValue))
-        //    {
-        //        ShowAlert("Please enter a search value.", "error");
-        //        return;
-        //    }
-
-        //    // BookID must be numeric
-        //    if (searchBy == "User Name")
-        //    {
-        //        // Must NOT start with a number + only letters, spaces, allowed chars
-        //        if (!System.Text.RegularExpressions.Regex.IsMatch(searchBy, @"^[A-Za-z .]+$"))
-        //        {
-        //            ShowAlert(lblErrorMsg[6], "error");
-        //            txtSearchValue.Focus();
-        //            return;
-        //        }
-
-        //    }
-
-        //    // BookTitle validation
-        //    if (searchBy == "Email")
-        //    {
-        //        // Must NOT start with a number + allow letters, numbers, allowed chars
-        //        if (!CommonFunction.CheckEmail(searchBy))
-        //        {
-        //            ShowAlert(lblErrorMsg[9], "error");
-        //            txtSearchValue.Focus();
-        //            return;
-        //        }
-        //    }
-        //    if (searchBy == "RoleType")
-        //    {
-        //        int roleID = Convert.ToInt32(searchBy);
-        //        if (roleID == 0)
-        //        {
-        //            ShowAlert(lblErrorMsg[18], "error");
-        //            return;
-        //        }
-        //    }
-
-        //    DataSet ds = objAdminBO.UserMaster("SEARCH", 0, "", "", "", "", "", "", "", "",
-        //    "", "", 0, "", true, searchBy, searchValue);
-
-        //    gvUser.DataSource = ds.Tables[0];
-        //    gvUser.DataBind();
-
-        //    lblRecordCount.Text = gvUser.Rows.Count + " Records found";
-
-        //    if (gvUser.Rows.Count == 0)
-        //    {
-        //        ShowAlert("No records found.", "warning");
-        //    }
-
-        //}
-
+      
         protected void btnSearch_Click(object sender, EventArgs e)
         {
             try
@@ -641,7 +923,7 @@ namespace Admin
                 DataSet ds = objAdminBO.UserMaster(
                     "SEARCH",
                     0, "", "", "", "", "", "", "", "",
-                    "", "", 0, "", true, intAdminUserID,
+                    "", "", 0,"", true, intAdminUserID,
                     searchBy,
                     searchValue
                 );
@@ -725,7 +1007,6 @@ namespace Admin
         protected void rptPager_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int newIndex = Convert.ToInt32(e.CommandArgument);
-
             gvUser.PageIndex = newIndex;
             BindUserGrid();
         }

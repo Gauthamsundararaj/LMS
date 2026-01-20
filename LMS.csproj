@@ -142,6 +142,9 @@
     <Content Include="assets\css\CustomPagination.css" />
     <Content Include="assets\css\forcefull.css" />
     <Content Include="assets\css\toastr.css" />
+    <Content Include="assets\images\icons\csvdownload.png" />
+    <Content Include="assets\images\icons\download %281%29.png" />
+    <Content Include="assets\images\icons\import.png" />
     <Content Include="assets\images\icons\Totalbooks.png" />
     <Content Include="assets\js\bootstrap-multiselect.min.js" />
     <Content Include="assets\js\Custom-Toasts.js" />

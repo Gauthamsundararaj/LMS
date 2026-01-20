@@ -72,32 +72,13 @@ namespace Admin
             }
         }
 
-        //private void LoadRoleTypes()
-        //{
-        //    try
-        //    {
-        //        DataSet ds = objBO.GetRoleType();
-
-        //        if (ds != null && ds.Tables[0].Rows.Count > 0)
-        //        {
-        //            ddlRoleType.DataSource = ds;
-        //            ddlRoleType.DataTextField = "RoleName";
-        //            ddlRoleType.DataValueField = "RoleID";
-        //            ddlRoleType.DataBind();
-        //        }
-
-        //        ddlRoleType.Items.Insert(0, new System.Web.UI.WebControls.ListItem("-- Select --", "0"));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ShowToastr(lblErrorMsg[1] + " " + ex.Message, "error");
-        //    }
-        //}
+        
 
         protected void ddlRoleType_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
             {
+                gvRoleMenu.PageIndex = 0;
                 if (ddlRoleType.SelectedValue == "0")
                 {
                     gvRoleMenu.DataSource = null;
@@ -135,8 +116,15 @@ namespace Admin
                     int totalRecords = ds.Tables[0].Rows.Count;
                     int pageSize = gvRoleMenu.PageSize;
                     int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
-
-                    BuildPager(totalPages, gvRoleMenu.PageIndex);
+                    if (ds.Tables[0].Rows.Count > gvRoleMenu.PageSize)
+                    {
+                        BuildPager(totalPages, gvRoleMenu.PageIndex);
+                        rptPager.Visible = true;
+                    }
+                    else
+                    {
+                        rptPager.Visible = false;
+                    }
                 }
                 else
                 {
@@ -192,7 +180,7 @@ namespace Admin
             try
             {
                 ddlRoleType.SelectedIndex = 0;
-
+                gvRoleMenu.PageIndex = 0;
                 gvRoleMenu.DataSource = null;
                 gvRoleMenu.DataBind();
                 lblRecordCount.Text = "";

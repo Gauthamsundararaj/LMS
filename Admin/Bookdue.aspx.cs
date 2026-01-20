@@ -157,8 +157,16 @@ namespace Admin
                         int totalRecords = ds.Tables[0].Rows.Count;
                         int pageSize = gvBookDues.PageSize;
                         int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
-
-                        BuildPager(totalPages, gvBookDues.PageIndex);
+                        if (ds.Tables[0].Rows.Count > gvBookDues.PageSize)
+                        {
+                            BuildPager(totalPages, gvBookDues.PageIndex);
+                            rptPager.Visible = true;
+                        }
+                        else
+                        {
+                            rptPager.Visible = false;
+                        }
+                       
 
                         foreach (GridViewRow row in gvBookDues.Rows)
                         {
@@ -184,17 +192,16 @@ namespace Admin
             }
         }
 
-
-
         protected void btnMarkReturned_Click(object sender, EventArgs e)
         {
             try
             {
                 DateTime selectedReturnDate;
 
-                if (!DateTime.TryParse(txtDate.Text, out selectedReturnDate))
+                // Validate return date
+                if (!DateTime.TryParse(txtDate.Text.Trim(), out selectedReturnDate))
                 {
-                    ShowToastr(lblErrorMsg[9], "warning");  //Please select a valid return date.
+                    ShowToastr(lblErrorMsg[9], "warning"); // Please select a valid return date.
                     return;
                 }
 
@@ -210,43 +217,52 @@ namespace Admin
 
                         DateTime issueDate = Convert.ToDateTime(row.Cells[5].Text);
 
+                        // Return date cannot be earlier than issue date
                         if (selectedReturnDate < issueDate)
                         {
-                            ShowToastr(lblErrorMsg[10], "error");  //Return date cannot be earlier than the Issue Date.
+                            ShowToastr(lblErrorMsg[10], "error");
                             return;
                         }
 
+                        // Return date cannot be in the future
                         if (selectedReturnDate > DateTime.Now)
                         {
-                            ShowToastr(lblErrorMsg[11], "error"); //Return date cannot be in the future.
+                            ShowToastr(lblErrorMsg[11], "error");
                             return;
                         }
 
-                        // Process return
+                        // Get Issue ID
                         int issueId = Convert.ToInt32(gvBookDues.DataKeys[row.RowIndex].Value);
-                        objBO.MarkBookReturned(issueId, intAdminUserID);
+
+                        // ✅ Pass DateTime parameter correctly
+                        objBO.MarkBookReturned(issueId, selectedReturnDate, intAdminUserID);
                     }
                 }
 
                 if (!anySelected)
                 {
-                    ShowToastr(lblErrorMsg[12], "warning");  //Please select at least one book.
+                    ShowToastr(lblErrorMsg[12], "warning"); // Please select at least one book.
                     return;
                 }
 
-                ShowToastr(lblErrorMsg[13], "success");  //Books marked as returned successfully.
+                ShowToastr(lblErrorMsg[13], "success"); // Books marked as returned successfully.
                 LoadBookDues();
+
+                // Clear date textbox on client side
                 ScriptManager.RegisterStartupScript(
-                this, this.GetType(), "clearDateReturned",
-                "document.getElementById('" + txtDate.ClientID + "').value='';",
-                true);
+                    this,
+                    this.GetType(),
+                    "clearDateReturned",
+                    "document.getElementById('" + txtDate.ClientID + "').value='';",
+                    true);
             }
             catch (Exception ex)
             {
                 MyExceptionLogger.Publish(ex);
-                ShowToastr(lblErrorMsg[6] + ex.Message, "error");  //Unexpected Error Occured.
+                ShowToastr(lblErrorMsg[6] + ex.Message, "error");
             }
         }
+
 
         protected void btnMarkRenewed_Click(object sender, EventArgs e)
         {
@@ -326,6 +342,7 @@ namespace Admin
 
                 gvBookDues.DataSource = null;
                 gvBookDues.DataBind();
+                rptPager.Visible=false;
             }
             catch (Exception ex)
             {

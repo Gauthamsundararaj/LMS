@@ -11,7 +11,6 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AuthorMenu</title>
-    <link href="http://localhost/LMS/assets/css/CustomPagination.css" rel="stylesheet" />
     <link href="../assets/css/CustomPagination.css" rel="stylesheet" />
 
 </head>
@@ -28,7 +27,7 @@
                     <asp:HiddenField ID="hdnAuthorID" runat="server" />
                     <div class="card-body">
 
-                        <div class="row g-3 needs-validation custom-input tooltip-valid validation-forms">
+                        <div class="row g-3 needs-validation  validation-forms">
                             <!-- Author Name -->
                             <div class="col-12 col-md-6 col-lg-4 position-relative">
                                 <label class="form-label" for="<%= txtAuthorName.ClientID %>">
@@ -39,7 +38,7 @@
                                     CssClass="form-control"
                                     MaxLength="50"
                                     placeholder="Enter Author Name"></asp:TextBox>
-                                <div class="valid-tooltip">Looks good!</div>
+                               
                             </div>
 
                             <!-- Author Type -->
@@ -86,7 +85,7 @@
                                     <asp:Button ID="btnClear"
                                         runat="server"
                                         Text="Clear"
-                                        CssClass="btn btn-danger"
+                                        CssClass="btn btn-warning"
                                         OnClick="Clear_Click" />
                                 </div>
                             </div>
@@ -111,7 +110,7 @@
                         <div class="table-responsive" style="overflow-x: auto; white-space: nowrap;">
                             <asp:GridView ID="gvAuthor"
                                 runat="server"
-                                CssClass="table table-bordered table-striped align-middle mb-0"
+                                CssClass="table table-bordered table-striped align-middle mb-0 text-center"
                                 AutoGenerateColumns="False"
                                 OnRowCommand="gvAuthor_RowCommand"
                                 AllowPaging="True"
