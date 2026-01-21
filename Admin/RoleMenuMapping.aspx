@@ -39,36 +39,26 @@
 
                     <div class="card-body basic-form">
 
-                 <div class="d-flex align-items-center gap-2 flex-nowrap">
+                        <div class="d-flex align-items-center gap-2 flex-nowrap">
 
-    <label class="form-label mb-0 text-nowrap fw-bold">
-        Role Type
-    </label>
+                            <label class="form-label mb-0 text-nowrap fw-bold">
+                                Role Type
+                            </label>
 
-    <asp:DropDownList ID="ddlRoleType" runat="server"
-        CssClass="form-control w-auto"
-        AutoPostBack="True"
-        OnSelectedIndexChanged="ddlRoleType_SelectedIndexChanged">
-    </asp:DropDownList>
+                            <asp:DropDownList ID="ddlRoleType" runat="server"
+                                CssClass="form-control w-auto"
+                                AutoPostBack="True"
+                                OnSelectedIndexChanged="ddlRoleType_SelectedIndexChanged">
+                            </asp:DropDownList>
 
-    <asp:Button ID="btnClear" runat="server"
-        Text="Clear"
-        CssClass="btn btn-secondary"
-        OnClick="btnClear_Click" />
+                            <asp:Button ID="btnClear" runat="server"
+                                Text="Clear"
+                                CssClass="btn btn-secondary"
+                                OnClick="btnClear_Click" />
 
-</div>
+                        </div>
 
-
-
-                        <!-- MENU LISTING FOR ROLE -->
                         <asp:Panel ID="pnlMenuList" runat="server" class="pt-0" Visible="false">
-                            <%-- <div class="card shadow-sm border-0 table-responsive mt-4 ">
-
-                            <div class="card-header bg-primary text-white">
-                                <h4 class="mb-0">Menu List</h4>
-                            </div>
-
-                            <div class="card-body">--%>
                             <div class="row align-items-end">
                                 <div class="col-md text-end">
                                     <asp:Label ID="lblRecordCount" runat="server"
@@ -84,7 +74,8 @@
                                 PageSize="10"
                                 AutoPostBack="true"
                                 PagerSettings-Visible="false"
-                                OnPageIndexChanging="gvMenu_PageIndexChanging">
+                                OnPageIndexChanging="gvMenu_PageIndexChanging"
+                                EmptyDataText="No records found">
 
                                 <Columns>
 

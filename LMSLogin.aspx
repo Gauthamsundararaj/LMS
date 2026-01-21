@@ -34,8 +34,6 @@
     <script src="assets/js/vendors/jquery/jquery.min.js"></script>
 
     <style>
-      
-
         .card {
             width: 430px;
             box-shadow: 0 15px 30px rgba(0,0,0,0.2);
@@ -44,37 +42,37 @@
         .form-area {
             animation: pageMove 0.4s ease;
         }
-    
-    .nav-tabs {
-        border-bottom: none;
-        margin-bottom: 25px;
-    }
 
-    .nav-tabs .nav-link {
-        color: #178E87;
-        font-weight: 600;
-        border: none;
-        padding: 10px 22px;
-        position: relative;
-    }
+        .nav-tabs {
+            border-bottom: none;
+            margin-bottom: 25px;
+        }
 
-    .nav-tabs .nav-link.active {
-        background: #178E87;
-        color: #fff;
-    }
+            .nav-tabs .nav-link {
+                color: #178E87;
+                font-weight: 600;
+                border: none;
+                padding: 10px 22px;
+                position: relative;
+            }
 
-    /* Form highlight */
-    .tab-pane {
-        border: 1px solid transparent;
-      /*  border-radius: 18px;*/
-        padding: 20px;
-        transition: all 0.4s ease;
-    }
+                .nav-tabs .nav-link.active {
+                    background: #178E87;
+                    color: #fff;
+                }
 
-    .tab-pane.active {
-        border-color: #178E87;
-        box-shadow: 0 0 25px rgba(23,142,135,0.4);
-    }
+        /* Form highlight */
+        .tab-pane {
+            border: 1px solid transparent;
+            /*  border-radius: 18px;*/
+            padding: 20px;
+            transition: all 0.4s ease;
+        }
+
+            .tab-pane.active {
+                border-color: #178E87;
+                box-shadow: 0 0 25px rgba(23,142,135,0.4);
+            }
 
         @keyframes pageMove {
             from {
@@ -91,8 +89,6 @@
         .btn-group .btn {
             font-weight: 600;
         }
-
-      
     </style>
 
 </head>
@@ -119,7 +115,7 @@
                             <a class="nav-link active" id="pills-student-tab" data-bs-toggle="pill" href="#pills-student" role="tab">Student</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="pills-admin-tab"  data-bs-toggle="pill" href="#pills-admin"  role="tab">Admin</a>
+                            <a class="nav-link" id="pills-admin-tab" data-bs-toggle="pill" href="#pills-admin" role="tab">Admin</a>
                         </li>
                     </ul>
 
@@ -142,13 +138,12 @@
                                     TextMode="Password"
                                     placeholder="Enter Password" />
                             </div>
-                             <div class="my-2">
-                               <a class="link" href="forget-password.html">Forgot password?</a>
-                             </div>
+                            <div class="my-2">
+                                <a class="link" href="forget-password.html">Forgot password?</a>
+                            </div>
                             <asp:Button ID="btnStudentLogin" runat="server"
                                 CssClass="btn btn-primary w-100 fw-bold rounded-pill p-2"
-                                Text="Login" OnClick="btnStudentLogin_Click"
-                               />
+                                Text="Login" OnClick="btnStudentLogin_Click" />
                         </div>
 
                         <!-- Admin Login -->
@@ -168,26 +163,17 @@
                                     placeholder="Enter Password" />
                             </div>
                             <div class="my-2">
-                            <a class="link" href="forget-password.html">Forgot password?</a>
-                                </div>
+                                <a class="link" href="forget-password.html">Forgot password?</a>
+                            </div>
                             <asp:Button ID="btnAdminLogin" runat="server"
                                 CssClass="btn btn-primary w-100 fw-bold  rounded-pill p-2"
-                                Text="Login" OnClick="btnAdminLogin_Click"
-                                 />
+                                Text="Login" OnClick="btnAdminLogin_Click" />
                         </div>
 
                     </div>
                 </div>
             </div>
         </form>
-
-
-
-
-
-
-
-
 
         <script src="assets/js/toastr/toastr.min.js" type="text/javascript"></script>
         <!-- bootstrap js-->
@@ -206,7 +192,23 @@
 
 
         <script>
-            $(document).ready(function () {
+           
+                document.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+                    e.preventDefault();
+
+                var activeTab = document.getElementById('<%= hdnActiveTab.ClientID %>').value;
+
+                if (activeTab === "admin") {
+                    document.getElementById('<%= btnAdminLogin.ClientID %>').click();
+        } else {
+            document.getElementById('<%= btnStudentLogin.ClientID %>').click();
+        }
+    }
+});
+        
+
+        $(document).ready(function () {
 
                 $('a[data-bs-toggle="pill"]').on('shown.bs.tab', function (e) {
                     let tabId = $(e.target).attr('id');
@@ -223,12 +225,12 @@
 
                  // Restore tab after postback
                  let activeTab = $('#<%= hdnActiveTab.ClientID %>').val();
-                 let tabToShow = activeTab === 'admin'
-                     ? 'pills-admin-tab'
-                     : 'pills-student-tab';
+            let tabToShow = activeTab === 'admin'
+                ? 'pills-admin-tab'
+                : 'pills-student-tab';
 
-                 new bootstrap.Tab(document.getElementById(tabToShow)).show();
-             });
+            new bootstrap.Tab(document.getElementById(tabToShow)).show();
+        });
         </script>
 
 

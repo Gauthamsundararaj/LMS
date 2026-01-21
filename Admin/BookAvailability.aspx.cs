@@ -36,7 +36,6 @@ namespace Admin
             }
         }
 
-
         private void ErrorMessages()
         {
             lblErrorMsg[0] = CommonFunction.GetErrorMessage("", "ERRBA0001");   //Please select at least one category
@@ -49,7 +48,7 @@ namespace Admin
             lblErrorMsg[7] = CommonFunction.GetErrorMessage("", "ERRBA0008");   //No books available for the selected category.
             lblErrorMsg[8] = CommonFunction.GetErrorMessage("", "ERRBA0009");   //No data available to download.
             lblErrorMsg[9] = CommonFunction.GetErrorMessage("", "ERRBA0010");   //Books loaded successfully.
-            lblErrorMsg[10] = CommonFunction.GetErrorMessage("", "ERRBA0011");  //Book availability exported successfully.
+            lblErrorMsg[10]= CommonFunction.GetErrorMessage("", "ERRBA0011");   //Book availability exported successfully.
         }
         private void LoadCategories()
         {
@@ -79,7 +78,6 @@ namespace Admin
             }
         }
 
-
         protected void btnShow_Click(object sender, EventArgs e)
         {
             var selectedCategories = ddlCategory.Items
@@ -101,7 +99,6 @@ namespace Admin
 
             BindBookAvailability(false);
         }
-
 
         protected void btnClear_Click(object sender, EventArgs e)
         {
@@ -180,8 +177,6 @@ namespace Admin
                     rptPager.Visible = false;
                 }
                 
-
-
                 RestoreGridFilters();
 
                 int recordCount = ds?.Tables[0].Rows.Count ?? 0;
@@ -211,7 +206,6 @@ namespace Admin
             }
         }
 
-
         private void SaveGridFilters()
         {
             if (gvbookA.HeaderRow == null) return;
@@ -232,7 +226,6 @@ namespace Admin
                 (gvbookA.HeaderRow.FindControl("txtFilterPublisher") as TextBox)?.Text?.Trim();
         }
 
-
         private void RestoreGridFilters()
         {
             if (gvbookA.HeaderRow == null) return;
@@ -251,7 +244,6 @@ namespace Admin
 
             (gvbookA.HeaderRow.FindControl("txtFilterPublisher") as TextBox).Text =
                 ViewState["Publisher"]?.ToString();
-
         }
 
         protected void btnDownloadCSV_Click(object sender, EventArgs e)
@@ -363,22 +355,18 @@ namespace Admin
                     ShowToastr("Please enter at least one filter value", "warning");
                     return;
                 }
-
-                // 🔹 Read values directly from Grid header
                 TextBox txtISBN = gvbookA.HeaderRow?.FindControl("txtFilterISBN") as TextBox;
                 TextBox txtYear = gvbookA.HeaderRow?.FindControl("txtFilterYear") as TextBox;
 
                 string isbn = txtISBN?.Text.Trim();
                 string year = txtYear?.Text.Trim();
 
-                // 🔹 ISBN validation (numbers only)
                 if (!string.IsNullOrEmpty(isbn) && !isbn.All(char.IsDigit))
                 {
                     ShowToastr("ISBN must contain numbers only.", "warning");
                     return;
                 }
 
-                // 🔹 Year validation (numbers + 4 digits)
                 if (!string.IsNullOrEmpty(year))
                 {
                     if (!year.All(char.IsDigit))
@@ -405,7 +393,6 @@ namespace Admin
             }
         }
 
-
         private bool HasAnyGridFilter()
         {
             if (gvbookA.HeaderRow == null)
@@ -431,7 +418,6 @@ namespace Admin
             get { return ViewState["IsRefresh"] != null && (bool)ViewState["IsRefresh"]; }
             set { ViewState["IsRefresh"] = value; }
         }
-
 
         protected void btnRefresh_Click(object sender, EventArgs e)
         {
@@ -478,17 +464,15 @@ namespace Admin
             if (endPage - startPage < maxPagesToShow - 1)
                 startPage = Math.Max(0, endPage - maxPagesToShow + 1);
 
-            // Previous
             pages.Add(new
             {
                 PageIndex = currentPage - 1,
                 Text = "« Previous",
                 Command = "Page",
                 Enabled = currentPage > 0,
-                IsActive = false   // ✅ REQUIRED
+                IsActive = false   
             });
 
-            // Page Numbers
             for (int i = startPage; i <= endPage; i++)
             {
                 pages.Add(new
@@ -497,24 +481,22 @@ namespace Admin
                     Text = (i + 1).ToString(),
                     Command = "Page",
                     Enabled = true,
-                    IsActive = (i == currentPage) // ✅ ONLY true for active page
+                    IsActive = (i == currentPage) 
                 });
             }
 
-            // Next
             pages.Add(new
             {
                 PageIndex = currentPage + 1,
                 Text = "Next »",
                 Command = "Page",
                 Enabled = currentPage < totalPages - 1,
-                IsActive = false   // ✅ REQUIRED
+                IsActive = false   
             });
 
             rptPager.DataSource = pages;
             rptPager.DataBind();
         }
-
 
         protected void rptPager_ItemCommand(object source, RepeaterCommandEventArgs e)
         {

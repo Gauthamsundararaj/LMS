@@ -255,6 +255,8 @@
   <Message id="ERRRRMM001">Role must be selected.</Message>
   <Message id="ERRRRMM003">Role menu mapping saved successfully.</Message>
   <Message id="ERRRRMM004">Form Cleared.</Message>
+  <Message id="ERRRRMM005">Role Menu Updated Successfully.</Message>
+  
 
   <!-- Book Dues -->
   <Message id="ERRBD001">Please enter a valid Member ID.</Message>

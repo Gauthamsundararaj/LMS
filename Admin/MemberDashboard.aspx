@@ -381,7 +381,7 @@
         </div>
     </form>
     <uc:footer id="Footer1" runat="server" />
-    <%-- <script src="../assets/js/vendors/bootstrap/dist/js/popper.min.js" defer=""></script>--%>
+   
     <script>
         function validateRenewalInput() {
 

@@ -49,7 +49,7 @@
                                     AutoPostBack="true"
                                     OnSelectedIndexChanged="rblMemberType_SelectedIndexChanged">
                                     <asp:ListItem Text="Student &nbsp;&nbsp;" Value="Student"></asp:ListItem>
-                                    <asp:ListItem Text="Staff " Value="Staff"></asp:ListItem>
+                                    <asp:ListItem Text="Staff" Value="Staff"></asp:ListItem>
                                 </asp:RadioButtonList>
                             </div>
 
@@ -73,7 +73,7 @@
                                 DataKeyNames="IssueID"
                                 PageSize="5"
                                 AllowPaging="true"
-
+                                EmptyDataText="No records found"
                                 PagerSettings-Visible="false"
                                 CssClass="table table-bordered table-striped text-center">
                                 <Columns>

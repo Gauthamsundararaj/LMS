@@ -160,7 +160,8 @@
                                 OnPageIndexChanging="gvMenu_PageIndexChanging"
                                 OnRowCommand="gvMenu_RowCommand"
                                 OnRowDeleting="gvMenu_RowDeleting"
-                                OnRowDataBound="gvMenu_RowDataBound">
+                                OnRowDataBound="gvMenu_RowDataBound"
+                                EmptyDataText="No records found">
                                 <Columns>
 
                                     <asp:TemplateField HeaderText="S.No">

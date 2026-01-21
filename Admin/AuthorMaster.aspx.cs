@@ -20,7 +20,7 @@ namespace Admin
             if (!IsPostBack)
             {
                 BindAuthorGrid();
-               
+
             }
             lblErrorMsg = new string[30];
             lblErrorMsg[0] = CommonFunction.GetErrorMessage("", "ERRAM01");
@@ -31,21 +31,20 @@ namespace Admin
             lblErrorMsg[5] = CommonFunction.GetErrorMessage("", "ERRAM05");
             lblErrorMsg[6] = CommonFunction.GetErrorMessage("", "ERRAM06");
             lblErrorMsg[7] = CommonFunction.GetErrorMessage("", "ERRAM07");
-
-
         }
+
         private void BindAuthorGrid()
         {
             try
             {
                 using (DataSet ds = objMasterBO.AuthorMaster("SELECT"))
                 {
-                    if(ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
                         gvAuthor.DataSource = ds.Tables[0];
                         gvAuthor.DataBind();
                     }
-                     else
+                    else
                     {
                         gvAuthor.DataSource = null;
                         gvAuthor.DataBind();
@@ -61,7 +60,7 @@ namespace Admin
                         rptPager.Visible = false;
                     }
                 }
-               
+
             }
             catch (Exception ex)
             {
@@ -77,24 +76,22 @@ namespace Admin
                 string authorName = txtAuthorName.Text.Trim();
                 string authorType = ddlAuthorType.SelectedValue;
 
-
-                // Regex: Alphabets, space, dot, hyphen, apostrophe
                 Regex namePattern = new Regex(@"^[A-Za-z'. -]+$");
-                // 1️⃣ Required check – Author Name
+
                 if (string.IsNullOrWhiteSpace(authorName))
                 {
                     ShowAlert(lblErrorMsg[4], "error");
                     txtAuthorName.Focus();
                     return;
                 }
-                // 2️⃣ Pattern validation – Author Name
+
                 if (!namePattern.IsMatch(authorName))
                 {
                     ShowAlert(lblErrorMsg[1], "error");
                     txtAuthorName.Focus();
                     return;
                 }
-                // 3️⃣ Required check – Author Type
+
                 if (string.IsNullOrWhiteSpace(authorType))
                 {
                     ShowAlert(lblErrorMsg[5], "error");
@@ -112,7 +109,8 @@ namespace Admin
                             ClearFormFields();
                             BindAuthorGrid();
 
-                        }if(msgCode == 2)
+                        }
+                        if (msgCode == 2)
                         {
                             ShowAlert(lblErrorMsg[6], "error");
                         }
@@ -121,9 +119,7 @@ namespace Admin
                             ShowAlert(lblErrorMsg[7], "error");
                         }
                     }
-                        
                 }
-
             }
             catch (Exception ex)
             {
@@ -152,12 +148,11 @@ namespace Admin
                             btnUpdate.Visible = true;
                         }
                     }
-
                 }
                 if (e.CommandName == "DeleteAuthor")
                 {
-                   
-                    using (DataSet ds = objMasterBO.AuthorMaster("DELETE",Convert.ToInt32(authorID),  "","",  false, intAdminUserID))
+
+                    using (DataSet ds = objMasterBO.AuthorMaster("DELETE", Convert.ToInt32(authorID), "", "", false, intAdminUserID))
                     {
                         int msgCode = Convert.ToInt32(ds.Tables[0].Rows[0]["MsgCode"]);
                         if (msgCode == 1)
@@ -165,9 +160,7 @@ namespace Admin
                             ShowAlert(lblErrorMsg[3], "success");
                             BindAuthorGrid();
                         }
-                            
                     }
-
                 }
             }
             catch (Exception ex)
@@ -196,22 +189,18 @@ namespace Admin
                         btnAdd.Visible = true;
                         btnUpdate.Visible = false;
                         btnAdd.Text = "Save";
-
                     }
                     else
                     {
                         ShowAlert(lblErrorMsg[0], "error");
                     }
-
                 }
-
             }
             catch (Exception ex)
             {
                 MyExceptionLogger.Publish(ex);
             }
         }
-
 
         private void ShowAlert(string message, string alertType = "error")
         {
@@ -226,7 +215,7 @@ namespace Admin
         {
             txtAuthorName.Text = "";
             ddlAuthorType.SelectedIndex = 0;
-         
+
         }
         protected void Clear_Click(object sender, EventArgs e)
         {
@@ -235,7 +224,6 @@ namespace Admin
             btnAdd.Visible=true;
             btnUpdate.Visible= false;
         }
-
 
         private void BuildPager(int totalPages, int currentPage)
         {
@@ -255,10 +243,9 @@ namespace Admin
                 Text = "« Previous",
                 Command = "Page",
                 Enabled = currentPage > 0,
-                IsActive = false   // ✅ REQUIRED
+                IsActive = false  
             });
 
-            // Page Numbers
             for (int i = startPage; i <= endPage; i++)
             {
                 pages.Add(new
@@ -267,25 +254,22 @@ namespace Admin
                     Text = (i + 1).ToString(),
                     Command = "Page",
                     Enabled = true,
-                    IsActive = (i == currentPage) // ✅ ONLY true for active page
+                    IsActive = (i == currentPage) 
                 });
             }
 
-            // Next
             pages.Add(new
             {
                 PageIndex = currentPage + 1,
                 Text = "Next »",
                 Command = "Page",
                 Enabled = currentPage < totalPages - 1,
-                IsActive = false   // ✅ REQUIRED
+                IsActive = false   
             });
 
             rptPager.DataSource = pages;
             rptPager.DataBind();
         }
-
-
 
         protected void rptPager_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
@@ -297,22 +281,8 @@ namespace Admin
 
         protected void gvAuthor_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            // 1. Set the new page index
             gvAuthor.PageIndex = e.NewPageIndex;
-
-            // 2. Re-bind the data from your source
             BindAuthorGrid();
         }
-
-
-
-
-
-
-
-
-
-
-
     }
 }

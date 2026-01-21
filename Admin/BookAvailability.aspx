@@ -13,12 +13,10 @@
         .required {
             color: red;
         }
-
         .authors-header {
             width: 240px;
             white-space: nowrap;
-        }
-
+        }  
         .authors-cell {
             width: 240px;
             white-space: normal;
@@ -28,7 +26,6 @@
             padding: 6px 8px;
             vertical-align: top;
         }
-
         .search-wrapper {
             position: relative;
         }
@@ -50,7 +47,6 @@
             .clear-btn:hover {
                 color: #a71d2a;
             }
-
 
         .search-wrapper input:not(:placeholder-shown) ~ .clear-btn {
             display: block;
@@ -80,7 +76,6 @@
 
 <body>
     <uc1:header runat="server" id="Header" />
-
     <form id="form1" runat="server">
         <asp:HiddenField ID="hfIsFirstTime" runat="server" Value="1" />
         <div class="page-body">
@@ -92,19 +87,9 @@
                                 <h4 class="card-title mb-0">Book Availability</h4>
                             </div>
                             <div class="col-auto text-end">
-                                <asp:LinkButton
-                                    ID="lnkDownloadCSV"
-                                    runat="server"
-                                    OnClick="btnDownloadCSV_Click"
-                                    ToolTip="Download CSV">
-
-                                    <asp:Image
-                                        ID="imgDownload"
-                                        runat="server"
-                                        ImageUrl="~/assets/images/icons/csvdownload.png"
-                                        AlternateText="Download"
-                                        CssClass="icon img-fluid"
-                                        Width="35" Height="35" />
+                                <asp:LinkButton  ID="lnkDownloadCSV" runat="server" OnClick="btnDownloadCSV_Click"  ToolTip="Download CSV">
+                                     <asp:Image  ID="imgDownload" runat="server" ImageUrl="~/assets/images/icons/csvdownload.png"
+                                        AlternateText="Download" CssClass="icon img-fluid" Width="35" Height="35" />
                                 </asp:LinkButton>
                             </div>
                         </div>
@@ -116,137 +101,70 @@
                                 <label class="fw-bold fs-6">
                                     Category <span class="required">*</span>
                                 </label>
-                                <asp:ListBox ID="ddlCategory"
-                                    runat="server"
-                                    CssClass="form-select"
-                                    SelectionMode="Multiple"
-                                    AutoPostBack="false" />
+                                <asp:ListBox ID="ddlCategory"  runat="server" CssClass="form-select" SelectionMode="Multiple" AutoPostBack="false" />
                             </div>
-
                             <div class="col-md-4">
-                                <asp:Button ID="btnSearch"
-                                    runat="server"
-                                    Text="Show Books"
-                                    CssClass="btn btn-primary"
-                                    OnClick="btnShow_Click" />
-
-                                <asp:Button ID="btnClear"
-                                    runat="server"
-                                    Text="Clear"
-                                    CssClass="btn btn-warning"
-                                    OnClick="btnClear_Click" />
+                                <asp:Button ID="btnSearch"  runat="server" Text="Show Books"  CssClass="btn btn-primary" OnClick="btnShow_Click" />
+                                <asp:Button ID="btnClear" runat="server"  Text="Clear"  CssClass="btn btn-warning" OnClick="btnClear_Click" />
                             </div>
                             <div class="col-md-2 col-lg-auto ms-lg-auto text-lg-end p-1">
-                                <asp:Label ID="lblRecordCount" runat="server"
-                                    CssClass="fw-bold text-primary"></asp:Label>
+                                <asp:Label ID="lblRecordCount" runat="server" CssClass="fw-bold text-primary"></asp:Label>
                             </div>
                         </div>
-
                         <asp:Panel ID="pnlGrid" runat="server" Visible="false">
                             <div class="table-responsive">
-                                <asp:GridView ID="gvbookA"
-                                    runat="server"
-                                    AutoGenerateColumns="false"
-                                    CssClass="table table-bordered table-striped table-hover"
-                                    AllowPaging="true"
-                                    PageSize="5"
-                                    OnPageIndexChanging="gvbookA_PageIndexChanging"
-                                    PagerSettings-Visible="false"
-                                    ShowHeaderWhenEmpty="true"
-                                    ClientIDMode="Static">
-
-                                    <EmptyDataTemplate>
+                                <asp:GridView ID="gvbookA" runat="server"  AutoGenerateColumns="false"  CssClass="table table-bordered table-striped table-hover"
+                                    AllowPaging="true"  PageSize="5"  OnPageIndexChanging="gvbookA_PageIndexChanging"
+                                    PagerSettings-Visible="false" ShowHeaderWhenEmpty="true" ClientIDMode="Static"  EmptyDataText="No records found">
+                                <EmptyDataTemplate>
                                         <div class="text-center py-4">
                                             <i class="bi bi-search fs-2 text-muted"></i>
-                                            <div class="mt-2 fw-semibold text-muted">
-                                                No results found
-                                            </div>
+                                            <div class="mt-2 fw-semibold text-muted">  No results found </div>
                                             <div class="mt-3">
-                                                <asp:LinkButton ID="btnEmptyRefresh"
-                                                    runat="server"
-                                                    CssClass="btn btn-primary btn-sm"
-                                                    ToolTip="Refresh"
-                                                    OnClick="btnRefresh_Click">
-                                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                                                <asp:LinkButton ID="btnEmptyRefresh"  runat="server" CssClass="btn btn-primary btn-sm"
+                                                    ToolTip="Refresh" OnClick="btnRefresh_Click">  <i class="bi bi-arrow-clockwise"></i> Refresh
                                                 </asp:LinkButton>
                                             </div>
                                         </div>
-                                    </EmptyDataTemplate>
-
-
+                                    </EmptyDataTemplate> 
                                     <Columns>
                                         <asp:TemplateField HeaderText="S.No">
                                             <HeaderTemplate>
                                                 <div class="fw-bold text-center">S.No</div>
-
-                                                <div class="d-flex justify-content-center gap-2 mt-1">
-                                                    <asp:LinkButton ID="btnApplyFilter"
-                                                        runat="server"
-                                                        CssClass="text-primary"
-                                                        ToolTip="Filter"
-                                                        OnClientClick="toggleClearFilterIcon();"
-                                                        OnClick="btnSearch_Click">
-                                                     <i class="fa-solid fa-filter"></i>
+                                                 <div class="d-flex justify-content-center gap-2 mt-1">
+                                                    <asp:LinkButton ID="btnApplyFilter" runat="server" CssClass="text-primary" ToolTip="Filter"
+                                                        OnClientClick="toggleClearFilterIcon();"  OnClick="btnSearch_Click"> <i class="fa-solid fa-filter"></i>
                                                     </asp:LinkButton>
-
-
-                                                    <asp:LinkButton ID="btnClearFilter"
-                                                        runat="server"
-                                                        ToolTip="Clear Filter"
-                                                        CssClass="text-danger clear-filter-btn"
-                                                        Style="display: none;"
-                                                        OnClick="btnRefresh_Click">
-                                                    <i class="fa-solid fa-circle-xmark"></i>
+                                                    <asp:LinkButton ID="btnClearFilter" runat="server"  ToolTip="Clear Filter" CssClass="text-danger clear-filter-btn"
+                                                        Style="display: none;"  OnClick="btnRefresh_Click">  <i class="fa-solid fa-circle-xmark"></i>
                                                     </asp:LinkButton>
-
-                                                </div>
-                                            </HeaderTemplate>
-
-                                            <ItemTemplate>
-                                                <%# Container.DataItemIndex + 1 %>
-                                            </ItemTemplate>
+                                                 </div>
+                                           </HeaderTemplate>
+                                            <ItemTemplate><%# Container.DataItemIndex + 1 %> </ItemTemplate>
                                         </asp:TemplateField>
-
 
                                         <asp:TemplateField>
                                             <HeaderTemplate>
                                                 <div class="fw-bold">ISBN</div>
                                                 <div class="search-wrapper">
-                                                    <asp:TextBox ID="txtFilterISBN"
-                                                        runat="server"
-                                                        CssClass="form-control form-control-sm"
-                                                        placeholder="Search ISBN"
-                                                        MaxLength="13"
-                                                        onkeypress="return allowOnlyNumbers(event);"
-                                                        onkeyup="toggleClearFilterIcon();" />
+                                                    <asp:TextBox ID="txtFilterISBN" runat="server" CssClass="form-control form-control-sm" placeholder="Search ISBN"
+                                                        MaxLength="13" onkeypress="return allowOnlyNumbers(event);" onkeyup="toggleClearFilterIcon();" />
                                                     <span class="clear-btn" onclick="clearSearch(this)">✖</span>
                                                 </div>
                                             </HeaderTemplate>
-
-                                            <ItemTemplate>
-                                                <%# Eval("ISBN") %>
-                                            </ItemTemplate>
+                                            <ItemTemplate> <%# Eval("ISBN") %> </ItemTemplate>
                                         </asp:TemplateField>
-
 
                                         <asp:TemplateField>
                                             <HeaderTemplate>
                                                 <div class="fw-bold">Book Title</div>
                                                 <div class="search-wrapper">
-                                                    <asp:TextBox ID="txtFilterBookTitle"
-                                                        runat="server"
-                                                        CssClass="form-control form-control-sm"
-                                                        placeholder="Search Title"
-                                                        onkeypress="return allowAlphaNumeric(event);"
-                                                        onkeyup="toggleClearFilterIcon();" />
-
-                                                    <span class="clear-btn" onclick="clearSearch(this)">✖</span>
+                                                    <asp:TextBox ID="txtFilterBookTitle" runat="server" CssClass="form-control form-control-sm" placeholder="Search Title"
+                                                        onkeypress="return allowAlphaNumeric(event);" onkeyup="toggleClearFilterIcon();" />
+                                                     <span class="clear-btn" onclick="clearSearch(this)">✖</span>
                                                 </div>
                                             </HeaderTemplate>
-
-                                            <ItemTemplate>
-                                                <%# Eval("Book Title") %>
-                                            </ItemTemplate>
+                                            <ItemTemplate> <%# Eval("Book Title") %> </ItemTemplate>
                                         </asp:TemplateField>
 
 
@@ -254,22 +172,12 @@
                                             <HeaderTemplate>
                                                 <div class="fw-bold">Author</div>
                                                 <div class="search-wrapper">
-                                                    <asp:TextBox ID="txtFilterAuthor"
-                                                        runat="server"
-                                                        CssClass="form-control form-control-sm"
-                                                        placeholder="Search Author"
-                                                        MaxLength="30"
-                                                        onkeypress="return allowAlphaNumeric(event);"
-                                                        onkeyup="toggleClearFilterIcon();" />
-
-
+                                                    <asp:TextBox ID="txtFilterAuthor" runat="server" CssClass="form-control form-control-sm" placeholder="Search Author"
+                                                        MaxLength="30" onkeypress="return allowAlphaNumeric(event);" onkeyup="toggleClearFilterIcon();" />
                                                     <span class="clear-btn" onclick="clearSearch(this)">✖</span>
                                                 </div>
                                             </HeaderTemplate>
-
-                                            <ItemTemplate>
-                                                <%# Eval("Author Name") %>
-                                            </ItemTemplate>
+                                            <ItemTemplate>  <%# Eval("Author Name") %> </ItemTemplate>
                                         </asp:TemplateField>
 
 
@@ -277,46 +185,25 @@
                                             <HeaderTemplate>
                                                 <div class="fw-bold">Year</div>
                                                 <div class="search-wrapper">
-                                                    <asp:TextBox ID="txtFilterYear"
-                                                        runat="server"
-                                                        CssClass="form-control form-control-sm"
-                                                        placeholder="Search Year"
-                                                        MaxLength="4"
-                                                        onkeypress="return allowOnlyNumbers(event);"
-                                                        onkeyup="toggleClearFilterIcon();" />
-
-
+                                                    <asp:TextBox ID="txtFilterYear" runat="server" CssClass="form-control form-control-sm" MaxLength="4"
+                                                        onkeypress="return allowOnlyNumbers(event);" onkeyup="toggleClearFilterIcon();" />
                                                     <span class="clear-btn" onclick="clearSearch(this)">✖</span>
                                                 </div>
                                             </HeaderTemplate>
-
-                                            <ItemTemplate>
-                                                <%# Eval("Published Year") %>
-                                            </ItemTemplate>
+                                            <ItemTemplate> <%# Eval("Published Year") %> </ItemTemplate>
                                         </asp:TemplateField>
-
 
                                         <asp:TemplateField>
                                             <HeaderTemplate>
                                                 <div class="fw-bold">Publisher</div>
                                                 <div class="search-wrapper">
-                                                    <asp:TextBox ID="txtFilterPublisher"
-                                                        runat="server"
-                                                        CssClass="form-control form-control-sm"
-                                                        placeholder="Search Publisher"
-                                                        MaxLength="30"
-                                                        onkeypress="return allowAlphaNumeric(event);"
-                                                        onkeyup="toggleClearFilterIcon();" />
-
+                                                    <asp:TextBox ID="txtFilterPublisher" runat="server" CssClass="form-control form-control-sm" placeholder="Search Publisher"
+                                                        MaxLength="30" onkeypress="return allowAlphaNumeric(event);" onkeyup="toggleClearFilterIcon();" />
                                                     <span class="clear-btn" onclick="clearSearch(this)">✖</span>
                                                 </div>
                                             </HeaderTemplate>
-
-                                            <ItemTemplate>
-                                                <%# Eval("Publisher Name") %>
-                                            </ItemTemplate>
+                                            <ItemTemplate><%# Eval("Publisher Name") %></ItemTemplate>
                                         </asp:TemplateField>
-
 
                                         <asp:BoundField DataField="TotalCopies" HeaderText="Total Copies" />
                                         <asp:BoundField DataField="AvailableCopies" HeaderText="Available Copies" />
@@ -326,12 +213,8 @@
                             <div class="pager-fixed">
                                 <asp:Repeater ID="rptPager" runat="server" OnItemCommand="rptPager_ItemCommand">
                                     <ItemTemplate>
-                                        <asp:LinkButton ID="lnkPage" runat="server"
-                                            CssClass='<%# (bool)Eval("IsActive") ? "page-btn active" : "page-btn" %>'
-                                            CommandName='<%# Eval("Command") %>'
-                                            CommandArgument='<%# Eval("PageIndex") %>'
-                                            Enabled='<%# Eval("Enabled") %>'
-                                            Text='<%# Eval("Text") %>'>
+                                        <asp:LinkButton ID="lnkPage" runat="server" CssClass='<%# (bool)Eval("IsActive") ? "page-btn active" : "page-btn" %>'
+                                            CommandName='<%# Eval("Command") %>' CommandArgument='<%# Eval("PageIndex") %>' Enabled='<%# Eval("Enabled") %>' Text='<%# Eval("Text") %>'>
                                         </asp:LinkButton>
                                     </ItemTemplate>
                                 </asp:Repeater>
@@ -345,8 +228,6 @@
     </form>
 
     <uc1:footer runat="server" id="Footer" />
-
-
     <script src="../assets/js/bootstrap-multiselect.min.js"></script>
 
     <script>
@@ -377,7 +258,6 @@
             toggleClearFilterIcon();
             __doPostBack('<%= btnSearch.ClientID %>', '');
         }
-
 
         function allowOnlyNumbers(evt) {
             var charCode = evt.which ? evt.which : evt.keyCode;
@@ -438,7 +318,6 @@
                 clearBtn.hide();
             }
         }
-
     </script>
 </body>
 </html>

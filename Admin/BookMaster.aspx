@@ -73,27 +73,19 @@
         }
 
         .icon-btn {
-    width: 38px;
-    height: 38px;
-    background-color: #0ea5a0; /* teal matching header */
-    border-radius: 8px;
-    color: #ffffff;
-    text-decoration: none;
-    transition: all 0.2s ease-in-out;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
+            width: 38px;
+            height: 38px;
+            background-color: #0ea5a0; /* teal matching header */
+            border-radius: 8px;
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
 
-.icon-btn i {
-    font-size: 18px;
-}
-
-/*.icon-btn:hover {
-    background-color: #0c8b87;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    color: #ffffff;
-}*/
-
+            .icon-btn i {
+                font-size: 18px;
+            }
     </style>
 
 </head>
@@ -116,22 +108,21 @@
                                 <h4 class="card-title mb-0">Book Details</h4>
                             </div>
                             <div class="col-auto text-end">
-    <asp:LinkButton
-        ID="lnkDownloadCSV"
-        runat="server"
-       
-        OnClick="btnDownloadCSV_Click"
-        ToolTip="Download CSV">
+                                <asp:LinkButton
+                                    ID="lnkDownloadCSV"
+                                    runat="server"
+                                    OnClick="btnDownloadCSV_Click"
+                                    ToolTip="Download CSV">
 
-        <asp:Image
-            ID="imgDownload"
-            runat="server"
-            ImageUrl="../assets/images/icons/csvdownload.png"
-            AlternateText="Download"
-            CssClass="icon img-fluid"
-            Width="35" Height="35" />
-    </asp:LinkButton>
-</div>
+                                    <asp:Image
+                                        ID="imgDownload"
+                                        runat="server"
+                                        ImageUrl="../assets/images/icons/csvdownload.png"
+                                        AlternateText="Download"
+                                        CssClass="icon img-fluid"
+                                        Width="35" Height="35" />
+                                </asp:LinkButton>
+                            </div>
                         </div>
                     </div>
 
@@ -191,7 +182,8 @@
                                 AllowPaging="True"
                                 PageSize="5"
                                 OnPageIndexChanging="gvBookMaster_PageIndexChanging"
-                                PagerSettings-Visible="false">
+                                PagerSettings-Visible="false"
+                                EmptyDataText="No records found">
                                 <Columns>
                                     <asp:BoundField DataField="Sno" HeaderText="Sno" />
                                     <asp:BoundField DataField="BookID" Visible="false" />
@@ -356,7 +348,7 @@
                                     Year Published <span
                                         style="color: red">*</span></label>
                                 <asp:TextBox ID="txtYearPublished" runat="server"
-                                    CssClass="form-control" MaxLength="4" placeholder="Enter Year (YYYY)"  onkeypress="return event.charCode >= 48 && event.charCode <= 57;"></asp:TextBox>
+                                    CssClass="form-control" MaxLength="4" placeholder="Enter Year (YYYY)" onkeypress="return event.charCode >= 48 && event.charCode <= 57;"></asp:TextBox>
                             </div>
                             <!-- Edition -->
                             <div class="col-md-4 mb-3">
@@ -370,9 +362,9 @@
                                     Price
                                 </label>
                                 <asp:TextBox ID="txtPrice" runat="server"
-                                    CssClass="form-control" placeholder="Enter Price" MaxLength="20"  onkeypress="return allowPriceChars(event);"
-       onpaste="return false;"></asp:TextBox>
-                            </div> 
+                                    CssClass="form-control" placeholder="Enter Price" MaxLength="20" onkeypress="return allowPriceChars(event);"
+                                    onpaste="return false;"></asp:TextBox>
+                            </div>
                             <!-- Total Copies -->
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">
@@ -380,7 +372,7 @@
                                         style="color: red">*</span></label>
                                 <asp:TextBox ID="txtTotalCopies" runat="server"
                                     CssClass="form-control" placeholder="Enter Total Copies" MaxLength="10"
-                                     onkeypress="return event.charCode >= 48 && event.charCode <= 57;"></asp:TextBox>
+                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57;"></asp:TextBox>
                             </div>
 
                             <!-- Shelf Location -->
@@ -488,7 +480,7 @@
 
             // Allow digits, dot, comma
             if (/[\d.,]/.test(key)) {
-                return true;s
+                return true; s
             }
 
             return false;

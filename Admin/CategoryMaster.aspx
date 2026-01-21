@@ -96,7 +96,8 @@
                                     AllowPaging="True"
                                     PageSize="5"
                                     OnPageIndexChanging="gvCategory_PageIndexChanging"
-                                    PagerSettings-Visible="false">
+                                    PagerSettings-Visible="false"
+                                    EmptyDataText="No records found">
                                     <Columns>
                                         <asp:BoundField DataField="Sno" HeaderText="Sno" />
                                         <asp:TemplateField HeaderText="CategoryID" Visible="false">

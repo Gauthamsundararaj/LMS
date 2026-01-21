@@ -106,7 +106,8 @@
                                 DataKeyNames="RoleID"
                                 OnRowCommand="gvRoleMaster_RowCommand"
                                 OnRowDeleting="gvRoleMaster_RowDeleting"
-                                CssClass="table table-bordered table-striped">
+                                CssClass="table table-bordered table-striped"
+                                EmptyDataText="No records found">
 
                                 <Columns>
                                     <asp:TemplateField HeaderText="S.No">

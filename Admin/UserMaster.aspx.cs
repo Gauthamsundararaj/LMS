@@ -421,14 +421,15 @@ namespace Admin
             {
                 ShowAlert(lblErrorMsg[11], "error"); return false;
             }
-            if (!System.Text.RegularExpressions.Regex.IsMatch(strPhone, @"^\d{10}$"))
+            //if (!System.Text.RegularExpressions.Regex.IsMatch(strPhone, @"^\d{10}$"))
+            if(!CommonFunction.CheckNumeric(strPhone))
             {
                 ShowAlert(lblErrorMsg[12], "error"); return false;
             }
 
             // Alternate Phone (optional - exactly 10 digits)
-            if (!string.IsNullOrWhiteSpace(strAltPhone) &&
-                !System.Text.RegularExpressions.Regex.IsMatch(strAltPhone, @"^\d{10}$"))
+            if (!string.IsNullOrWhiteSpace(strAltPhone) && !CommonFunction.CheckNumeric(strPhone))
+                //!System.Text.RegularExpressions.Regex.IsMatch(strAltPhone, @"^\d{10}$"))
             {
                 ShowAlert(lblErrorMsg[15], "error"); return false;
             }

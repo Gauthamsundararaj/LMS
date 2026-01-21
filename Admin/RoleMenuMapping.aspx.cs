@@ -39,6 +39,7 @@ namespace Admin
             {
                 lblErrorMsg[1] = CommonFunction.GetErrorMessage("", "ERRMENU016"); //Unexpected error occurred
                 lblErrorMsg[2] = CommonFunction.GetErrorMessage("", "ERRMENU022"); //No record Found
+                lblErrorMsg[3] = CommonFunction.GetErrorMessage("", "ERRRRMM005"); //Role Menu Updated Successfully.
                 
             }
             catch (Exception ex)
@@ -158,13 +159,12 @@ namespace Admin
                 int isChecked = chk.Checked ? 1 : 0;
 
                 DataSet ds = objBO.SaveUpdateRoleMenu(roleID, menuID, 0, isChecked, aUserID);
-
                 if (ds != null && ds.Tables.Count > 0)
                 {
-                    string msg = ds.Tables[0].Rows[0]["Message"].ToString();
-                    string type = ds.Tables[0].Rows[0]["MessageType"].ToString().ToLower();
-
-                    ShowToastr(msg, type);
+                    int MsgCode = Convert.ToInt32(ds.Tables[0].Rows[0]["MsgCode"]);
+                    {
+                        ShowToastr(lblErrorMsg[3], "success");
+                    }
                 }
                 LoadMenuByRole();
                 lblRecordCount.Text = gvRoleMenu.Rows.Count + " Records found";
