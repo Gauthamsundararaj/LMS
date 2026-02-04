@@ -99,7 +99,7 @@
                                     OnPageIndexChanging="gvUser_PageIndexChanging"
                                     PagerSettings-Visible="false">
                                     <Columns>
-                                        <asp:BoundField DataField="Sno" HeaderText="SNo" />
+                                        <asp:BoundField DataField="Sno" HeaderText="S.No." />
                                         <asp:BoundField DataField="UserID" Visible="false" />
                                         <asp:BoundField DataField="LoginID" HeaderText="Login ID" />
 

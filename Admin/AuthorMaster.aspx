@@ -81,7 +81,7 @@
                                 PageSize="5"  OnPageIndexChanging="gvAuthor_PageIndexChanging"
                                 PagerSettings-Visible="false"  EmptyDataText="No records found">
                                <Columns>
-                                    <asp:BoundField DataField="Sno" HeaderText="Sno" />
+                                    <asp:BoundField DataField="Sno" HeaderText="S.No." />
                                     <asp:TemplateField HeaderText="AuthorID" Visible="false">
                                         <ItemTemplate> <%# Eval("AuthorID") %> </ItemTemplate>
                                     </asp:TemplateField>

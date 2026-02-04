@@ -73,11 +73,10 @@
                                 DataKeyNames="IssueID"
                                 PageSize="5"
                                 AllowPaging="true"
-                                EmptyDataText="No records found"
                                 PagerSettings-Visible="false"
                                 CssClass="table table-bordered table-striped text-center">
                                 <Columns>
-                                    <asp:TemplateField HeaderText="S.No">
+                                    <asp:TemplateField HeaderText="S.No.">
                                         <ItemTemplate>
                                             <%# Container.DataItemIndex + 1 %>
                                         </ItemTemplate>
@@ -121,7 +120,7 @@
 
                                 <div style="width: 180px;">
                                     <asp:TextBox ID="txtDate" runat="server" TextMode="Date"
-                                        CssClass="form-control"></asp:TextBox>
+                                        CssClass="form-control" onkeydown="return false;"  onpaste="return false;"></asp:TextBox>
                                 </div>
                             </div>
                         </div>

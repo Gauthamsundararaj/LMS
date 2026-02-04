@@ -3,7 +3,6 @@ using Library;
 using System;
 using System.Data;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Admin
 {
@@ -45,28 +44,29 @@ namespace Admin
                 string oldEnc = Security.CryptTripleDES(true, txtOldPassword.Text);
                 string newEnc = Security.CryptTripleDES(true, txtNewPassword.Text);
 
-                DataSet ds = objBO.ChangePassword(userId, oldEnc, newEnc);
-
-                if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                using (DataSet ds = objBO.ChangePassword(userId, oldEnc, newEnc))
                 {
-                    int status = Convert.ToInt32(ds.Tables[0].Rows[0]["Status"]);
-                    string message = ds.Tables[0].Rows[0]["Message"].ToString();
-
-                    if (status == 1)
+                    if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
-                        ShowToastr(message, "success");
-                        txtOldPassword.Text = "";
-                        txtNewPassword.Text = "";
-                        txtConfirmPassword.Text = "";
+                        int status = Convert.ToInt32(ds.Tables[0].Rows[0]["Status"]);
+                        string message = ds.Tables[0].Rows[0]["Message"].ToString();
+
+                        if (status == 1)
+                        {
+                            ShowToastr(message, "success");
+                            txtOldPassword.Text = "";
+                            txtNewPassword.Text = "";
+                            txtConfirmPassword.Text = "";
+                        }
+                        else
+                        {
+                            ShowToastr(message, "error");
+                        }
                     }
                     else
                     {
-                        ShowToastr(message, "error");
+                        ShowToastr("Invalid response from server", "error");
                     }
-                }
-                else
-                {
-                    ShowToastr("Invalid response from server", "error");
                 }
             }
             catch (Exception ex)

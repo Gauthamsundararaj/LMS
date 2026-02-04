@@ -64,6 +64,8 @@
             margin-bottom: 10px;
             accent-color: #308e87; /* Bootstrap primary color */
         }
+
+
     </style>
 </head>
 <body>
@@ -120,13 +122,13 @@
 
                                 <div class="col-md-3">
                                     <label class="form-label">Issue Date <span class="text-danger">*</span></label>
-                                    <input type="date" id="issueDate" runat="server" class="form-control" />
+                                    <input type="date" id="issueDate" runat="server" class="form-control" onkeydown="return false;"  onpaste="return false;"/>
                                 </div>
 
                                 <!-- Due Date -->
                                 <div class="col-md-3">
                                     <label class="form-label">Due Date <span class="text-danger">*</span></label>
-                                    <input type="date" id="dueDate" runat="server" class="form-control" />
+                                    <input type="date" id="dueDate" runat="server" class="form-control" onkeydown="return false;"  onpaste="return false;" />
                                 </div>
 
                             </div>
@@ -141,61 +143,50 @@
                         </div>
                     </div>
                 </div>
+                <!-- Selected Books Modal -->
+<div class="modal fade" id="selectedBooksModal" tabindex="-1" aria-labelledby="selectedBooksModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
 
-                <div class="card" id="divGrid" runat="server" visible="false">
-                    <div class="card-header bg-primary p-3">
-                        <h4 class="card-title mb-0 p-0">Selected Books</h4>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="table-responsive" style="overflow-x: auto; white-space: nowrap;">
-                                <asp:GridView ID="gvSelectedBooks" runat="server" AutoGenerateColumns="False" DataKeyNames="ISBN" CssClass="table table-bordered text-center" EmptyDataText="No records found">
-                                    <Columns>
-                                        <asp:BoundField DataField="ISBN" HeaderText="ISBN" />
-                                        <asp:BoundField DataField="BookTitle" HeaderText="Book Title" />
-                                        <asp:BoundField DataField="AuthorNames" HeaderText="Author(s)" />
-                                    </Columns>
-                                </asp:GridView>
-                            </div>
-                            <asp:Panel ID="pnlConfirm" runat="server" Visible="false" CssClass="mt-2">
-                                <asp:Button ID="btnConfirm" runat="server" Text="Issue Books" CssClass="btn btn-success" OnClick="btnConfirm_Click" />
-                                <asp:Button ID="Button1" runat="server" Text="Cancel" CssClass="btn btn-danger" OnClick="btnCancel_Click1" />
-                            </asp:Panel>
-                        </div>
-                    </div>
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="selectedBooksModalLabel">Selected Books</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <asp:GridView ID="gvSelectedBooks" runat="server"
+                        AutoGenerateColumns="False"
+                        DataKeyNames="ISBN"
+                        CssClass="table table-hover table-striped align-middle text-center"
+                        EmptyDataText="No records found">
+                        <Columns>
+                             <asp:TemplateField HeaderText="S.No.">
+                              <ItemTemplate> <%# Container.DataItemIndex + 1 %> </ItemTemplate> <ItemStyle Width="60px" />
+                           </asp:TemplateField>
+                            <asp:BoundField DataField="ISBN" HeaderText="ISBN" />
+                            <asp:BoundField DataField="BookTitle" HeaderText="Book Title" />
+                            <asp:BoundField DataField="AuthorNames" HeaderText="Author(s)" />
+                        </Columns>
+                    </asp:GridView>
                 </div>
+            </div>
 
-                <%--  <div class="modal fade bd-example-modal-lg" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModal" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h3 class="modal-title fs-5" id="myExtraLargeModal">Confirm Book Issue</h3>
-                                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <h5>Selected Books</h5>
-                                <hr />
-                                <table class="table table-bordered">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>ISBN</th>
-                                            <th>Book Name</th>
-                                            <th>Authors</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tblConfirmBody" runat="server"></tbody>
-                                </table>
-                            </div>
-                            <div class="modal-footer">
-                                <asp:Button ID="btnConfirmIssue" runat="server"
-                                    CssClass="btn btn-success" Text="Confirm Issue"
-                                    OnClick="btnConfirmIssue_Click" />
-                                <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>--%>
-                <%--------- Form End ---------%>
+            <div class="modal-footer">
+                <asp:Button ID="btnConfirm" runat="server"
+                    Text="Issue Books"
+                    CssClass="btn btn-success"
+                    OnClick="btnConfirm_Click" />
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+         
+
             </div>
         </div>
     </form>
@@ -260,38 +251,6 @@
 
             return true;
         }
-
-
-
-        // open modal from server-side
-        //function openConfirmModal() {
-        //    var modal = new bootstrap.Modal(document.getElementById('confirmModal'));
-        //    modal.show();
-        //}
-
-        //// You can call this manually from console or debugging
-        //function closeConfirmModal() {
-        //    var modalElement = document.getElementById('confirmModal');
-        //    var modal = bootstrap.Modal.getInstance(modalElement);
-        //    if (modal) modal.hide();
-        //}
-
-        //// highlight selected books count dynamically
-        //function updateBookCount(count) {
-        //    document.getElementById("lblBookCount").innerText = count;
-        //}
-
-        //// optional: warn if no books selected
-        //function validateBeforeConfirm() {
-        //    const count = document.getElementById("lblBookCount").innerText;
-        //    if (count === "0") {
-        //        alert("No books selected!");
-        //        return false;
-        //    }
-        //    return true;
-        //}
-
-
 
 
     </script>

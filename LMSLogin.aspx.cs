@@ -1,17 +1,14 @@
 ﻿using BLL;
 using Library;
 using System;
-using System.Configuration;
 using System.Data;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace LMS
 {
-    public partial class dummy : System.Web.UI.Page
+    public partial class LMSLogin : System.Web.UI.Page
     {
         LoginBO objLoginBo = new LoginBO();
         private string[] lblErrorMsg = new string[10];
@@ -38,11 +35,13 @@ namespace LMS
                 }
                 lblErrorMsg = new string[10];
                 // Load error messages
-                lblErrorMsg[0] = CommonFunction.GetErrorMessage("", "ERRLOG001"); //Please enter Login id
+                lblErrorMsg[0] = CommonFunction.GetErrorMessage("", "ERRLOG001"); //Please enter Student id
                 lblErrorMsg[1] = CommonFunction.GetErrorMessage("", "ERRLOG002"); // Please enter Password.
-                lblErrorMsg[2] = CommonFunction.GetErrorMessage("", "ERRLOG003"); // Invalid Login id or Password
-                lblErrorMsg[3] = CommonFunction.GetErrorMessage("", "ERRLOG004"); // Your account has been locked. Please contact the administrator.
-                lblErrorMsg[4] = CommonFunction.GetErrorMessage("", "ERRLOG005"); // Unauthorized login attempt.
+                lblErrorMsg[2] = CommonFunction.GetErrorMessage("", "ERRLOG003"); // Invalid Student id or Password
+                lblErrorMsg[3] = CommonFunction.GetErrorMessage("", "ERRLOG004"); //Please enter admin id
+                lblErrorMsg[4] = CommonFunction.GetErrorMessage("", "ERRLOG005"); // Invalid Admin id or Password
+                lblErrorMsg[5] = CommonFunction.GetErrorMessage("", "ERRLOG006"); // Your account has been locked. Please contact the administrator.
+                lblErrorMsg[6] = CommonFunction.GetErrorMessage("", "ERRLOG007"); // Unauthorized login attempt.
                
             }
             catch (Exception ex)
@@ -71,10 +70,10 @@ namespace LMS
                 userType:2,
                 strUserId: txtAdminID.Text.Trim(),
                 strPassword: txtAdminPwd.Text.Trim(),
-                loginIdEmptyMsg: lblErrorMsg[0],
+                loginIdEmptyMsg: lblErrorMsg[3],
                
                 passwordEmptyMsg: lblErrorMsg[1],
-                invalidLoginMsg: lblErrorMsg[2],
+                invalidLoginMsg: lblErrorMsg[4],
                 validateLoginIdFormat: CommonFunction.IsAlphaNumeric
             );
         }
@@ -87,7 +86,7 @@ namespace LMS
         {
             try
             {
-                // 1️⃣ UserID required
+                // 1️⃣ UserID required  
                 if (string.IsNullOrWhiteSpace(strUserId))
                 {
                     ShowAlert(loginIdEmptyMsg, "error");
@@ -171,7 +170,7 @@ namespace LMS
                         }
                         else
                         {
-                            ClearFields();
+                            //ClearFields();
                             ShowAlert(invalidLoginMsg, "error");
                             return;
                         }
@@ -179,7 +178,7 @@ namespace LMS
                     else
                     {
 
-                        ClearFields();
+                       // ClearFields();
                         ShowAlert(invalidLoginMsg, "error");
                         return;
                     }

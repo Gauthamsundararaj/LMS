@@ -71,10 +71,10 @@ namespace Admin
 
         protected void rblMemberType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (IsPostBack && rblMemberType.SelectedIndex != -1 && ViewState["HasSelectedMemberType"] != null)
-            {
-                ShowToastr("Selection changed. Enter Member ID.", "info");
-            }
+            //if (IsPostBack && rblMemberType.SelectedIndex != -1 && ViewState["HasSelectedMemberType"] != null)
+            //{
+            //    ShowToastr("Selection changed. Enter Member ID.", "info");
+            //}
 
             // Mark that user has selected at least once
             ViewState["HasSelectedMemberType"] = true;
@@ -127,62 +127,63 @@ namespace Admin
             try
             {
                 string memberType = rblMemberType.SelectedValue;
-                DataSet ds = objBO.GetBookDues(memberType, memberId);
-
-                if (ds != null && ds.Tables.Count > 0)
+                using (DataSet ds = objBO.GetBookDues(memberType, memberId))
                 {
-                    // Check for INVALID_ID
-                    if (ds.Tables[0].Columns.Contains("Result") &&
-                        ds.Tables[0].Rows[0]["Result"].ToString() == "INVALID_ID")
+                    if (ds != null && ds.Tables.Count > 0)
                     {
-                        ShowToastr(lblErrorMsg[18], "error"); // "Invalid ID - Enter correctly"
-
-                        // Clear GridView and hide action sections
-                        gvBookDues.DataSource = null;
-                        gvBookDues.DataBind();
-                        divActionButtons.Visible = false;
-                        divDateSection.Visible = false;
-
-                        // Stop further processing
-                        return;
-                    }
-
-                    // Bind only if rows exist
-                    if (ds.Tables[0].Rows.Count > 0)
-                    {
-                        gvBookDues.DataSource = ds;
-                        gvBookDues.DataBind();
-                        divActionButtons.Visible = true;
-                        divDateSection.Visible = true;
-                        int totalRecords = ds.Tables[0].Rows.Count;
-                        int pageSize = gvBookDues.PageSize;
-                        int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
-                        if (ds.Tables[0].Rows.Count > gvBookDues.PageSize)
+                        // Check for INVALID_ID
+                        if (ds.Tables[0].Columns.Contains("Result") &&
+                            ds.Tables[0].Rows[0]["Result"].ToString() == "INVALID_ID")
                         {
-                            BuildPager(totalPages, gvBookDues.PageIndex);
-                            rptPager.Visible = true;
+                            ShowToastr(lblErrorMsg[18], "error"); // "Invalid ID - Enter correctly"
+
+                            // Clear GridView and hide action sections
+                            gvBookDues.DataSource = null;
+                            gvBookDues.DataBind();
+                            divActionButtons.Visible = false;
+                            divDateSection.Visible = false;
+
+                            // Stop further processing
+                            return;
+                        }
+
+                        // Bind only if rows exist
+                        if (ds.Tables[0].Rows.Count > 0)
+                        {
+                            gvBookDues.DataSource = ds;
+                            gvBookDues.DataBind();
+                            divActionButtons.Visible = true;
+                            divDateSection.Visible = true;
+                            int totalRecords = ds.Tables[0].Rows.Count;
+                            int pageSize = gvBookDues.PageSize;
+                            int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+                            if (ds.Tables[0].Rows.Count > gvBookDues.PageSize)
+                            {
+                                BuildPager(totalPages, gvBookDues.PageIndex);
+                                rptPager.Visible = true;
+                            }
+                            else
+                            {
+                                rptPager.Visible = false;
+                            }
+
+
+                            foreach (GridViewRow row in gvBookDues.Rows)
+                            {
+                                CheckBox chk = (CheckBox)row.FindControl("chkSelect");
+                                if (chk != null) chk.Checked = false;
+                            }
                         }
                         else
                         {
-                            rptPager.Visible = false;
+                            gvBookDues.DataSource = null;
+                            gvBookDues.DataBind();
+                            divActionButtons.Visible = false;
+                            divDateSection.Visible = false;
+                            ShowToastr(lblErrorMsg[1], "info"); // "No Records found"
                         }
-                       
-
-                        foreach (GridViewRow row in gvBookDues.Rows)
-                        {
-                            CheckBox chk = (CheckBox)row.FindControl("chkSelect");
-                            if (chk != null) chk.Checked = false;
-                        }
+                        BuildPager(gvBookDues.PageCount, gvBookDues.PageIndex);
                     }
-                    else
-                    {
-                        gvBookDues.DataSource = null;
-                        gvBookDues.DataBind();
-                        divActionButtons.Visible = false;
-                        divDateSection.Visible = false;
-                        ShowToastr(lblErrorMsg[1], "info"); // "No Records found"
-                    }
-                    BuildPager(gvBookDues.PageCount, gvBookDues.PageIndex);
                 }
             }
             catch (Exception ex)

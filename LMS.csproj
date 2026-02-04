@@ -144,10 +144,16 @@
     <Content Include="assets\css\toastr.css" />
     <Content Include="assets\images\icons\csvdownload.png" />
     <Content Include="assets\images\icons\download %281%29.png" />
+    <Content Include="assets\images\icons\duebooks.png" />
     <Content Include="assets\images\icons\import.png" />
+    <Content Include="assets\images\icons\issuebooks.png" />
+    <Content Include="assets\images\icons\Newbook.png" />
+    <Content Include="assets\images\icons\open-book.png" />
     <Content Include="assets\images\icons\Totalbooks.png" />
     <Content Include="assets\js\bootstrap-multiselect.min.js" />
     <Content Include="assets\js\Custom-Toasts.js" />
+    <Content Include="assets\js\customcharts\chartjs.js" />
+    <Content Include="assets\js\customcharts\chartjsplugin.js" />
     <Content Include="assets\js\CustomMultiselect.js" />
     <Content Include="assets\js\JavaScript.js" />
     <Content Include="Config\Messages.xml">

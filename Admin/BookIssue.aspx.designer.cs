@@ -150,15 +150,6 @@ namespace Admin
         protected global::System.Web.UI.WebControls.Button btnCancel;
 
         /// <summary>
-        /// divGrid control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divGrid;
-
-        /// <summary>
         /// gvSelectedBooks control.
         /// </summary>
         /// <remarks>
@@ -168,15 +159,6 @@ namespace Admin
         protected global::System.Web.UI.WebControls.GridView gvSelectedBooks;
 
         /// <summary>
-        /// pnlConfirm control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlConfirm;
-
-        /// <summary>
         /// btnConfirm control.
         /// </summary>
         /// <remarks>
@@ -184,15 +166,6 @@ namespace Admin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnConfirm;
-
-        /// <summary>
-        /// Button1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Button1;
 
         /// <summary>
         /// Footer1 control.

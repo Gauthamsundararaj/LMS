@@ -24,7 +24,7 @@ namespace Admin
 
                 if (!IsPostBack)
                 {
-                  
+
                     parentMenuDiv.Visible = false;
                     BindGrid();
                     IsDefault.Checked = false;
@@ -38,12 +38,12 @@ namespace Admin
                 ShowToastr(lblErrorMsg[9], "error");
             }
         }
-        
+
         private void ErrorLog()
         {
             try
             {
-                
+
                 lblErrorMsg[0] = CommonFunction.GetErrorMessage("", "ERRMENU001"); // Menu Name is required.
                 lblErrorMsg[1] = CommonFunction.GetErrorMessage("", "ERRMENU002"); // Invalid Menu Name.
                 lblErrorMsg[2] = CommonFunction.GetErrorMessage("", "ERRMENU005"); // Active missing.
@@ -85,9 +85,9 @@ namespace Admin
             {
                 parentMenuDiv.Visible = chkIsChild.Checked;
 
-                if(!chkIsChild.Checked)
+                if (!chkIsChild.Checked)
                 {
-                        ddlParentMenu.SelectedValue="0";
+                    ddlParentMenu.SelectedValue="0";
                 }
             }
             catch (Exception ex)
@@ -96,14 +96,10 @@ namespace Admin
                 ShowToastr(lblErrorMsg[9] + ": " + ex.Message, "error");
             }
         }
-        protected void IsDefault_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
+ 
         private int GetNextSequenceNo(int parentMenuID)
         {
-            DataTable dt = objAdminBO.MenuMaster ("SELECT_CHILD", 0, "", "", parentMenuID, true, false,0, true, intAdminUserID ).Tables[0];
+            DataTable dt = objAdminBO.MenuMaster("SELECT_CHILD", 0, "", "", parentMenuID, true, false, 0, true, intAdminUserID).Tables[0];
 
             if (dt.Rows.Count == 0)
                 return 1;
@@ -130,16 +126,17 @@ namespace Admin
                 ddlParentMenu.Items.Clear();
                 ddlParentMenu.Items.Add(new ListItem("-- Select Parent Menu --", "0"));
 
-                DataSet ds = objAdminBO.MenuMaster ("SELECT_PARENT", 0, "", "", 0, false, false, 0, true, intAdminUserID);
-
-                DataTable dt = ds.Tables[0];
-
-                foreach (DataRow dr in dt.Rows)
+                using (DataSet ds = objAdminBO.MenuMaster("SELECT_PARENT", 0, "", "", 0, false, false, 0, true, intAdminUserID))
                 {
-                    ddlParentMenu.Items.Add(new ListItem(
-                        dr["MenuName"].ToString(),
-                        dr["MenuID"].ToString()
-                    ));
+                    DataTable dt = ds.Tables[0];
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        ddlParentMenu.Items.Add(new ListItem(
+                            dr["MenuName"].ToString(),
+                            dr["MenuID"].ToString()
+                        ));
+                    }
                 }
             }
             catch (Exception ex)
@@ -148,44 +145,6 @@ namespace Admin
                 ShowToastr(lblErrorMsg[4] + ": " + ex.Message, "error");
             }
         }
-
-
-        //private void BindGrid()
-        //{
-        //    try
-        //    {
-        //        string searchBy = ddlSearchBy.SelectedValue;
-        //        string searchValue = txtSearchValue.Text.Trim();
-
-        //        DataTable dt;
-
-
-        //        if (!string.IsNullOrEmpty(searchBy) && !string.IsNullOrEmpty(searchValue))
-        //        {
-        //            dt = objAdminBO.SearchMenuMaster(searchBy, searchValue);
-        //        }
-        //        else
-        //        {
-        //            dt = objAdminBO.GetMenuMasterGrid();
-
-        //        }
-
-        //        gvMenu.DataSource = dt;
-        //        gvMenu.DataBind();
-        //        lblRecordCount.Text = dt.Rows.Count + " Records found";
-        //        int totalRecords = dt.Rows.Count;
-        //        int pageSize = gvMenu.PageSize;
-        //        int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
-
-        //        BuildPager(totalPages, gvMenu.PageIndex);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MyExceptionLogger.Publish(ex);
-        //        ShowToastr(lblErrorMsg[4] + ": " + ex.Message, "error");
-        //    }
-        //}
-
         private void BindGrid()
         {
             try
@@ -318,41 +277,31 @@ namespace Admin
                     ? GetNextSequenceNo(parentId)
                     : GetNextParentSequence();
 
-                DataSet ds = objAdminBO.MenuMaster(
-                    "INSERT",
-                    0,
-                    menuName,
-                    pageName,
-                    parentId,
-                    isChild,
-                    IsDefaultPage,
-                    sequenceNo,
-                    isActive,
-                    intAdminUserID
-                );
-
-                int resultCode = Convert.ToInt32(ds.Tables[0].Rows[0]["ResultCode"]);
-
-                switch (resultCode)
+                using (DataSet ds = objAdminBO.MenuMaster("INSERT", 0, menuName, pageName, parentId, isChild, IsDefaultPage, sequenceNo, isActive, intAdminUserID))
                 {
-                    case 0:
-                        ClearFields();
-                        BindGrid();
-                        BindParentMenus();
-                        ShowToastr(lblErrorMsg[8], "success"); // Menu added
-                        break;
+                    int resultCode = Convert.ToInt32(ds.Tables[0].Rows[0]["ResultCode"]);
 
-                    case 1:
-                        ShowToastr(lblErrorMsg[0], "error");
-                        break;
+                    switch (resultCode)
+                    {
+                        case 0:
+                            ClearFields();
+                            BindGrid();
+                            BindParentMenus();
+                            ShowToastr(lblErrorMsg[8], "success"); // Menu added
+                            break;
 
-                    case 2:
-                        ShowToastr(lblErrorMsg[3], "warning");
-                        break;
+                        case 1:
+                            ShowToastr(lblErrorMsg[0], "error");
+                            break;
 
-                    default:
-                        ShowToastr(lblErrorMsg[4], "error");
-                        break;
+                        case 2:
+                            ShowToastr(lblErrorMsg[3], "warning");
+                            break;
+
+                        default:
+                            ShowToastr(lblErrorMsg[4], "error");
+                            break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -410,30 +359,12 @@ namespace Admin
                         return;
                     }
 
-                    //if (!Regex.IsMatch(pageName, @"^[A-Za-z0-9_]+\.aspx$", RegexOptions.IgnoreCase))
-                    //{
-                    //    ShowToastr(lblErrorMsg[10], "error"); // Invalid Page Name
-                    //    return;
-                    //}
-
                     if (parentId==0)
                     {
                         ShowToastr(lblErrorMsg[18], "error");  //Select Parent Menu
                         return;
                     }
                 }
-                //else
-                //{
-
-                //    if (txtPageName.Text.Length > 0)
-                //    {
-                //        if (!Regex.IsMatch(txtPageName.Text.Trim(), @"^[A-Za-z0-9_]+\.aspx$", RegexOptions.IgnoreCase))
-                //        {
-                //            ShowToastr(lblErrorMsg[10], "error");
-                //            return;
-                //        }
-                //    }
-                //}
 
                 int sequenceNo;
 
@@ -447,43 +378,35 @@ namespace Admin
                 }
                 string modifiedBy = Session["UserName"] != null ? Session["UserName"].ToString() : "";
 
-                DataSet ds = objAdminBO.MenuMaster(
-    "UPDATE",
-    menuId,
-    menuName,
-    pageName,
-    parentId,
-    isChild,
-    IsDefaultPage,
-    sequenceNo,
-    isActive,
-    intAdminUserID
-);
-                chkIsActive.Checked = true;
-                int resultCode = Convert.ToInt32(ds.Tables[0].Rows[0]["ResultCode"]);
-
-                switch (resultCode)
+                using (DataSet ds = objAdminBO.MenuMaster(
+                    "UPDATE",menuId,menuName,pageName, parentId,isChild,IsDefaultPage,sequenceNo,isActive,intAdminUserID))
                 {
-                    case 0:
-                        ClearFields();
-                        BindGrid();
-                        BindParentMenus();
-                        btnSubmit.Visible = true;
-                        btnUpdate.Visible = false;
-                        ShowToastr(lblErrorMsg[6], "success"); // updated
-                        break;
+                    chkIsActive.Checked = true;
+                    int resultCode = Convert.ToInt32(ds.Tables[0].Rows[0]["ResultCode"]);
 
-                    case 2:
-                        ShowToastr(lblErrorMsg[3], "warning"); // duplicate
-                        break;
+                    switch (resultCode)
+                    {
+                        case 0:
+                            ClearFields();
+                            BindGrid();
+                            BindParentMenus();
+                            btnSubmit.Visible = true;
+                            btnUpdate.Visible = false;
+                            ShowToastr(lblErrorMsg[6], "success"); // updated
+                            break;
 
-                    case 3:
-                        ShowToastr(lblErrorMsg[5], "error"); // not found
-                        break;
+                        case 2:
+                            ShowToastr(lblErrorMsg[3], "warning"); // duplicate
+                            break;
 
-                    default:
-                        ShowToastr(lblErrorMsg[4], "error");
-                        break;
+                        case 3:
+                            ShowToastr(lblErrorMsg[5], "error"); // not found
+                            break;
+
+                        default:
+                            ShowToastr(lblErrorMsg[4], "error");
+                            break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -497,9 +420,9 @@ namespace Admin
         #region Grid Events
         protected void gvMenu_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            gvMenu.PageIndex = e.NewPageIndex; 
+            gvMenu.PageIndex = e.NewPageIndex;
             BindGrid();
- 
+
         }
 
         protected void gvMenu_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -520,6 +443,7 @@ namespace Admin
                         txtPageName.Text = dr["PageName"].ToString();
 
                         chkIsChild.Checked = Convert.ToBoolean(dr["IsChildMenu"]);
+                        IsDefault.Checked = Convert.ToBoolean(dr["IsDefaultPage"]);
                         parentMenuDiv.Visible = chkIsChild.Checked;
 
                         string parentValue = dr["ParentMenuID"] != DBNull.Value ? dr["ParentMenuID"].ToString() : "0";
@@ -549,24 +473,24 @@ namespace Admin
             {
                 int menuId = Convert.ToInt32(gvMenu.DataKeys[e.RowIndex].Value);
 
-                DataSet ds = objAdminBO.MenuMaster("DELETE", menuId);
-
-                int resultCode = Convert.ToInt32(ds.Tables[0].Rows[0]["ResultCode"]);
-
-                if (resultCode == 0)
+                using (DataSet ds = objAdminBO.MenuMaster("DELETE", menuId))
                 {
-                    BindGrid();
-                    ShowToastr(lblErrorMsg[7], "success");
-                }
-                else if (resultCode == 3)
-                {
-                    ShowToastr(lblErrorMsg[5], "error");
-                }
-                else
-                {
-                    ShowToastr(lblErrorMsg[4], "error");
-                }
+                    int resultCode = Convert.ToInt32(ds.Tables[0].Rows[0]["ResultCode"]);
 
+                    if (resultCode == 0)
+                    {
+                        BindGrid();
+                        ShowToastr(lblErrorMsg[7], "success");
+                    }
+                    else if (resultCode == 3)
+                    {
+                        ShowToastr(lblErrorMsg[5], "error");
+                    }
+                    else
+                    {
+                        ShowToastr(lblErrorMsg[4], "error");
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -583,7 +507,7 @@ namespace Admin
 
                 if (string.IsNullOrEmpty(searchBy))
                 {
-                    ShowToastr(lblErrorMsg[12], "warning"); 
+                    ShowToastr(lblErrorMsg[12], "warning");
                     return;
                 }
 
@@ -627,7 +551,7 @@ namespace Admin
                 ShowToastr(lblErrorMsg[9] + ": " + ex.Message, "error");
             }
         }
-   
+
 
         protected void btnClearSearch_Click(object sender, EventArgs e)
         {

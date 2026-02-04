@@ -39,8 +39,20 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.3s ease; /* keeps black icons clean */
+            color:white;
+            /* keeps black icons clean */
         }
+/*        .summary-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}*/
+
+.summary-card.selected-card {
+    opacity: 0.6;
+    transform: scale(0.98);
+    box-shadow: inset 0 0 0 2px #00000030;
+}
+
 
 
 
@@ -145,7 +157,7 @@
                     <!-- Borrowed Books -->
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <asp:LinkButton runat="server" OnClick="CardAllRenewals_Click">
-                            <div class="card summary-card bg-renewals shadow-sm">
+                            <div class="card summary-card bg-renewals shadow-sm" id="cardAll" runat="server">
                                 <div class="card-body d-flex align-items-center justify-content-between">
                                     <div class="text-start">
                                         <h4 class="mb-1">Total Renewal Requests</h4>
@@ -163,8 +175,8 @@
                     <!-- Returned Books -->
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <asp:LinkButton runat="server" OnClick="CardNewRequests_Click">
-                            <div class="card summary-card bg-requests shadow-sm">
-                                <div class="card-body d-flex align-items-center justify-content-between">
+                            <div class="card summary-card bg-requests shadow-sm" id="cardNew" runat="server">
+                                <div class="card-body d-flex align-items-center justify-content-between " >
                                     <div class="text-start">
                                         <h4 class="mb-1">Yet To Be Process</h4>
                                         <h2 class="fw-bold mb-0">
@@ -180,7 +192,7 @@
                     <!-- Due Date -->
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <asp:LinkButton runat="server" OnClick="CardApproved_Click">
-                            <div class="card summary-card bg-approve shadow-sm">
+                            <div class="card summary-card bg-approve shadow-sm" id="cardProcessed" runat="server">
                                 <div class="card-body d-flex align-items-center justify-content-between">
                                     <div class="text-start">
                                         <h4 class="mb-1">Processed</h4>
@@ -263,7 +275,7 @@
                                     </EmptyDataTemplate>
                                     <Columns>
 
-                                        <asp:TemplateField HeaderText="S.No">
+                                        <asp:TemplateField HeaderText="S.No.">
                                             <HeaderTemplate>
                                                 <div class="fw-bold text-center">S.No</div>
 
@@ -689,98 +701,7 @@
             toggleClearFilterIcon();
         }
 
-      <%--  function validateRejectReason() {
-            var reason = document.getElementById('<%= ddlRejectReason.ClientID %>').value.trim();
-
-            if (reason === "") {
-                AlertMessage('Please enter reject reason.', 'error');
-                return false; // stop postback
-            }
-            return true; // allow postback
-        }
-        function clearSearch(el) {
-            const wrapper = el.closest('.input-clear-wrapper');
-            const input = wrapper.querySelector('input');
-
-            input.value = '';
-            el.style.display = 'none';
-            input.focus();
-
-            toggleClearFilterIcon();
-        }
-
-       
-        function allowOnlyNumbers(evt) {
-            var charCode = evt.which ? evt.which : evt.keyCode;
-
-            // Allow backspace, delete, arrows
-            if (charCode === 8 || charCode === 46 || charCode === 37 || charCode === 39) {
-                return true;
-            }
-            // Allow only digits
-            if (charCode < 48 || charCode > 57) {
-                evt.preventDefault();
-                return false;
-            }
-            return true;
-        }
-
-        function allowAlphaNumeric(evt) {
-            var charCode = evt.which ? evt.which : evt.keyCode;
-
-            // Allow backspace, space, delete
-            if (charCode === 8 || charCode === 32 || charCode === 46) {
-                return true;
-            }
-
-            // 0-9 A-Z a-z
-            if (
-                (charCode >= 48 && charCode <= 57) || // numbers
-                (charCode >= 65 && charCode <= 90) || // uppercase
-                (charCode >= 97 && charCode <= 122)   // lowercase
-            ) {
-                return true;
-            }
-
-            evt.preventDefault();
-            return false;
-        }
-
-        function toggleClearIcon(input) {
-            const wrapper = input.closest('.input-clear-wrapper');
-            const clearBtn = wrapper.querySelector('.clear-btn-inside');
-
-            if (input.value.trim() !== '') {
-                clearBtn.style.display = 'block';
-            } else {
-                clearBtn.style.display = 'none';
-            }
-
-            toggleClearFilterIcon(); // your existing filter icon logic
-        }
-        function toggleClearFilterIcon() {
-            const grid = $('#<%= gvRenewals.ClientID %>');
-            const hasValue =
-
-                $('#gvBooks input[id*="txtFilterRequestedType"]').val()?.trim() ||
-
-                $('#gvBooks input[id*="txtFilterISBN"]').val()?.trim() ||
-
-                $('#gvBooks input[id*="txtFilterBookTitle"]').val()?.trim() ||
-
-                $('#gvBooks input[id*="txtFilterRequestedMember"]').val()?.trim();
-
-            if (hasValue) {
-
-                $('#gvBooks .clear-filter-btn').show();
-
-            } else {
-
-                $('#gvBooks .clear-filter-btn').hide();
-
-            }
-
-        }--%>
+    
 
 
 

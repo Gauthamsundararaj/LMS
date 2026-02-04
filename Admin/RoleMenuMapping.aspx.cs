@@ -52,20 +52,21 @@ namespace Admin
         {
             try
             {
-                DataSet ds = objBO.GetRolesForDropdown();
-
-                ddlRoleType.Items.Clear();
-
-                if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                using (DataSet ds = objBO.GetRolesForDropdown())
                 {
-                    ddlRoleType.DataSource = ds.Tables[0];
-                    ddlRoleType.DataTextField = "UserRole"; // column from RoleMaster
-                    ddlRoleType.DataValueField = "RoleID";
-                    ddlRoleType.DataBind();
-                }
+                    ddlRoleType.Items.Clear();
 
-                ddlRoleType.Items.Insert(0,
-                    new ListItem("-- Select Role --", "0"));
+                    if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        ddlRoleType.DataSource = ds.Tables[0];
+                        ddlRoleType.DataTextField = "UserRole"; // column from RoleMaster
+                        ddlRoleType.DataValueField = "RoleID";
+                        ddlRoleType.DataBind();
+                    }
+
+                    ddlRoleType.Items.Insert(0,
+                        new ListItem("-- Select Role --", "0"));
+                }
             }
             catch (Exception ex)
             {
@@ -100,44 +101,45 @@ namespace Admin
         {
             try
             {
-                if(ddlRoleType.SelectedValue=="0")
+                if (ddlRoleType.SelectedValue=="0")
                 {
                     pnlMenuList.Visible=false;
                     return;
                 }
 
                 int roleID = Convert.ToInt32(ddlRoleType.SelectedValue);
-                DataSet ds = objBO.SearchRoleMenu(roleID);
-
-                if (ds != null && ds.Tables[0].Rows.Count > 0)
+                using (DataSet ds = objBO.SearchRoleMenu(roleID))
                 {
-                    gvRoleMenu.DataSource = ds;
-                    gvRoleMenu.DataBind();
-                    lblRecordCount.Text = ds.Tables[0].Rows.Count + " Records found";
-                    int totalRecords = ds.Tables[0].Rows.Count;
-                    int pageSize = gvRoleMenu.PageSize;
-                    int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
-                    if (ds.Tables[0].Rows.Count > gvRoleMenu.PageSize)
+                    if (ds != null && ds.Tables[0].Rows.Count > 0)
                     {
-                        BuildPager(totalPages, gvRoleMenu.PageIndex);
-                        rptPager.Visible = true;
+                        gvRoleMenu.DataSource = ds;
+                        gvRoleMenu.DataBind();
+                        lblRecordCount.Text = ds.Tables[0].Rows.Count + " Records found";
+                        int totalRecords = ds.Tables[0].Rows.Count;
+                        int pageSize = gvRoleMenu.PageSize;
+                        int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+                        if (ds.Tables[0].Rows.Count > gvRoleMenu.PageSize)
+                        {
+                            BuildPager(totalPages, gvRoleMenu.PageIndex);
+                            rptPager.Visible = true;
+                        }
+                        else
+                        {
+                            rptPager.Visible = false;
+                        }
                     }
                     else
                     {
-                        rptPager.Visible = false;
-                    }
-                }
-                else
-                {
-                    gvRoleMenu.DataSource = null;
-                    gvRoleMenu.DataBind();
-                    lblRecordCount.Text = gvRoleMenu.Rows.Count + " Records found";
+                        gvRoleMenu.DataSource = null;
+                        gvRoleMenu.DataBind();
+                        lblRecordCount.Text = gvRoleMenu.Rows.Count + " Records found";
 
-                    ShowToastr(lblErrorMsg[2], "info"); //No Record Found
+                        ShowToastr(lblErrorMsg[2], "info"); //No Record Found
+                    }
+                    pnlMenuList.Visible=true;
+                    lblRecordCount.Text = ds.Tables[0].Rows.Count + " Records found";
+                    BuildPager(gvRoleMenu.PageCount, gvRoleMenu.PageIndex);
                 }
-                pnlMenuList.Visible=true;
-                lblRecordCount.Text = ds.Tables[0].Rows.Count + " Records found";
-                BuildPager(gvRoleMenu.PageCount, gvRoleMenu.PageIndex);
             }
             catch (Exception ex)
             {
@@ -158,16 +160,18 @@ namespace Admin
 
                 int isChecked = chk.Checked ? 1 : 0;
 
-                DataSet ds = objBO.SaveUpdateRoleMenu(roleID, menuID, 0, isChecked, aUserID);
-                if (ds != null && ds.Tables.Count > 0)
+                using (DataSet ds = objBO.SaveUpdateRoleMenu(roleID, menuID, 0, isChecked, aUserID))
                 {
-                    int MsgCode = Convert.ToInt32(ds.Tables[0].Rows[0]["MsgCode"]);
+                    if (ds != null && ds.Tables.Count > 0)
                     {
-                        ShowToastr(lblErrorMsg[3], "success");
+                        int MsgCode = Convert.ToInt32(ds.Tables[0].Rows[0]["MsgCode"]);
+                        {
+                            ShowToastr(lblErrorMsg[3], "success");
+                        }
                     }
+                    LoadMenuByRole();
+                    lblRecordCount.Text = gvRoleMenu.Rows.Count + " Records found";
                 }
-                LoadMenuByRole();
-                lblRecordCount.Text = gvRoleMenu.Rows.Count + " Records found";
             }
             catch (Exception ex)
             {

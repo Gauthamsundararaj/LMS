@@ -3,7 +3,6 @@
 <%@ Register Src="../Controls/Header.ascx" TagPrefix="uc" TagName="Header" %>
 <%@ Register Src="../Controls/Footer.ascx" TagPrefix="uc" TagName="Footer" %>
 <!DOCTYPE html>
-
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>MemberDashboard</title>
@@ -193,7 +192,7 @@
                                     EmptyDataText="No records found" AllowPaging="True" PageSize="5" PagerSettings-Visible="false">
 
                                     <Columns>
-                                        <asp:TemplateField HeaderText="S.No">
+                                        <asp:TemplateField HeaderText="S.No.">
                                             <ItemTemplate><%# Container.DataItemIndex + 1 %></ItemTemplate>
                                             <ItemStyle HorizontalAlign="Center" Width="60px" />
                                         </asp:TemplateField>
@@ -242,7 +241,7 @@
                                                 </asp:LinkButton>
                                             </ItemTemplate>
                                         </asp:TemplateField>
-                                        
+
                                         <asp:TemplateField HeaderText="Last Renewal Status">
 
                                             <ItemTemplate>
@@ -291,7 +290,7 @@
                         <div class="modal-content">
 
                             <!-- Modal Header -->
-                            <div class="modal-header">
+                            <div class="modal-header bg-primary">
                                 <h5 class="modal-title">Renewal Request</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
@@ -377,11 +376,58 @@
                         </div>
                     </div>
                 </div>
+                <!-- Renewal Expired Warning Modal -->
+<div class="modal fade" id="renewalExpiredModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content shadow">
+
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Renewal Time Expired
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body text-center p-4">
+                <i class="bi bi-exclamation-circle text-warning fs-1 mb-3"></i>
+
+                <p class="fw-bold mb-2">
+                    Renewal period has expired.
+                </p>
+
+                <p class="mb-0">
+                    Books can be renewed only within
+                    <strong>
+                        <asp:Label ID="lblMaxRenewDays" runat="server"></asp:Label>
+                        days after the due date
+                    </strong>.
+                    <br />
+                    Please return the book to the library.
+                </p>
+
+                <p class="text-danger mt-2">
+                    Overdue fine will be applicable.
+                </p>
+            </div>
+
+            <div class="modal-footer justify-content-center">
+                <button type="button"
+                        class="btn btn-warning"
+                        data-bs-dismiss="modal">
+                    OK
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
             </div>
         </div>
     </form>
     <uc:footer id="Footer1" runat="server" />
-   
+
     <script>
         function validateRenewalInput() {
 
@@ -424,3 +470,4 @@
 
 </body>
 </html>
+ler

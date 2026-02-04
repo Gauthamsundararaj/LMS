@@ -157,45 +157,46 @@ namespace Admin
                     yearPublished = y;
                 }
 
-                DataSet ds = objCommonBO.GetBookAvailability(
-                    categoryNames, isbn, bookTitle, authorName, yearPublished, publisherName);
-
-                pnlGrid.Visible = true;
-
-                gvbookA.DataSource = ds?.Tables[0];
-                gvbookA.DataBind();
-                int totalRecords = ds.Tables[0].Rows.Count;
-                int pageSize = gvbookA.PageSize;
-                int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
-                if (ds.Tables[0].Rows.Count > gvbookA.PageSize)
+                using (DataSet ds = objCommonBO.GetBookAvailability(
+                    categoryNames, isbn, bookTitle, authorName, yearPublished, publisherName))
                 {
-                    BuildPager(totalPages, gvbookA.PageIndex);
-                    rptPager.Visible = true;
+                    pnlGrid.Visible = true;
+
+                    gvbookA.DataSource = ds?.Tables[0];
+                    gvbookA.DataBind();
+                    int totalRecords = ds.Tables[0].Rows.Count;
+                    int pageSize = gvbookA.PageSize;
+                    int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+                    if (ds.Tables[0].Rows.Count > gvbookA.PageSize)
+                    {
+                        BuildPager(totalPages, gvbookA.PageIndex);
+                        rptPager.Visible = true;
+                    }
+                    else
+                    {
+                        rptPager.Visible = false;
+                    }
+
+                    RestoreGridFilters();
+
+                    int recordCount = ds?.Tables[0].Rows.Count ?? 0;
+
+                    lblRecordCount.Text = "No of Records : " + recordCount;
+
+                    ViewState["BookAvailabilityDS"] = recordCount > 0 ? ds : null;
+
+                    if (!showMessage) return;
+
+                    if (recordCount > 0)
+                    {
+                        ShowToastr(lblErrorMsg[9], "success"); // Books loaded successfully
+                    }
+                    else
+                    {
+                        ShowToastr(lblErrorMsg[7], "warning"); // No books available for selected category
+                    }
+                    BuildPager(gvbookA.PageCount, gvbookA.PageIndex);
                 }
-                else
-                {
-                    rptPager.Visible = false;
-                }
-                
-                RestoreGridFilters();
-
-                int recordCount = ds?.Tables[0].Rows.Count ?? 0;
-
-                lblRecordCount.Text = "No of Records : " + recordCount;
-
-                ViewState["BookAvailabilityDS"] = recordCount > 0 ? ds : null;
-
-                if (!showMessage) return;
-
-                if (recordCount > 0)
-                {
-                    ShowToastr(lblErrorMsg[9], "success"); // Books loaded successfully
-                }
-                else
-                {
-                    ShowToastr(lblErrorMsg[7], "warning"); // No books available for selected category
-                }
-                BuildPager(gvbookA.PageCount, gvbookA.PageIndex);
             }
             catch (Exception ex)
             {
@@ -275,44 +276,45 @@ namespace Admin
                     yearPublished = y;
                 }
 
-                DataSet ds = objCommonBO.GetBookAvailability(
-                    categoryNames, isbn, bookTitle, authorName, yearPublished, publisherName);
-
-                if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+                using (DataSet ds = objCommonBO.GetBookAvailability(
+                    categoryNames, isbn, bookTitle, authorName, yearPublished, publisherName))
                 {
-                    ShowToastr(lblErrorMsg[8], "warning");
-                    return;
-                }
-
-                DataTable sourceTable = ds.Tables[0];
-
-                if (sourceTable.Columns.Contains("ISBN"))
-                {
-                    foreach (DataRow row in sourceTable.Rows)
+                    if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
                     {
-                        row["ISBN"] = "\t" + row["ISBN"];
+                        ShowToastr(lblErrorMsg[8], "warning");
+                        return;
                     }
-                }
 
-                string removeColumns = hfRemoveColumnsCSV.Value;
-                if (!string.IsNullOrWhiteSpace(removeColumns))
-                {
-                    foreach (string col in removeColumns.Split(','))
+                    DataTable sourceTable = ds.Tables[0];
+
+                    if (sourceTable.Columns.Contains("ISBN"))
                     {
-                        if (sourceTable.Columns.Contains(col))
-                            sourceTable.Columns.Remove(col);
+                        foreach (DataRow row in sourceTable.Rows)
+                        {
+                            row["ISBN"] = "\t" + row["ISBN"];
+                        }
                     }
+
+                    string removeColumns = hfRemoveColumnsCSV.Value;
+                    if (!string.IsNullOrWhiteSpace(removeColumns))
+                    {
+                        foreach (string col in removeColumns.Split(','))
+                        {
+                            if (sourceTable.Columns.Contains(col))
+                                sourceTable.Columns.Remove(col);
+                        }
+                    }
+
+                    StringBuilder sb = CommonFunction.CSVFileGenerationWithoutHeader(sourceTable, "BookAvailability");
+
+                    Response.Clear();
+                    Response.Buffer = true;
+                    Response.AddHeader("content-disposition", "attachment;filename=BookAvailability.csv");
+                    Response.Charset = "";
+                    Response.ContentType = "text/csv";
+                    Response.Write(sb.ToString());
+                    Response.End();
                 }
-
-                StringBuilder sb = CommonFunction.CSVFileGenerationWithoutHeader(sourceTable, "BookAvailability");
-
-                Response.Clear();
-                Response.Buffer = true;
-                Response.AddHeader("content-disposition", "attachment;filename=BookAvailability.csv");
-                Response.Charset = "";
-                Response.ContentType = "text/csv";
-                Response.Write(sb.ToString());
-                Response.End();
             }
             catch (Exception ex)
             {

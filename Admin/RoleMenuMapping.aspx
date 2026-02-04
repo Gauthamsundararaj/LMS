@@ -65,7 +65,7 @@
                                         CssClass="fw-bold text-primary"></asp:Label>
                                 </div>
                             </div>
-
+                            <div class="table-responsive">
                             <asp:GridView ID="gvRoleMenu" runat="server"
                                 AutoGenerateColumns="False"
                                 CssClass="table table-striped table-bordered text-center pt-1"
@@ -80,7 +80,7 @@
                                 <Columns>
 
 
-                                    <asp:TemplateField HeaderText="S.No">
+                                    <asp:TemplateField HeaderText="S.No.">
                                         <ItemTemplate>
                                             <%# Container.DataItemIndex + 1 %>
                                         </ItemTemplate>
@@ -116,7 +116,7 @@
                                 </Columns>
 
                             </asp:GridView>
-                    </div>
+                            </div>
                     <div class="pager-fixed">
                         <asp:Repeater ID="rptPager" runat="server" OnItemCommand="rptPager_ItemCommand">
                             <ItemTemplate>
@@ -129,13 +129,13 @@
                                 </asp:LinkButton>
                             </ItemTemplate>
                         </asp:Repeater>
-                    </div>
-                </div>
-                </asp:Panel>
+                    </div> 
+                        </asp:Panel>
             </div>
+          </div>
         </div>
-        </div>
-         </div>
+      </div>
+
 
     </form>
 

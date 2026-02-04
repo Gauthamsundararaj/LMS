@@ -57,16 +57,16 @@
 
                             <!-- Right column: description -->
                             <div class="col-12 col-md-6 col-lg-7">
-                                <label class="form-label" for="<%= txtDescription.ClientID %>">Description</label>
+                                <label class="form-label" for="<%= txtDescription.ClientID %>">Description <span class="text-danger">*</span></label>
                                 <!-- HtmlTextArea (server-side) -->
                                 <textarea id="txtDescription"
                                     runat="server"
                                     class="form-control"
-                                    rows="4"></textarea>
+                                    rows="4" maxlength="300"></textarea>
                             </div>
                         </div>
 
-                        <!-- Action Buttons -->
+                        <!-- Action Buttons -->                     
                         <div class="col-12 mt-3 mb-0">
                             <!-- Stack on xs, inline on sm+ -->
                             <div class="d-grid gap-2 d-sm-flex">
@@ -99,7 +99,7 @@
                                     PagerSettings-Visible="false"
                                     EmptyDataText="No records found">
                                     <Columns>
-                                        <asp:BoundField DataField="Sno" HeaderText="Sno" />
+                                        <asp:BoundField DataField="Sno" HeaderText="S.No." />
                                         <asp:TemplateField HeaderText="CategoryID" Visible="false">
                                             <ItemTemplate>
                                                 <%# Eval("CategoryID") %>

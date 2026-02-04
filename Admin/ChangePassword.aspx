@@ -69,9 +69,10 @@
         }
 
         .eye-icon {
+            display: none;   
             position: absolute;
             right: 14px;
-            top: 50%;
+            top: 35%;
             transform: translateY(-50%);
             cursor: pointer;
             font-size: 12px;
@@ -95,7 +96,7 @@
         .btn-submit:hover {
             background-color: #09564d;
         }
-
+            
         @media (min-width: 768px) {
             .card-box {
                 max-width: 520px;
@@ -115,13 +116,13 @@
             }
         }
     </script>
-</head>
+</head> 
 
 <body>
 
     <uc:header id="Header" runat="server" />
 
-    <form id="form1" runat="server">
+    <form id="form" runat="server">
         <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
 
         <div class="page-body">
@@ -180,6 +181,24 @@
     </form>
 
     <uc:footer id="Footer" runat="server" />
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            document.querySelectorAll(".password-wrapper input").forEach(function (input) {
+
+                input.addEventListener("input", function () {
+                    this.nextElementSibling.style.display = this.value ? "inline" : "none";
+                });
+
+                input.addEventListener("blur", function () {
+                    if (this.value === "") {
+                        this.nextElementSibling.style.display = "none";
+                    }
+                });
+            });
+
+        });
+    </script>
 
 </body>
 </html>

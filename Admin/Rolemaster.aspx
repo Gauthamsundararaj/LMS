@@ -63,7 +63,7 @@
 
                                 <!-- ✅ Hidden field -->
                                 <asp:HiddenField ID="hfRoleID" runat="server" />
-                                <div class="col-3 col-md-4 col-sm-6 mt-4">
+                                <div class="col-3 col-md-4 col-sm-4 ">
                                     <asp:Button ID="btnSubmit" runat="server" Text="Save"
                                         CssClass="btn btn-primary me-2"
                                         OnClientClick="return validateRoleMaster();"
@@ -96,50 +96,28 @@
 
                         <div class="table-responsive">
                             <asp:GridView
-                                ID="gvRoleMaster"
-                                runat="server"
-                                AutoGenerateColumns="False"
-                                AllowPaging="true"
-                                PagerSettings-Visible="false"
-                                PageSize="5"
-                                OnPageIndexChanging="gvMenu_PageIndexChanging"
-                                DataKeyNames="RoleID"
-                                OnRowCommand="gvRoleMaster_RowCommand"
-                                OnRowDeleting="gvRoleMaster_RowDeleting"
-                                CssClass="table table-bordered table-striped"
-                                EmptyDataText="No records found">
-
-                                <Columns>
-                                    <asp:TemplateField HeaderText="S.No">
-                                        <ItemTemplate>
-                                            <%# Container.DataItemIndex + 1 %>
-                                        </ItemTemplate>
+                                ID="gvRoleMaster" runat="server"  AutoGenerateColumns="False"  AllowPaging="true"
+                                PagerSettings-Visible="false" PageSize="5"  OnPageIndexChanging="gvMenu_PageIndexChanging"
+                                DataKeyNames="RoleID" OnRowCommand="gvRoleMaster_RowCommand"  OnRowDeleting="gvRoleMaster_RowDeleting"
+                                CssClass="table table-bordered table-striped" EmptyDataText="No records found">
+                            <Columns>
+                                    <asp:TemplateField HeaderText="S.No.">
+                                        <ItemTemplate>  <%# Container.DataItemIndex + 1 %>  </ItemTemplate>
                                     </asp:TemplateField>
-
                                     <asp:BoundField DataField="UserRole" HeaderText="User Role" />
                                     <asp:BoundField DataField="MenuName" HeaderText="Default Page" />
                                     <asp:TemplateField HeaderText="Active">
-                                        <ItemTemplate>
-                                            <%# Convert.ToBoolean(Eval("Active")) ? "Yes" : "No" %>
-                                        </ItemTemplate>
+                                        <ItemTemplate> <%# Convert.ToBoolean(Eval("Active")) ? "Yes" : "No" %> </ItemTemplate>
                                     </asp:TemplateField>
-                                   
-
                                     <asp:TemplateField HeaderText="Edit">
                                         <ItemTemplate>
                                             <asp:LinkButton
-                                                ID="btnEdit"
-                                                runat="server"
-                                                CommandName="EditRole"
-                                                CommandArgument='<%# Eval("RoleID") %>'
-                                                CssClass="btn btn-sm btn-primary me-2"
-                                                ToolTip="Edit">
-                                                <i class="iconly-Edit icli"></i>
+                                                ID="btnEdit" runat="server" CommandName="EditRole" CommandArgument='<%# Eval("RoleID") %>'
+                                                CssClass="btn btn-sm btn-primary me-2" ToolTip="Edit"><i class="iconly-Edit icli"></i>
                                             </asp:LinkButton>
                                         </ItemTemplate>
                                     </asp:TemplateField>
-
-                                    <asp:TemplateField HeaderText="Delete">
+                                <asp:TemplateField HeaderText="Delete">
                                         <ItemTemplate>
                                             <asp:LinkButton
                                                 ID="btnDelete"
@@ -195,12 +173,7 @@
                 return false;
             }
 
-            // OPTIONAL – normally not required
-            // if (!isActiveChecked) {
-            //     AlertMessage("Role must be active.", "warning");
-            //     return false;
-            // }
-
+          
             return true;
         }
     </script>

@@ -3,14 +3,8 @@ using Library;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
-using System.Reflection.Emit;
-using System.Security.Policy;
-using System.Text.RegularExpressions;
-using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-
 
 
 namespace Admin
@@ -29,7 +23,7 @@ namespace Admin
                 {
                     BindRoleType();
                     BindUserGrid();
-                   
+
                     //divForm.Style["display"] = "none";
                     //divGrid.Style["display"] = "block";
                 }
@@ -104,13 +98,13 @@ namespace Admin
 
             }
         }
-      
-        
+
+
         private void BindUserGrid()
         {
             try
             {
-  using (DataSet ds = objAdminBO.UserMaster("SELECT"))
+                using (DataSet ds = objAdminBO.UserMaster("SELECT"))
                 {
                     if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
@@ -143,7 +137,7 @@ namespace Admin
 
         //private bool ValidateUserInputs()
         //{
-            
+
         //    if (!string.IsNullOrWhiteSpace(hdnUserID.Value))
         //    {
         //        userId = Convert.ToInt32(hdnUserID.Value);
@@ -330,7 +324,7 @@ namespace Admin
         //                        break;
         //                }
 
-                        
+
 
 
         //            }
@@ -422,14 +416,14 @@ namespace Admin
                 ShowAlert(lblErrorMsg[11], "error"); return false;
             }
             //if (!System.Text.RegularExpressions.Regex.IsMatch(strPhone, @"^\d{10}$"))
-            if(!CommonFunction.CheckNumeric(strPhone))
+            if (!CommonFunction.CheckNumeric(strPhone))
             {
                 ShowAlert(lblErrorMsg[12], "error"); return false;
             }
 
             // Alternate Phone (optional - exactly 10 digits)
             if (!string.IsNullOrWhiteSpace(strAltPhone) && !CommonFunction.CheckNumeric(strPhone))
-                //!System.Text.RegularExpressions.Regex.IsMatch(strAltPhone, @"^\d{10}$"))
+            //!System.Text.RegularExpressions.Regex.IsMatch(strAltPhone, @"^\d{10}$"))
             {
                 ShowAlert(lblErrorMsg[15], "error"); return false;
             }
@@ -476,7 +470,7 @@ namespace Admin
         {
             try
             {
-               
+
                 string strLoginId = txtLoginId.Text.Trim();
                 string strEmpCode = txtEmpCode.Text.Trim();
                 string strUserName = txtUsername.Text.Trim();
@@ -491,7 +485,7 @@ namespace Admin
 
                 string strPhone = TxtPhone.Text.Trim();
                 string strAltPhone = txtAlternatePhone.Text.Trim();
-               
+
 
                 int roleID = 0;
                 if (!string.IsNullOrEmpty(ddlRoleType.SelectedValue))
@@ -509,29 +503,15 @@ namespace Admin
                 }
                 // ===== Validations =====
                 if (!ValidateUserInputs(strLoginId, strEmpCode, strUserName, strGender, strEmail, strAltEmail,
-                        strPhone,strAltPhone,strDepartment,strDesignation,roleID,strPassword))
+                        strPhone, strAltPhone, strDepartment, strDesignation, roleID, strPassword))
                 {
                     return; // stop if validation fails
                 }
 
                 // Proceed with insert
                 using (DataSet ds = objAdminBO.UserMaster(
-                    "INSERT",
-                    0,
-                    strLoginId,
-                    strEmpCode,
-                    strUserName,
-                    strGender,
-                    strEmail,
-                    strAltEmail,
-                    strPhone,
-                    strAltPhone,
-                    strDepartment,
-                    strDesignation,
-                    roleID,
-                    Security.CryptTripleDES(true, strPassword),
-                    boolIsActive,
-                    intAdminUserID))
+                    "INSERT", 0, strLoginId, strEmpCode, strUserName, strGender, strEmail, strAltEmail, strPhone, strAltPhone,
+                    strDepartment, strDesignation, roleID, Security.CryptTripleDES(true, strPassword), boolIsActive, intAdminUserID))
                 {
                     if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
@@ -729,7 +709,7 @@ namespace Admin
 
                 // ===== Validations =====
                 if (!ValidateUserInputs(
-                        
+
                         strLoginId,
                         strEmpCode,
                         strUserName,
@@ -747,14 +727,9 @@ namespace Admin
                 }
 
 
-                using (DataSet ds = objAdminBO.UserMaster( "UPDATE", userID, strLoginId, strEmpCode, strUserName, strGender,
-           strEmail, strAltEmail, strPhone,strAltPhone,strDepartment, strDesignation,roleID,
-         
-           Security.CryptTripleDES(true, strPassword),
-           boolIsActive,
-           intAdminUserID
-
-       ))
+                using (DataSet ds = objAdminBO.UserMaster("UPDATE", userID, strLoginId, strEmpCode, strUserName, strGender,
+                    strEmail, strAltEmail, strPhone, strAltPhone, strDepartment, strDesignation, roleID, Security.CryptTripleDES(true, strPassword),
+                    boolIsActive, intAdminUserID))
                 {
                     if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
@@ -798,8 +773,8 @@ namespace Admin
                                 ShowAlert("Unknown Error", "error");
                                 break;
                         }
-                      
-                      
+
+
                     }
                 }
             }
@@ -821,9 +796,9 @@ namespace Admin
             ddlDepartment.SelectedIndex = 0;
             txtDesignation.Text = "";
             ddlRoleType.SelectedIndex = 0;
-          
+
             txtPassword.Text = "";
-          
+
             rblGender.ClearSelection();
         }
 
@@ -862,7 +837,7 @@ namespace Admin
             BindUserGrid();
         }
 
-      
+
         protected void btnSearch_Click(object sender, EventArgs e)
         {
             try
@@ -921,30 +896,32 @@ namespace Admin
 
                 // ------------ DB CALL ----------------
 
-                DataSet ds = objAdminBO.UserMaster(
+                using (DataSet ds = objAdminBO.UserMaster(
                     "SEARCH",
                     0, "", "", "", "", "", "", "", "",
-                    "", "", 0,"", true, intAdminUserID,
+                    "", "", 0, "", true, intAdminUserID,
                     searchBy,
                     searchValue
-                );
-
-                gvUser.DataSource = ds.Tables[0];
-                gvUser.DataBind();
-
-                lblRecordCount.Text = gvUser.Rows.Count + " Records found";
-
-                if (gvUser.Rows.Count == 0)
+                ))
                 {
-                    ShowAlert("No records found.", "warning");
+
+                    gvUser.DataSource = ds.Tables[0];
+                    gvUser.DataBind();
+
+                    lblRecordCount.Text = gvUser.Rows.Count + " Records found";
+
+                    if (gvUser.Rows.Count == 0)
+                    {
+                        ShowAlert("No records found.", "warning");
+                    }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MyExceptionLogger.Publish(ex);
                 ShowAlert("Error: " + ex.Message, "error");
             }
-           
+
         }
         protected void btnClearSearch_Click(object sender, EventArgs e)
         {

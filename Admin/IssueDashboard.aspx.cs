@@ -28,22 +28,24 @@ namespace Admin
         {
             try
             {
-                DataSet ds = objCommonBO.GetBookIssueDashboard("TOTAL_COUNT");
-
-                if (ds != null && ds.Tables.Count > 0)
+                using (DataSet ds = objCommonBO.GetBookIssueDashboard("TOTAL_COUNT"))
                 {
-                    DataTable dt = ds.Tables[0];
 
-                    lblTotalBooks.Text    = dt.Rows[0]["TotalBooks"].ToString();
-                    lblIssuedBooks.Text   = GetCount("ISSUED_COUNT");
-                    lblDueBooks.Text      = GetCount("DUE_COUNT");
-                    lblReturnedBooks.Text = GetCount("RETURNED_COUNT");
+                    if (ds != null && ds.Tables.Count > 0)
+                    {
+                        DataTable dt = ds.Tables[0];
 
-                    BindGrid("TOTAL", true);
-                }
-                else
-                {
-                    ClearGrid();
+                        lblTotalBooks.Text    = dt.Rows[0]["TotalBooks"].ToString();
+                        lblIssuedBooks.Text   = GetCount("ISSUED_COUNT");
+                        lblDueBooks.Text      = GetCount("DUE_COUNT");
+                        lblReturnedBooks.Text = GetCount("RETURNED_COUNT");
+
+                        BindGrid("TOTAL", true);
+                    }
+                    else
+                    {
+                        ClearGrid();
+                    }
                 }
             }
             catch (Exception ex)
@@ -54,10 +56,12 @@ namespace Admin
 
         private string GetCount(string action)
         {
-            DataSet ds = objCommonBO.GetBookIssueDashboard(action);
-            return (ds != null && ds.Tables[0].Rows.Count > 0)
-                   ? ds.Tables[0].Rows[0][0].ToString()
-                   : "0";
+            using (DataSet ds = objCommonBO.GetBookIssueDashboard(action))
+            {
+                return (ds != null && ds.Tables[0].Rows.Count > 0)
+                       ? ds.Tables[0].Rows[0][0].ToString()
+                       : "0";
+            }
         }
 
         private void BindGrid(string type, bool resetPageIndex = false)

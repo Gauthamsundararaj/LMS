@@ -96,6 +96,7 @@
     <Content Include="BookMaster.aspx" />
     <Content Include="CategoryMaster.aspx" />
     <Content Include="ChangePassword.aspx" />
+    <Content Include="Dashboard.aspx" />
     <Content Include="IssueDashboard.aspx" />
     <Content Include="MemberDashboard.aspx" />
     <Content Include="Menumaster.aspx" />
@@ -164,6 +165,13 @@
     </Compile>
     <Compile Include="ChangePassword.aspx.designer.cs">
       <DependentUpon>ChangePassword.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Dashboard.aspx.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Dashboard.aspx.designer.cs">
+      <DependentUpon>Dashboard.aspx</DependentUpon>
     </Compile>
     <Compile Include="IssueDashboard.aspx.cs">
       <DependentUpon>IssueDashboard.aspx</DependentUpon>

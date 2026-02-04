@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Error>
-  <Message id="ERRLOG001">Please enter Login id.</Message>
+  <Message id="ERRLOG001">Please enter Student Id.</Message>
   <Message id="ERRLOG002">Please enter Password.</Message>
-  <Message id="ERRLOG003">Invalid Login id or Password.</Message>
-  <Message id="ERRLOG004">Your account has been locked. Please contact the administrator.</Message>
-  <Message id="ERRLOG005">Unauthorized login attempt.</Message>
+  <Message id="ERRLOG003">Invalid Student id or Password.</Message>
+  <Message id="ERRLOG004">Please enter Admin Id.</Message>
+  <Message id="ERRLOG005">Invalid Admin id or Password.</Message>
+  <Message id="ERRLOG006">Your account has been locked. Please contact the administrator.</Message>
+  <Message id="ERRLOG007">Unauthorized login attempt.</Message>
  
 
   <Message id="ERRCOM">No Records Found</Message>

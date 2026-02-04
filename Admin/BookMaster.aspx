@@ -127,10 +127,8 @@
                     </div>
 
                     <div class="card-body p-3">
-
                         <!-- ---------- SEARCH AREA (Not Scrollable) ---------- -->
                         <div class="row mb-3 align-items-end g-2">
-
                             <!-- Left controls -->
                             <div class="col-12 col-lg d-flex flex-wrap gap-2 align-items-end">
 
@@ -185,7 +183,7 @@
                                 PagerSettings-Visible="false"
                                 EmptyDataText="No records found">
                                 <Columns>
-                                    <asp:BoundField DataField="Sno" HeaderText="Sno" />
+                                    <asp:BoundField DataField="Sno" HeaderText="S.No." />
                                     <asp:BoundField DataField="BookID" Visible="false" />
                                     <asp:BoundField DataField="ISBN" HeaderText="ISBN" />
                                     <asp:TemplateField HeaderText="Book Title">
@@ -348,7 +346,7 @@
                                     Year Published <span
                                         style="color: red">*</span></label>
                                 <asp:TextBox ID="txtYearPublished" runat="server"
-                                    CssClass="form-control" MaxLength="4" placeholder="Enter Year (YYYY)" onkeypress="return event.charCode >= 48 && event.charCode <= 57;"></asp:TextBox>
+                                    CssClass="form-control" MaxLength="4" placeholder="Enter Year (YYYY)"   oninput="this.value = this.value.replace(/[^0-9]/g, '')"></asp:TextBox>
                             </div>
                             <!-- Edition -->
                             <div class="col-md-4 mb-3">
@@ -362,7 +360,7 @@
                                     Price
                                 </label>
                                 <asp:TextBox ID="txtPrice" runat="server"
-                                    CssClass="form-control" placeholder="Enter Price" MaxLength="20" onkeypress="return allowPriceChars(event);"
+                                    CssClass="form-control" placeholder="Enter Price" MaxLength="8" onkeypress="return allowPriceChars(event);"
                                     onpaste="return false;"></asp:TextBox>
                             </div>
                             <!-- Total Copies -->
@@ -370,9 +368,10 @@
                                 <label class="form-label">
                                     Total Copies <span
                                         style="color: red">*</span></label>
-                                <asp:TextBox ID="txtTotalCopies" runat="server"
-                                    CssClass="form-control" placeholder="Enter Total Copies" MaxLength="10"
-                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57;"></asp:TextBox>
+                                <asp:TextBox ID="txtTotalCopies" runat="server" CssClass="form-control" placeholder="Enter Total Copies"
+                                    MaxLength="10"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                </asp:TextBox>
                             </div>
 
                             <!-- Shelf Location -->
@@ -472,19 +471,35 @@
         }
         function allowPriceChars(evt) {
             const key = evt.key;
+            const input = evt.target.value;
 
             // Allow control keys
-            if (key === "Backspace" || key === "Delete" || key === "Tab") {
+            if (
+                key === "Backspace" || key === "Delete" || key === "Tab" || key === "ArrowLeft" || key === "ArrowRight"
+            ) {
                 return true;
             }
 
-            // Allow digits, dot, comma
-            if (/[\d.,]/.test(key)) {
-                return true; s
+            // Allow digits
+            if (key >= '0' && key <= '9') {
+                // If decimal exists, limit to 2 digits after dot
+                if (input.includes('.')) {
+                    const parts = input.split('.');
+                    if (evt.target.selectionStart > input.indexOf('.')) {
+                        return parts[1].length < 2;
+                    }
+                }
+                return true;
+            }
+
+            // Allow only ONE dot
+            if (key === '.') {
+                return !input.includes('.');
             }
 
             return false;
         }
+
 
 
     </script>

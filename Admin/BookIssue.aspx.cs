@@ -158,16 +158,16 @@ namespace Admin
                 {
                     gvSelectedBooks.DataSource = ds.Tables[0];
                     gvSelectedBooks.DataBind();
-                    pnlConfirm.Visible = true;
+                    //pnlConfirm.Visible = true;
                 }
                 else
                 {
                     ShowAlert(lblErrorMsg[0], "error");
-                    pnlConfirm.Visible = false;
+                    //pnlConfirm.Visible = false;
                 }
             }
 
-            pnlConfirm.Visible = true;
+            //pnlConfirm.Visible = true;
         }
 
         protected void btnSave_Click1(object sender, EventArgs e)
@@ -274,10 +274,9 @@ namespace Admin
                 ViewState["bookIdsCsv"] = bookIdsCsv;
 
                 BindSelectedBooksGrid();
-                divGrid.Visible=true;
-                btnSave.Visible = false;
-                btnClear.Visible = false;
-                btnCancel.Visible = false;
+                ScriptManager.RegisterStartupScript(Page, Page.GetType(), "ShowModal",
+                    "$(document).ready(function()" +
+                    "{ $('#selectedBooksModal').modal('show')  });", true);
             }
 
 
@@ -333,7 +332,7 @@ namespace Admin
                 MyExceptionLogger.Publish(ex);
             }
 
-            divGrid.Visible=false;
+           
             btnSave.Visible = true;
             btnClear.Visible = true;
             btnCancel.Visible = true;
@@ -343,8 +342,8 @@ namespace Admin
         {
             gvSelectedBooks.DataSource = null;
             gvSelectedBooks.DataBind();
-            pnlConfirm.Visible = false;
-            divGrid.Visible=false;
+            //pnlConfirm.Visible = false;
+            //divGrid.Visible=false;
             ClearFormFields();
             btnSave.Visible = true;
             btnClear.Visible = true;

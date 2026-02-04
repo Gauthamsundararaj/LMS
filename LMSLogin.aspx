@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="LMSLogin.aspx.cs" Inherits="LMS.dummy" UnobtrusiveValidationMode="None" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="LMSLogin.aspx.cs" Inherits="LMS.LMSLogin" UnobtrusiveValidationMode="None" %>
 
 <!DOCTYPE html>
 <html>
@@ -225,7 +225,7 @@
 
                  // Restore tab after postback
                  let activeTab = $('#<%= hdnActiveTab.ClientID %>').val();
-            let tabToShow = activeTab === 'admin'
+                let tabToShow = activeTab === 'admin'
                 ? 'pills-admin-tab'
                 : 'pills-student-tab';
 

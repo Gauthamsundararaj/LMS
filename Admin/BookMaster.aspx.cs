@@ -333,71 +333,8 @@ namespace Admin
                 ShowAlert("Failed to save book", "error");
             }
         }
+        
 
-        //      protected void btnSave_Click(object sender, EventArgs e)
-        //      {
-        //          string selectedValues = string.Join(",", GetSelectedAuthors());
-        //          try
-        //          {
-        //              // Collect fields
-        //              string title = txtBookTitle.Text.Trim();
-        //              string isbn = txtISBN.Text.Trim();
-        //              int categoryId = string.IsNullOrEmpty(ddlCategory.SelectedValue) ? 0 : Convert.ToInt32(ddlCategory.SelectedValue);
-        //              string language = ddlLanguage.SelectedValue;
-        //              string publisher = txtPublisher.Text.Trim();
-        //              string yearText = txtYearPublished.Text.Trim();
-        //              string edition = txtEdition.Text.Trim();
-        //              string priceText = txtPrice.Text.Trim();
-        //              string totalCopies = txtTotalCopies.Text.Trim();
-        //              string shelfLocation = txtShelfLocation.Text.Trim();
-        //              bool Active = chkActive.Checked;
-
-        //              // Authors selected -> build CSV of IDs
-        //              string authorIdsCsv = "";
-        //              foreach (ListItem li in lstAuthor.Items)
-        //              {
-        //                  if (li.Selected)
-        //                  {
-        //                      if (!string.IsNullOrEmpty(authorIdsCsv)) authorIdsCsv += ",";
-        //                      authorIdsCsv += li.Value;
-        //                  }
-        //              }
-        //              if(!ValidateUserInputs( title,isbn,categoryId,language,publisher,yearText,edition,priceText,
-        //totalCopies, authorIdsCsv = ""))
-
-
-        //              using (DataSet ds = objMasterBO.BookMaster("INSERT", 0, isbn, categoryId, title, language, publisher, publishedYear, edition, price,
-        //                  totalCopies, shelfLocation, Active, authorIdsCsv, intAdminUserID))
-        //              {
-        //                  if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
-        //                  {
-        //                      int msgCode = Convert.ToInt32(ds.Tables[0].Rows[0]["MsgCode"]);
-        //                      if (msgCode == 2)
-        //                      {
-        //                          ShowAlert(lblErrorMsg[23], "error");
-        //                      }
-
-        //                      if (msgCode == 1)
-        //                      {
-        //                          ShowAlert(lblErrorMsg[20], "success"); // insert success
-        //                          ClearFormFields();
-        //                          divBookGrid.Visible = true;
-        //                          divForm.Visible = false;
-        //                          btnAddBooks.Visible = true;
-        //                          BindBookGrid();
-
-
-        //                      }
-
-        //                  }
-        //              }
-        //          }
-        //          catch (Exception ex)
-        //          {
-        //              MyExceptionLogger.Publish(ex);
-        //              ShowAlert("Failed to save book", "error");
-        //          }
-        //      }
 
         protected void gvBookMaster_RowCommand(object sender, GridViewCommandEventArgs e)
         {
@@ -689,19 +626,22 @@ namespace Admin
                 }
 
                 // Search call (correct BAL object name)
-                DataSet ds = objMasterBO.BookMaster("SEARCH", 0, "", 0, "", "", "", 0, "", 0, 0, "", true,
-                "", intAdminUserID, searchBy, searchValue);
-                if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+               using( DataSet ds = objMasterBO.BookMaster("SEARCH", 0, "", 0, "", "", "", 0, "", 0, 0, "", true,
+                "", intAdminUserID, searchBy, searchValue))
                 {
-                    gvBookMaster.DataSource = ds.Tables[0];
+                    if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        gvBookMaster.DataSource = ds.Tables[0];
 
-                    gvBookMaster.DataBind();
-                    //lblRecordCount.Text ="Total Books:" + gvBookMaster.Rows.Count;
+                        gvBookMaster.DataBind();
+                        //lblRecordCount.Text ="Total Books:" + gvBookMaster.Rows.Count;
+                    }
+                    else
+                    {
+                        ShowAlert("No records found.", "warning");
+                    }
                 }
-                else
-                {
-                    ShowAlert("No records found.", "warning");
-                }
+               
             }
             catch (Exception ex)
             {
@@ -722,44 +662,46 @@ namespace Admin
         {
             try
             {
-                DataSet ds = objMasterBO.BookMaster("SELECT");
-
-                if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+                using (DataSet ds = objMasterBO.BookMaster("SELECT"))
                 {
-                    ShowAlert("No data available for export.", "warning");
-                    return;
-                }
-
-                DataTable sourceTable = ds.Tables[0];
-                if (sourceTable.Columns.Contains("ISBN"))
-                {
-                    foreach (DataRow row in sourceTable.Rows)
+                    if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
                     {
-                        row["ISBN"] = "\t" + row["ISBN"].ToString();
+                        ShowAlert("No data available for export.", "warning");
+                        return;
                     }
-                }
-                string removeColumns = hfRemoveColumnsCSV.Value;
 
-                if (!string.IsNullOrWhiteSpace(removeColumns))
-                {
-                    string[] columnsToRemove = removeColumns.Split(',');
 
-                    foreach (string col in columnsToRemove)
+                    DataTable sourceTable = ds.Tables[0];
+                    if (sourceTable.Columns.Contains("ISBN"))
                     {
-                        if (ds.Tables[0].Columns.Contains(col))
-                            ds.Tables[0].Columns.Remove(col);
+                        foreach (DataRow row in sourceTable.Rows)
+                        {
+                            row["ISBN"] = "\t" + row["ISBN"].ToString();
+                        }
                     }
-                }
-                StringBuilder sb = CommonFunction.CSVFileGenerationWithoutHeader(sourceTable, "BookMaster");
+                    string removeColumns = hfRemoveColumnsCSV.Value;
 
-                Response.Clear();
-                Response.Buffer = true;
-                Response.AddHeader("content-disposition", "attachment;filename=BookMaster.csv");
-                Response.Charset = "";
-                Response.ContentType = "text/csv";
-                Response.Write(sb.ToString());
-                Response.Flush();
-                Response.End();
+                    if (!string.IsNullOrWhiteSpace(removeColumns))
+                    {
+                        string[] columnsToRemove = removeColumns.Split(',');
+
+                        foreach (string col in columnsToRemove)
+                        {
+                            if (ds.Tables[0].Columns.Contains(col))
+                                ds.Tables[0].Columns.Remove(col);
+                        }
+                    }
+                    StringBuilder sb = CommonFunction.CSVFileGenerationWithoutHeader(sourceTable, "BookMaster");
+
+                    Response.Clear();
+                    Response.Buffer = true;
+                    Response.AddHeader("content-disposition", "attachment;filename=BookMaster.csv");
+                    Response.Charset = "";
+                    Response.ContentType = "text/csv";
+                    Response.Write(sb.ToString());
+                    Response.Flush();
+                    Response.End();
+                }
             }
             catch (Exception ex)
             {

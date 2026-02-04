@@ -128,7 +128,7 @@
                                         </div>
                                     </EmptyDataTemplate> 
                                     <Columns>
-                                        <asp:TemplateField HeaderText="S.No">
+                                        <asp:TemplateField HeaderText="S.No.">
                                             <HeaderTemplate>
                                                 <div class="fw-bold text-center">S.No</div>
                                                  <div class="d-flex justify-content-center gap-2 mt-1">
@@ -185,7 +185,7 @@
                                             <HeaderTemplate>
                                                 <div class="fw-bold">Year</div>
                                                 <div class="search-wrapper">
-                                                    <asp:TextBox ID="txtFilterYear" runat="server" CssClass="form-control form-control-sm" MaxLength="4"
+                                                    <asp:TextBox ID="txtFilterYear" runat="server" CssClass="form-control form-control-sm" MaxLength="4"  placeholder="2026"
                                                         onkeypress="return allowOnlyNumbers(event);" onkeyup="toggleClearFilterIcon();" />
                                                     <span class="clear-btn" onclick="clearSearch(this)">✖</span>
                                                 </div>

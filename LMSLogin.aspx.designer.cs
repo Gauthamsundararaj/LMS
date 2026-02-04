@@ -11,7 +11,7 @@ namespace LMS
 {
 
 
-    public partial class dummy
+    public partial class LMSLogin
     {
 
         /// <summary>

@@ -63,7 +63,7 @@ namespace Admin
                         Session["MemberBooks"] = ds.Tables[0];
 
                         // 🔹 DEFAULT GRID
-                        BindGrid("BORROWED");
+                        BindGrid(CurrentGrid);
                     }
                     else
                     {
@@ -187,18 +187,22 @@ namespace Admin
 
         protected void Borrowed_Click(object sender, EventArgs e)
         {
-            BindGrid("BORROWED");
+            CurrentGrid = "BORROWED";
+            BindGrid("BORROWED", true);
         }
 
         protected void Returned_Click(object sender, EventArgs e)
         {
-            BindGrid("RETURNED");
+            CurrentGrid = "RETURNED";
+            BindGrid("RETURNED", true);
         }
 
         protected void Due_Click(object sender, EventArgs e)
         {
-            BindGrid("DUE");
+            CurrentGrid = "DUE";
+            BindGrid("DUE", true);
         }
+
         private void ClearGrids()
         {
             // Clear GridView data
@@ -273,7 +277,11 @@ namespace Admin
             rptPager.DataSource = pages;
             rptPager.DataBind();
         }
-
+        private string CurrentGrid
+        {
+            get { return Session["CurrentGrid"]?.ToString() ?? "BORROWED"; }
+            set { Session["CurrentGrid"] = value; }
+        }
 
 
         protected void rptPager_ItemCommand(object source, RepeaterCommandEventArgs e)
@@ -288,7 +296,10 @@ namespace Admin
         protected void gvBooks_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             if (e.CommandName == "RenewalRequest")
+
             {
+
+
                 // 1️⃣ Get BookIssueID from CommandArgument
                 int bookIssueId;
                 if (!int.TryParse(e.CommandArgument.ToString(), out bookIssueId))
@@ -304,7 +315,25 @@ namespace Admin
                 // 3️⃣ Find row by BookIssueID
                 DataRow row = dt.AsEnumerable()
                                 .FirstOrDefault(r => Convert.ToInt32(r["BookIssueID"]) == bookIssueId);
+                if (row == null) return;
 
+                // ❌ Renewal not allowed
+                if (Convert.ToInt32(row["IsRenewalAllowed"]) == 0)
+                {
+                    // ✅ ADD HERE
+                    lblMaxRenewDays.Text = row["MaxRenewalDays"].ToString();
+
+                    // Show warning modal (not hard-coded)
+                    ScriptManager.RegisterStartupScript(
+                        Page,
+                        Page.GetType(),
+                        "ShowRenewalExpiredModal",
+                          "$(document).ready(function(){ $('#renewalExpiredModal').modal('show'); });",
+                     
+                        true
+                    );
+                    return;
+                }
                 if (row != null)
                 {
                     lblISBN.Text = row["ISBN"].ToString();
@@ -380,6 +409,7 @@ namespace Admin
                         {
                             ShowAlert(lblErrorMsg[3], "success");
 
+                            CurrentGrid = "DUE";   // ✅ stay on Due
                             BindSummary();
 
                             ScriptManager.RegisterStartupScript(

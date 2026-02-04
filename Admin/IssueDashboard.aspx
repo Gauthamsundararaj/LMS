@@ -158,7 +158,7 @@
                             <div class="card summary-card bg-total shadow-sm">
                                 <div class="card-body d-flex align-items-center justify-content-between">
                                     <div>
-                                        <h4 class="mb-1">Total Books</h4>
+                                        <h4 class="mb-1">Total Issued Books</h4>
                                         <h2 class="fw-bold mb-0">
                                             <asp:Label ID="lblTotalBooks" runat="server" Text="0" />
                                         </h2>
@@ -196,7 +196,7 @@
                             <div class="card summary-card bg-due shadow-sm">
                                 <div class="card-body d-flex align-items-center justify-content-between">
                                     <div>
-                                        <h4 class="mb-1">Due Books</h4>
+                                        <h4 class="mb-1">OverDue Books</h4>
                                         <h2 class="fw-bold mb-0">
                                             <asp:Label ID="lblDueBooks" runat="server" Text="0" />
                                         </h2>
@@ -291,9 +291,9 @@
                             <Columns>
 
 
-                                <asp:TemplateField HeaderText="S.No">
+                                <asp:TemplateField HeaderText="S.No.">
                                     <HeaderTemplate>
-                                        <div class="fw-bold text-center">S.No</div>
+                                        <div class="fw-bold text-center">S.No.</div>
 
                                         <div class="d-flex justify-content-center gap-2 mt-2 align-items-center">
                                             <asp:LinkButton ID="btnApplyFilter"

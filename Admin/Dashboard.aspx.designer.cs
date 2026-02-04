@@ -11,7 +11,7 @@ namespace Admin
 {
 
 
-    public partial class MemberDashboard
+    public partial class Dashboard
     {
 
         /// <summary>
@@ -33,112 +33,112 @@ namespace Admin
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// hdnBookID control.
+        /// txtFromDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdnBookID;
+        protected global::System.Web.UI.WebControls.TextBox txtFromDate;
 
         /// <summary>
-        /// hdnBookIssueID control.
+        /// txtToDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdnBookIssueID;
+        protected global::System.Web.UI.WebControls.TextBox txtToDate;
 
         /// <summary>
-        /// ScriptManager1 control.
+        /// btnSearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.ScriptManager ScriptManager1;
+        protected global::System.Web.UI.WebControls.Button btnSearch;
 
         /// <summary>
-        /// divOverDueAlert control.
+        /// lblTotalBooks control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divOverDueAlert;
+        protected global::System.Web.UI.WebControls.Label lblTotalBooks;
 
         /// <summary>
-        /// lblOverDueCount control.
+        /// lblTotalIssued control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblOverDueCount;
+        protected global::System.Web.UI.WebControls.Label lblTotalIssued;
 
         /// <summary>
-        /// divSummary control.
+        /// lblDueBooks control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divSummary;
+        protected global::System.Web.UI.WebControls.Label lblDueBooks;
 
         /// <summary>
-        /// lblBorrowedCount control.
+        /// lblReturnedBooks control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblBorrowedCount;
+        protected global::System.Web.UI.WebControls.Label lblReturnedBooks;
 
         /// <summary>
-        /// lblReturnedCount control.
+        /// lblModalTitle control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblReturnedCount;
+        protected global::System.Web.UI.WebControls.Label lblModalTitle;
 
         /// <summary>
-        /// lblDueCount control.
+        /// LinkButton1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblDueCount;
+        protected global::System.Web.UI.WebControls.LinkButton LinkButton1;
 
         /// <summary>
-        /// divGrid control.
+        /// Image1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divGrid;
+        protected global::System.Web.UI.WebControls.Image Image1;
 
         /// <summary>
-        /// lblGridTitle control.
+        /// lblRecordCount control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl lblGridTitle;
+        protected global::System.Web.UI.WebControls.Label lblRecordCount;
 
         /// <summary>
-        /// gvBooks control.
+        /// gvData control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvBooks;
+        protected global::System.Web.UI.WebControls.GridView gvData;
 
         /// <summary>
         /// rptPager control.
@@ -150,84 +150,129 @@ namespace Admin
         protected global::System.Web.UI.WebControls.Repeater rptPager;
 
         /// <summary>
-        /// lblBookTitle control.
+        /// hfStudentIssued control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblBookTitle;
+        protected global::System.Web.UI.WebControls.HiddenField hfStudentIssued;
 
         /// <summary>
-        /// lblDueDate control.
+        /// hfStudentReturned control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblDueDate;
+        protected global::System.Web.UI.WebControls.HiddenField hfStudentReturned;
 
         /// <summary>
-        /// lblAuthors control.
+        /// hfStaffIssued control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblAuthors;
+        protected global::System.Web.UI.WebControls.HiddenField hfStaffIssued;
 
         /// <summary>
-        /// lblISBN control.
+        /// hfStaffReturned control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblISBN;
+        protected global::System.Web.UI.WebControls.HiddenField hfStaffReturned;
 
         /// <summary>
-        /// lblCategory control.
+        /// hfStudentTotal control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblCategory;
+        protected global::System.Web.UI.WebControls.HiddenField hfStudentTotal;
 
         /// <summary>
-        /// txtRenewDays control.
+        /// hfStaffTotal control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtRenewDays;
+        protected global::System.Web.UI.WebControls.HiddenField hfStaffTotal;
 
         /// <summary>
-        /// btnSubmitRenewal control.
+        /// hfStudentIssuedDD control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSubmitRenewal;
+        protected global::System.Web.UI.WebControls.HiddenField hfStudentIssuedDD;
 
         /// <summary>
-        /// lblMaxRenewDays control.
+        /// hfStudentReturnedDD control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblMaxRenewDays;
+        protected global::System.Web.UI.WebControls.HiddenField hfStudentReturnedDD;
 
         /// <summary>
-        /// Footer1 control.
+        /// hfStaffIssuedDD control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UserControl Footer1;
+        protected global::System.Web.UI.WebControls.HiddenField hfStaffIssuedDD;
+
+        /// <summary>
+        /// hfStaffReturnedDD control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hfStaffReturnedDD;
+
+        /// <summary>
+        /// hfDayLabels control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hfDayLabels;
+
+        /// <summary>
+        /// hfDayIssued control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hfDayIssued;
+
+        /// <summary>
+        /// hfDayReturned control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hfDayReturned;
+
+        /// <summary>
+        /// Footer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UserControl Footer;
     }
 }

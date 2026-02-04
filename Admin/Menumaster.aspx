@@ -164,7 +164,7 @@
                                 EmptyDataText="No records found">
                                 <Columns>
 
-                                    <asp:TemplateField HeaderText="S.No">
+                                    <asp:TemplateField HeaderText="S.No.">
                                         <ItemTemplate><%# Container.DataItemIndex + 1 %></ItemTemplate>
                                     </asp:TemplateField>
 

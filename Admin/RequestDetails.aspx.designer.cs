@@ -60,6 +60,15 @@ namespace Admin
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl divSummary;
 
         /// <summary>
+        /// cardAll control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl cardAll;
+
+        /// <summary>
         /// lblRenewalsCount control.
         /// </summary>
         /// <remarks>
@@ -69,6 +78,15 @@ namespace Admin
         protected global::System.Web.UI.WebControls.Label lblRenewalsCount;
 
         /// <summary>
+        /// cardNew control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl cardNew;
+
+        /// <summary>
         /// lblRequestCount control.
         /// </summary>
         /// <remarks>
@@ -76,6 +94,15 @@ namespace Admin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblRequestCount;
+
+        /// <summary>
+        /// cardProcessed control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl cardProcessed;
 
         /// <summary>
         /// lblApproveCount control.

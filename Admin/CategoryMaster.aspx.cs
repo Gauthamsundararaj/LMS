@@ -113,7 +113,7 @@ namespace Admin
                     return;
                 }
                 // Max length
-                if (Description.Length > 500)
+                if (Description.Length > 300)
                 {
                     ShowAlert(lblErrorMsg[7], "error");
                     txtDescription.Focus();
@@ -309,8 +309,6 @@ namespace Admin
             rptPager.DataSource = pages;
             rptPager.DataBind();
         }
-
-
 
         protected void rptPager_ItemCommand(object source, RepeaterCommandEventArgs e)
         {

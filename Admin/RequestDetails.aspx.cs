@@ -3,9 +3,7 @@ using Library;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Text;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -21,6 +19,7 @@ namespace Admin
             if (!IsPostBack)
             {
                 LoadRenewals();
+                //ApplySelectedCardStyle();
             }
 
             lblErrorMsg[1] = CommonFunction.GetErrorMessage("", "ERRRR01");
@@ -32,27 +31,28 @@ namespace Admin
         {
             try
             {
-                DataSet ds = objCommonBO.BookRenewalRequest("SELECT","", 0, 0);
-
-                if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                using (DataSet ds = objCommonBO.BookRenewalRequest("SELECT", "", 0, 0))
                 {
-                    DataTable dt = ds.Tables[0];
+                    if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    {
+                        DataTable dt = ds.Tables[0];
 
-                    // 🔹 CARD COUNTS
-                    lblRenewalsCount.Text = dt.Rows[0]["TotalRenewals"].ToString();
-                    lblRequestCount.Text  = dt.Rows[0]["Requests"].ToString();
-                    lblApproveCount.Text  = dt.Rows[0]["ProcessedRequests"].ToString();
+                        // 🔹 CARD COUNTS
+                        lblRenewalsCount.Text = dt.Rows[0]["TotalRenewals"].ToString();
+                        lblRequestCount.Text  = dt.Rows[0]["Requests"].ToString();
+                        lblApproveCount.Text  = dt.Rows[0]["ProcessedRequests"].ToString();
 
-                    // 🔹 STORE DATA IN SESSION
-                    Session["RenewalData"] = dt;
-                   
-                    // 🔹 DEFAULT GRID → NEW REQUESTS
-                    BindRenewalGrid("NEW");
-                }
-                else
-                {
-                    ClearRenewalGrid();
-                    rptPager.Visible = false;
+                        // 🔹 STORE DATA IN SESSION
+                        Session["RenewalData"] = dt;
+
+                        // 🔹 DEFAULT GRID → NEW REQUESTS
+                        BindRenewalGrid("NEW");
+                    }
+                    else
+                    {
+                        ClearRenewalGrid();
+                        rptPager.Visible = false;
+                    }
                 }
             }
             catch (Exception ex)
@@ -116,9 +116,38 @@ namespace Admin
             {
                 rptPager.Visible = false;
             }
-           
+            ApplySelectedCardStyle();
         }
 
+        private string SelectedCard
+        {
+            get { return ViewState["SelectedCard"]?.ToString() ?? "NEW"; }
+            set { ViewState["SelectedCard"] = value; }
+        }
+        private void ApplySelectedCardStyle()
+        {
+            cardAll.Attributes["class"] =
+                cardAll.Attributes["class"].Replace(" selected-card", "");
+            cardNew.Attributes["class"] =
+                cardNew.Attributes["class"].Replace(" selected-card", "");
+            cardProcessed.Attributes["class"] =
+                cardProcessed.Attributes["class"].Replace(" selected-card", "");
+
+            switch (SelectedCard)
+            {
+                case "ALL":
+                    cardAll.Attributes["class"] += " selected-card";
+                    break;
+
+                case "NEW":
+                    cardNew.Attributes["class"] += " selected-card";
+                    break;
+
+                case "PROCESSED":
+                    cardProcessed.Attributes["class"] += " selected-card";
+                    break;
+            }
+        }
 
 
         private void ConfigureRenewalGrid(string mode)
@@ -159,16 +188,19 @@ namespace Admin
         }
         protected void CardNewRequests_Click(object sender, EventArgs e)
         {
+            SelectedCard = "NEW";
             BindRenewalGrid("NEW", true);
         }
 
         protected void CardApproved_Click(object sender, EventArgs e)
         {
+            SelectedCard = "PROCESSED";
             BindRenewalGrid("PROCESSED", true);
         }
 
         protected void CardAllRenewals_Click(object sender, EventArgs e)
         {
+            SelectedCard = "ALL";
             BindRenewalGrid("ALL", true);
         }
         private void ClearRenewalGrid()
@@ -259,9 +291,6 @@ namespace Admin
                 MyExceptionLogger.Publish(ex);
             }
         }
-
-        /* ================= CONFIRM REJECT ================= */
-
         protected void btnConfirmReject_Click(object sender, EventArgs e)
         {
             try
@@ -320,12 +349,9 @@ namespace Admin
         protected void rptPager_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int newIndex = Convert.ToInt32(e.CommandArgument);
-
             gvRenewals.PageIndex = newIndex;
-
             string type = ViewState["CurrentGridType"]?.ToString() ?? "NEW";
             BindRenewalGrid(type);
-
         }
         private void BuildPager(int totalPages, int currentPage)
         {
@@ -398,14 +424,6 @@ namespace Admin
         {
             return value?.Replace("'", "''");
         }
-
-       
-
-        //private bool IsRefresh
-        //{
-        //    get { return ViewState["IsRefresh"] != null && (bool)ViewState["IsRefresh"]; }
-        //    set { ViewState["IsRefresh"] = value; }
-        //}
 
         private void SaveRenewalGridFilters()
         {

@@ -187,7 +187,15 @@ namespace BLL
         {
             return objAdminDAO.GetMenusByRole(RoleID);
         }
+        public DataSet GetDashboardData(DateTime fromDate, DateTime toDate)
+        {
+            return objAdminDAO.GetDashboardData(fromDate, toDate);
+        }
 
+        public DataSet GetDashboardGrid(string actionType, DateTime fromDate, DateTime toDate)
+        {
+            return objAdminDAO.GetDashboardGrid(actionType, fromDate, toDate);
+        }
 
     }
 }

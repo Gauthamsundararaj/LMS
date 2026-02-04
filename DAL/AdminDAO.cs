@@ -29,7 +29,7 @@ namespace DAL
            string action,
            int roleID = 0,
            string roleName = "",
-           string DefaultPage ="",
+           string DefaultPage = "",
            bool active = true,
            int adminUserID = 0
        )
@@ -52,10 +52,10 @@ namespace DAL
             );
         }
 
-        public DataSet UserMaster(string Action, int UserID,string LoginId, string EmpCode,string UserName,
-      string Gender,string Email, string AltEmail, string Phone, string AltPhone, string Department,
-      string Designation,int RoleType, string Password, bool Active, int AdminUserID, string searchBy,
-      string searchValue )
+        public DataSet UserMaster(string Action, int UserID, string LoginId, string EmpCode, string UserName,
+      string Gender, string Email, string AltEmail, string Phone, string AltPhone, string Department,
+      string Designation, int RoleType, string Password, bool Active, int AdminUserID, string searchBy,
+      string searchValue)
         {
             SqlParameter[] objParam = new SqlParameter[]
             {
@@ -97,7 +97,7 @@ namespace DAL
                 new SqlParameter("@Action", action),
                 new SqlParameter("@RoleID", roleId),
                 new SqlParameter("@RoleName", (object)strRoleName ?? DBNull.Value),
-               
+
                 new SqlParameter("@Active", active),
 
             };
@@ -196,7 +196,7 @@ namespace DAL
             return SqlHelper.ExecuteDataset(objSqlConnection, CommandType.StoredProcedure,
                 "sp_RoleMenuMapping", p);
         }
-       
+
         public DataSet MenuMaster(
          string action,
          int? menuID = null,
@@ -239,11 +239,54 @@ namespace DAL
         {
             SqlParameter[] param =
             {
-
                 new SqlParameter("@RoleID", RoleID)
             };
 
             return SqlHelper.ExecuteDataset(objSqlConnection, CommandType.StoredProcedure, "sp_GetMenusByRole", param);
         }
+
+
+        public DataSet GetDashboardData(DateTime fromDate, DateTime toDate)
+        {
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@FromDate", SqlDbType.Date)
+                {
+                    Value = fromDate.Date
+                },
+                new SqlParameter("@ToDate", SqlDbType.Date)
+                {
+                    Value = toDate.Date
+                }
+            };
+
+            return SqlHelper.ExecuteDataset(
+                objSqlConnection,
+                CommandType.StoredProcedure,
+                "Dashboard",
+                parameters
+            );
+        }
+
+        /*=========================================
+          DASHBOARD GRID (MODAL + DOWNLOAD)
+        =========================================*/
+        public DataSet GetDashboardGrid(string actionType, DateTime fromDate, DateTime toDate)
+        {
+            SqlParameter[] parameters =
+            {
+        new SqlParameter("@ActionType", SqlDbType.VarChar, 20) { Value = actionType },
+        new SqlParameter("@FromDate", SqlDbType.Date) { Value = fromDate.Date },
+        new SqlParameter("@ToDate", SqlDbType.Date) { Value = toDate.Date }
+    };
+
+            return SqlHelper.ExecuteDataset(
+                objSqlConnection,
+                CommandType.StoredProcedure,
+                "DashboardGrid",
+                parameters
+            );
+        }
+
     }
 }
