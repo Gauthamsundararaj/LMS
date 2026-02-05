@@ -64,8 +64,6 @@
             margin-bottom: 10px;
             accent-color: #308e87; /* Bootstrap primary color */
         }
-
-
     </style>
 </head>
 <body>
@@ -122,13 +120,13 @@
 
                                 <div class="col-md-3">
                                     <label class="form-label">Issue Date <span class="text-danger">*</span></label>
-                                    <input type="date" id="issueDate" runat="server" class="form-control" onkeydown="return false;"  onpaste="return false;"/>
+                                    <input type="date" id="issueDate" runat="server" class="form-control" onkeydown="return false;" onpaste="return false;" />
                                 </div>
 
                                 <!-- Due Date -->
                                 <div class="col-md-3">
                                     <label class="form-label">Due Date <span class="text-danger">*</span></label>
-                                    <input type="date" id="dueDate" runat="server" class="form-control" onkeydown="return false;"  onpaste="return false;" />
+                                    <input type="date" id="dueDate" runat="server" class="form-control" onkeydown="return false;" onpaste="return false;" />
                                 </div>
 
                             </div>
@@ -144,48 +142,50 @@
                     </div>
                 </div>
                 <!-- Selected Books Modal -->
-<div class="modal fade" id="selectedBooksModal" tabindex="-1" aria-labelledby="selectedBooksModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
+                <div class="modal fade" id="selectedBooksModal" tabindex="-1" aria-labelledby="selectedBooksModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                        <div class="modal-content">
 
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="selectedBooksModalLabel">Selected Books</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
-            </div>
+                            <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title" id="selectedBooksModalLabel">Selected Books</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                    aria-label="Close">
+                                </button>
+                            </div>
 
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <asp:GridView ID="gvSelectedBooks" runat="server"
-                        AutoGenerateColumns="False"
-                        DataKeyNames="ISBN"
-                        CssClass="table table-hover table-striped align-middle text-center"
-                        EmptyDataText="No records found">
-                        <Columns>
-                             <asp:TemplateField HeaderText="S.No.">
-                              <ItemTemplate> <%# Container.DataItemIndex + 1 %> </ItemTemplate> <ItemStyle Width="60px" />
-                           </asp:TemplateField>
-                            <asp:BoundField DataField="ISBN" HeaderText="ISBN" />
-                            <asp:BoundField DataField="BookTitle" HeaderText="Book Title" />
-                            <asp:BoundField DataField="AuthorNames" HeaderText="Author(s)" />
-                        </Columns>
-                    </asp:GridView>
+                            <div class="modal-body">
+                                <div class="table-responsive">
+                                    <asp:GridView ID="gvSelectedBooks" runat="server"
+                                        AutoGenerateColumns="False"
+                                        DataKeyNames="ISBN"
+                                        CssClass="table table-hover table-striped align-middle text-center"
+                                        EmptyDataText="No records found">
+                                        <Columns>
+                                            <asp:TemplateField HeaderText="S.No.">
+                                                <ItemTemplate><%# Container.DataItemIndex + 1 %> </ItemTemplate>
+                                                <ItemStyle Width="60px" />
+                                            </asp:TemplateField>
+                                            <asp:BoundField DataField="ISBN" HeaderText="ISBN" />
+                                            <asp:BoundField DataField="BookTitle" HeaderText="Book Title" />
+                                            <asp:BoundField DataField="AuthorNames" HeaderText="Author(s)" />
+                                        </Columns>
+                                    </asp:GridView>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <asp:Button ID="btnConfirm" runat="server"
+                                    Text="Issue Books"
+                                    CssClass="btn btn-success"
+                                    OnClick="btnConfirm_Click" />
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <div class="modal-footer">
-                <asp:Button ID="btnConfirm" runat="server"
-                    Text="Issue Books"
-                    CssClass="btn btn-success"
-                    OnClick="btnConfirm_Click" />
-            </div>
-
-        </div>
-    </div>
-</div>
 
 
-         
+
 
             </div>
         </div>

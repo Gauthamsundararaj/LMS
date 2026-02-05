@@ -3,7 +3,6 @@ using Library;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing.Printing;
 using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -40,7 +39,7 @@ namespace Admin
                         lblDueBooks.Text      = GetCount("DUE_COUNT");
                         lblReturnedBooks.Text = GetCount("RETURNED_COUNT");
 
-                        BindGrid("TOTAL", true);
+                        BindGrid("TOTAL_GRID", true);
                     }
                     else
                     {
@@ -66,11 +65,73 @@ namespace Admin
 
         private void BindGrid(string type, bool resetPageIndex = false)
         {
+            divPager.Visible = lnkDownloadCSV.Visible = false;
             CurrentGridType = type;
             SetCSVHiddenColumns(type);
 
             if (!IsRefresh)
                 SaveGridFilters();
+            DataSet ds = objCommonBO.GetBookIssueDashboard(type);
+
+            using (ds)
+            {
+                if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                {
+                    ApplyFiltersUsingViewState(ref ds);
+                    ViewState["GridData"] = ds.Tables[0].DefaultView.ToTable();
+                    gvBooks.DataSource = ds.Tables[0].DefaultView;
+                    gvBooks.DataBind();
+                    if (resetPageIndex)
+                        gvBooks.PageIndex = 0;
+
+                    int intRowCount = ds.Tables[0].Rows.Count;
+
+                    // ✅ hide pager + CSV when empty
+                    divPager.Visible = lnkDownloadCSV.Visible = true;
+
+                    // ✅ custom pager
+                    if (intRowCount > gvBooks.PageSize)
+                    {
+                        BuildPager(gvBooks.PageCount, gvBooks.PageIndex);
+                        rptPager.Visible = true;
+                    }
+                    else
+                        rptPager.Visible = false;
+                    if (type.ToUpper() == "TOTAL_GRID")
+                    {
+                        lblGridTitle.InnerText = "Book Details";
+                        gvBooks.Columns[9].Visible = true;
+                        gvBooks.Columns[10].Visible = true;
+                        gvBooks.Columns[11].Visible = true;
+                    }
+                    else if (type.ToUpper() == "ISSUED_GRID")
+                    {
+                        lblGridTitle.InnerText = "Issued Book Details";
+                        gvBooks.Columns[9].Visible = false;
+                        gvBooks.Columns[10].Visible = false;
+                        gvBooks.Columns[11].Visible = false;
+                    }
+                    else if (type.ToUpper() == "DUE_GRID")
+                    {
+                        lblGridTitle.InnerText = "Due Book Details";
+                        gvBooks.Columns[9].Visible = false;
+                        gvBooks.Columns[10].Visible = false;
+                        gvBooks.Columns[11].Visible = false;
+                    }
+                    else if (type.ToUpper() == "RETURNED_GRID")
+                    {
+                        lblGridTitle.InnerText = "Returned Book Details";
+                        gvBooks.Columns[9].Visible = false;
+                        gvBooks.Columns[10].Visible = true;
+                        gvBooks.Columns[11].Visible = false;
+                    }
+
+                    RestoreGridFilters();
+                }
+
+            }
+        }
+            /*
 
             DataSet ds = null;
 
@@ -120,11 +181,17 @@ namespace Admin
 
             gvBooks.DataSource = ds.Tables[0].DefaultView;
             gvBooks.DataBind();
+            gvBooks.DataSource = ds.Tables[0].DefaultView;
+            gvBooks.DataBind();
 
-            RestoreGridFilters();
+            int filteredCount = ds.Tables[0].DefaultView.Count;
 
-            // Custom pager
-            if (ds.Tables[0].Rows.Count > gvBooks.PageSize)
+            // ✅ hide pager + CSV when empty
+            divPager.Visible = filteredCount > 0;
+            lnkDownloadCSV.Visible = filteredCount > 0;
+
+            // ✅ custom pager
+            if (filteredCount > gvBooks.PageSize)
             {
                 BuildPager(gvBooks.PageCount, gvBooks.PageIndex);
                 rptPager.Visible = true;
@@ -133,31 +200,32 @@ namespace Admin
             {
                 rptPager.Visible = false;
             }
-        }
+            RestoreGridFilters();
+            */
 
 
         protected void CardTotalBooks_Click(object sender, EventArgs e)
         {
             CurrentGridType = "TOTAL";
-            BindGrid("TOTAL", true);
+            BindGrid("TOTAL_GRID", true);
         }
 
         protected void CardIssuedBooks_Click(object sender, EventArgs e)
         {
             CurrentGridType = "ISSUED";
-            BindGrid("ISSUED", true);
+            BindGrid("ISSUED_GRID", true);
         }
 
         protected void CardDueBooks_Click(object sender, EventArgs e)
         {
             CurrentGridType = "DUE";
-            BindGrid("DUE", true);
+            BindGrid("DUE_GRID", true);
         }
 
         protected void CardReturnedBooks_Click(object sender, EventArgs e)
         {
             CurrentGridType = "RETURNED";
-            BindGrid("RETURNED", true);
+            BindGrid("RETURNED_GRID", true);
         }
 
         private string FilterISBN

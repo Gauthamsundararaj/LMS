@@ -59,7 +59,7 @@ namespace Admin
                     if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
                         ddlRoleType.DataSource = ds.Tables[0];
-                        ddlRoleType.DataTextField = "UserRole"; // column from RoleMaster
+                        ddlRoleType.DataTextField = "UserRole"; 
                         ddlRoleType.DataValueField = "RoleID";
                         ddlRoleType.DataBind();
                     }

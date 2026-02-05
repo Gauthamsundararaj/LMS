@@ -109,7 +109,7 @@
             }
 
 
-         .clear-btn-inside {
+        .clear-btn-inside {
             position: absolute;
             right: 8px;
             top: 50%;
@@ -359,7 +359,7 @@
                                                 AutoPostBack="false"
                                                 onkeypress="return allowAlphaNumeric(event);"
                                                 onkeyup="toggleClearIcon(this);" />
-                                           
+
                                             <span class="clear-btn-inside" onclick="clearSearch(this)">✖</span>
                                         </div>
                                     </HeaderTemplate>
@@ -435,7 +435,7 @@
                         </asp:GridView>
 
                     </div>
-                    <div class="pager-fixed">
+                    <div class="pager-fixed" runat="server" id="divPager">
                         <asp:Repeater ID="rptPager" runat="server" OnItemCommand="rptPager_ItemCommand">
                             <ItemTemplate>
                                 <asp:LinkButton ID="lnkPage" runat="server"
@@ -448,6 +448,7 @@
                             </ItemTemplate>
                         </asp:Repeater>
                     </div>
+
 
                 </div>
 

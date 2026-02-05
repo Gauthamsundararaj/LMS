@@ -167,9 +167,7 @@
                                 <asp:Label ID="lblRecordCount" runat="server"
                                     CssClass="fw-bold text-primary"></asp:Label>
                             </div>
-
                         </div>
-
 
                         <!-- ---------- ONLY GRIDVIEW SCROLLS ---------- -->
                         <div class="table-responsive" style="overflow-y: auto; white-space: nowrap;">
@@ -479,7 +477,6 @@
             ) {
                 return true;
             }
-
             // Allow digits
             if (key >= '0' && key <= '9') {
                 // If decimal exists, limit to 2 digits after dot
@@ -499,9 +496,6 @@
 
             return false;
         }
-
-
-
     </script>
 </body>
 </html>
