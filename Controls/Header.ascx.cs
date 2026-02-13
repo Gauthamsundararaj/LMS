@@ -1,6 +1,7 @@
-﻿using System;
+﻿using BLL;
+using Library;
+using System;
 using System.Data;
-using BLL;
 
 namespace Controls
 {
@@ -153,6 +154,22 @@ namespace Controls
             }
 
             return submenu;
+        }
+
+        protected void Page_Unload(object sender, EventArgs e)
+        {
+            try
+            {
+                if (objBO != null)
+                {
+                    objBO.ReleaseResources();
+                    objBO = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+            }
         }
     }
 }

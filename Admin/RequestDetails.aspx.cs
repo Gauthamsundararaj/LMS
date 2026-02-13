@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -498,6 +499,72 @@ namespace Admin
             }
         }
 
+        //protected void btnDownloadCSV_Click(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        DataTable gridData = ViewState["GridData"] as DataTable;
+
+        //        if (gridData == null || gridData.Rows.Count == 0)
+        //        {
+        //            ShowAlert("No data available for export.", "warning");
+        //            return;
+        //        }
+
+        //        // ✅ CLONE STRUCTURE + DATA
+        //        DataTable csvTable = gridData.Copy();
+        //        DataColumn snoCol = new DataColumn("S.No", typeof(int));
+        //        csvTable.Columns.Add(snoCol);
+        //        snoCol.SetOrdinal(0); // Make it first column
+
+        //        // ✅ FILL S.NO VALUES
+        //        int index = 1;
+        //        foreach (DataRow row in csvTable.Rows)
+        //        {
+        //            row["S.No"] = index++;
+        //        }
+        //        if (csvTable.Columns.Contains("ISBN"))
+        //        {
+        //            foreach (DataRow row in csvTable.Rows)
+        //            {
+        //                row["ISBN"] = "\t" + row["ISBN"].ToString();
+        //            }
+        //        }
+        //        // ✅ REMOVE UNWANTED COLUMNS USING DATATABLE
+        //        string removeColumns = hfRemoveColumnsCSV.Value;
+
+        //        if (!string.IsNullOrWhiteSpace(removeColumns))
+        //        {
+        //            string[] cols = removeColumns
+        //                .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+        //            foreach (string col in cols)
+        //            {
+        //                string colName = col.Trim();
+
+        //                if (csvTable.Columns.Contains(colName))
+        //                {
+        //                    csvTable.Columns.Remove(colName);
+        //                }
+        //            }
+        //        }
+
+        //        // ✅ GENERATE CSV
+        //        StringBuilder sb = CommonFunction.CSVFileGenerationWithoutHeader(csvTable, "Renewals");
+
+        //        Response.Clear();
+        //        Response.Buffer = true;
+        //        Response.AddHeader("content-disposition", "attachment;filename=Renewals.csv");
+        //        Response.ContentType = "text/csv";
+        //        Response.Write(sb.ToString());
+        //        Response.End();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MyExceptionLogger.Publish(ex);
+        //        ShowAlert("Failed to download CSV.", "error");
+        //    }
+        //}
         protected void btnDownloadCSV_Click(object sender, EventArgs e)
         {
             try
@@ -510,53 +577,47 @@ namespace Admin
                     return;
                 }
 
-                // ✅ CLONE STRUCTURE + DATA
                 DataTable csvTable = gridData.Copy();
+
                 DataColumn snoCol = new DataColumn("S.No", typeof(int));
                 csvTable.Columns.Add(snoCol);
-                snoCol.SetOrdinal(0); // Make it first column
+                snoCol.SetOrdinal(0);
 
-                // ✅ FILL S.NO VALUES
                 int index = 1;
                 foreach (DataRow row in csvTable.Rows)
-                {
                     row["S.No"] = index++;
-                }
+
                 if (csvTable.Columns.Contains("ISBN"))
                 {
                     foreach (DataRow row in csvTable.Rows)
-                    {
-                        row["ISBN"] = "\t" + row["ISBN"].ToString();
-                    }
+                        row["ISBN"] = "\t" + row["ISBN"];
                 }
-                // ✅ REMOVE UNWANTED COLUMNS USING DATATABLE
-                string removeColumns = hfRemoveColumnsCSV.Value;
 
-                if (!string.IsNullOrWhiteSpace(removeColumns))
+                if (!string.IsNullOrWhiteSpace(hfRemoveColumnsCSV.Value))
                 {
-                    string[] cols = removeColumns
-                        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    foreach (string col in cols)
+                    foreach (string col in hfRemoveColumnsCSV.Value.Split(','))
                     {
                         string colName = col.Trim();
-
                         if (csvTable.Columns.Contains(colName))
-                        {
                             csvTable.Columns.Remove(colName);
-                        }
                     }
                 }
 
-                // ✅ GENERATE CSV
-                StringBuilder sb = CommonFunction.CSVFileGenerationWithoutHeader(csvTable, "Renewals");
+                StringBuilder sb =
+                    CommonFunction.CSVFileGenerationWithoutHeader(csvTable, "Renewals");
 
                 Response.Clear();
-                Response.Buffer = true;
                 Response.AddHeader("content-disposition", "attachment;filename=Renewals.csv");
                 Response.ContentType = "text/csv";
                 Response.Write(sb.ToString());
-                Response.End();
+
+                Response.Flush();
+                Response.SuppressContent = true;
+                HttpContext.Current.ApplicationInstance.CompleteRequest();
+
+                // ✅ CORRECT CLEANUP
+                csvTable.Dispose();              // you own this
+                ViewState.Remove("GridData");    // release reference
             }
             catch (Exception ex)
             {
@@ -564,8 +625,21 @@ namespace Admin
                 ShowAlert("Failed to download CSV.", "error");
             }
         }
-
-
+        protected void Page_Unload(object sender, EventArgs e)
+        {
+            try
+            {
+                if (objCommonBO != null)
+                {
+                    objCommonBO.ReleaseResources();
+                    objCommonBO = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+            }
+        }
 
     }
 }

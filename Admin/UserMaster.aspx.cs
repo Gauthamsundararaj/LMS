@@ -23,9 +23,6 @@ namespace Admin
                 {
                     BindRoleType();
                     BindUserGrid();
-
-                    //divForm.Style["display"] = "none";
-                    //divGrid.Style["display"] = "block";
                 }
 
                 // Load all user messages
@@ -980,7 +977,21 @@ namespace Admin
             rptPager.DataBind();
         }
 
-
+        protected void Page_Unload(object sender, EventArgs e)
+        {
+            try
+            {
+                if (objAdminBO != null)
+                {
+                    objAdminBO.ReleaseResources();
+                    objAdminBO = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+            }
+        }
 
         protected void rptPager_ItemCommand(object source, RepeaterCommandEventArgs e)
         {

@@ -284,5 +284,21 @@ namespace Admin
             gvAuthor.PageIndex = e.NewPageIndex;
             BindAuthorGrid();
         }
+
+        protected void Page_Unload(object sender, EventArgs e)
+        {
+            try
+            {
+                if (objMasterBO != null)
+                {
+                    objMasterBO.ReleaseResources();
+                    objMasterBO = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+            }
+        }
     }
 }

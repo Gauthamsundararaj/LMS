@@ -3,9 +3,7 @@ using Library;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Web.Services.Description;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -170,7 +168,7 @@ namespace Admin
             {
                 gvBooks.Columns[returnDateCol].Visible = true;
                 gvBooks.Columns[status].Visible = true;
-               
+
             }
             else if (mode == "DUE")
             {
@@ -329,7 +327,7 @@ namespace Admin
                         Page.GetType(),
                         "ShowRenewalExpiredModal",
                           "$(document).ready(function(){ $('#renewalExpiredModal').modal('show'); });",
-                     
+
                         true
                     );
                     return;
@@ -358,6 +356,24 @@ namespace Admin
                     "$(document).ready(function(){ $('#renewalModal').modal('show'); });",
                     true
                 );
+            }
+        }
+        protected void gvBooks_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                DataRowView drv = (DataRowView)e.Row.DataItem;
+
+                string lastStatus = drv["Last Renewal Status"]?.ToString();
+
+                LinkButton btnRenew = (LinkButton)e.Row.FindControl("lnkRenewal");
+
+                if (btnRenew != null &&
+                    !string.IsNullOrEmpty(lastStatus) &&
+                    lastStatus.Equals("Rejected", StringComparison.OrdinalIgnoreCase))
+                {
+                    btnRenew.Visible = false;
+                }
             }
         }
 
@@ -427,7 +443,21 @@ namespace Admin
             {
                 MyExceptionLogger.Publish(ex);
             }
-
+        }
+        protected void Page_Unload(object sender, EventArgs e)
+        {
+            try
+            {
+                if (objCommonBO != null)
+                {
+                    objCommonBO.ReleaseResources();
+                    objCommonBO = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+            }
         }
     }
 }

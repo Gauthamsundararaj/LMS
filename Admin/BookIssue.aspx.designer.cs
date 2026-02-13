@@ -111,7 +111,7 @@ namespace Admin
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl issueDate;
+        protected global::System.Web.UI.WebControls.TextBox issueDate;
 
         /// <summary>
         /// dueDate control.
@@ -120,7 +120,7 @@ namespace Admin
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl dueDate;
+        protected global::System.Web.UI.WebControls.TextBox dueDate;
 
         /// <summary>
         /// btnSave control.

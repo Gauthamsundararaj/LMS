@@ -9,6 +9,8 @@
     <title>Book Dues</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="../assets/css/customPagination.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/flatpickr/flatpickr.min.css" />
+
     <style>
         #rblMemberType input[type="radio"] {
             margin-right: 6px;
@@ -91,10 +93,24 @@
                                     <asp:BoundField DataField="ISBN" HeaderText="ISBN" />
                                     <asp:BoundField DataField="BookTitle" HeaderText="Book Name" />
                                     <asp:BoundField DataField="AuthorName" HeaderText="Author Name" />
-                                    <asp:BoundField DataField="IssueDate" HeaderText="Issue Date" DataFormatString="{0:dd-MM-yyyy}" HtmlEncode="false" ItemStyle-Width="110px" HeaderStyle-Width="110px" ItemStyle-CssClass="nowrap" HeaderStyle-CssClass="nowrap" />
-                                    <asp:BoundField DataField="DueDate" HeaderText="Due Date" DataFormatString="{0:dd-MM-yyyy}" HtmlEncode="false" ItemStyle-Width="110px" HeaderStyle-Width="110px" ItemStyle-CssClass="nowrap" HeaderStyle-CssClass="nowrap" />
+                                    <asp:BoundField DataField="IssueDate"
+                                        HeaderText="Issue Date"
+                                        DataFormatString="{0:dd-MMM-yyyy}"
+                                        HtmlEncode="false" ItemStyle-Width="110px" HeaderStyle-Width="110px" ItemStyle-CssClass="nowrap" HeaderStyle-CssClass="nowrap" />
+
+
+                                    <asp:BoundField DataField="DueDate"
+                                        HeaderText="Due Date"
+                                        DataFormatString="{0:dd-MMM-yyyy}"
+                                        HtmlEncode="false" ItemStyle-Width="110px" HeaderStyle-Width="110px" ItemStyle-CssClass="nowrap" HeaderStyle-CssClass="nowrap" />
+
+
                                     <asp:BoundField DataField="RenewalCount" HeaderText="Renewals" />
-                                    <asp:BoundField DataField="LastRenewalDate" HeaderText="Last Renewal Date" DataFormatString="{0:dd-MM-yyyy}" />
+
+                                    <asp:BoundField DataField="LastRenewalDate"
+                                        HeaderText="Last Renewal Date"
+                                        DataFormatString="{0:dd-MMM-yyyy}" />
+
                                 </Columns>
                             </asp:GridView>
                         </div>
@@ -119,23 +135,29 @@
                                 <label class="form-label fw-bold me-2 mb-0">Select Date<span class="required">*</span></label>
 
                                 <div style="width: 180px;">
-                                    <asp:TextBox ID="txtDate" runat="server" TextMode="Date"
+                                    <%-- <asp:TextBox ID="txtDate" runat="server" TextMode="Date"
                                         CssClass="form-control" onkeydown="return false;"  onpaste="return false;"></asp:TextBox>
+                                </div>--%>
+                                    <asp:TextBox ID="txtDate" runat="server"
+                                        CssClass="form-control flatpickr-date"
+                                        onkeydown="return false;" onpaste="return false;">
+                                    </asp:TextBox>
+
                                 </div>
                             </div>
-                        </div>
 
 
-                        <!-- ACTION BUTTONS -->
-                        <div class="mt-4 mb-3" id="divActionButtons" runat="server" visible="false">
-                            <asp:Button ID="btnMarkReturned" runat="server" Text="Mark as Returned"
-                                CssClass="btn btn-primary"
-                                OnClick="btnMarkReturned_Click" />
+                            <!-- ACTION BUTTONS -->
+                            <div class="mt-4 mb-3" id="divActionButtons" runat="server" visible="false">
+                                <asp:Button ID="btnMarkReturned" runat="server" Text="Mark as Returned"
+                                    CssClass="btn btn-primary"
+                                    OnClick="btnMarkReturned_Click" />
 
-                            <asp:Button ID="btnMarkRenewed" runat="server" Text="Mark as Renewed"
-                                CssClass="btn btn-warning"
-                                OnClick="btnMarkRenewed_Click" />
+                                <asp:Button ID="btnMarkRenewed" runat="server" Text="Mark as Renewed"
+                                    CssClass="btn btn-warning"
+                                    OnClick="btnMarkRenewed_Click" />
 
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -144,5 +166,20 @@
 
         <uc:footer id="Footer" runat="server" />
     </form>
+    <script src="../assets/js/flat-pickr/flatpickr.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            flatpickr(".flatpickr-date", {
+                dateFormat: "d-M-Y",
+                allowInput: false,
+                onChange: function (selectedDates, dateStr, instance) {
+                    instance.input.value = dateStr.toUpperCase();
+                }
+            });
+        });
+
+    </script>
+
 </body>
 </html>

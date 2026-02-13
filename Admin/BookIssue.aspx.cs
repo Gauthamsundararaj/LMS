@@ -1,16 +1,11 @@
-﻿using Admin;
-using BLL;
+﻿using BLL;
 using Library;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Web;
-using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Globalization;
 
 namespace Admin
 {
@@ -177,8 +172,8 @@ namespace Admin
                 string issueType = rblIssueType.SelectedValue;
                 string studentId = txtStudentID.Text.Trim();
                 string staffId = txtStaffID.Text.Trim();
-                string issueDateText = issueDate.Value;
-                string dueDateText = dueDate.Value;
+                string issueDateText = issueDate.Text.Trim();
+                string dueDateText = dueDate.Text.Trim();
                 string action = "";
                 string bookIdsCsv = "";
                 string MemberID = "";
@@ -245,21 +240,47 @@ namespace Admin
                     return;
                 }
                 DateTime issueDt;
-                if (string.IsNullOrWhiteSpace(issueDate.Value)
-                    || !DateTime.TryParse(issueDate.Value, out issueDt))
+                if (string.IsNullOrWhiteSpace(issueDate.Text) ||
+                    !DateTime.TryParseExact(
+                        issueDate.Text.Trim(),
+                        "dd-MMM-yyyy",
+                        CultureInfo.InvariantCulture,
+                        DateTimeStyles.None,
+                        out issueDt))
                 {
-                    ShowAlert(lblErrorMsg[8], "error");
+                    ShowAlert(lblErrorMsg[8], "error"); // Invalid Issue Date
                     return;
                 }
-
 
                 DateTime dueDt;
-                if (string.IsNullOrWhiteSpace(dueDate.Value)
-                    || !DateTime.TryParse(dueDate.Value, out dueDt))
+                if (string.IsNullOrWhiteSpace(dueDate.Text) ||
+                    !DateTime.TryParseExact(
+                        dueDate.Text.Trim(),
+                        "dd-MMM-yyyy",
+                        CultureInfo.InvariantCulture,
+                        DateTimeStyles.None,
+                        out dueDt))
                 {
-                    ShowAlert(lblErrorMsg[9], "error");
+                    ShowAlert(lblErrorMsg[9], "error"); // Invalid Due Date
                     return;
                 }
+
+                //DateTime issueDt;
+                //if (string.IsNullOrWhiteSpace(issueDate.Value)
+                //    || !DateTime.TryParse(issueDate.Value, out issueDt))
+                //{
+                //    ShowAlert(lblErrorMsg[8], "error");
+                //    return;
+                //}
+
+
+                //DateTime dueDt;
+                //if (string.IsNullOrWhiteSpace(dueDate.Value)
+                //    || !DateTime.TryParse(dueDate.Value, out dueDt))
+                //{
+                //    ShowAlert(lblErrorMsg[9], "error");
+                //    return;
+                //}
 
                 if (dueDt <= issueDt)
                 {
@@ -366,8 +387,8 @@ namespace Admin
             }
             lstIsbn.ClearSelection();
 
-            issueDate.Value = "";
-            dueDate.Value = "";
+            issueDate.Text = "";
+            dueDate.Text= "";
             divIssueDetails.Visible = true;
 
         }
@@ -391,42 +412,23 @@ namespace Admin
             btnCancel.Visible = false;
 
         }
+
+        protected void Page_Unload(object sender, EventArgs e)
+        {
+            try
+            {
+                if (objMasterBO != null & objCommonBO!=null)
+                {
+                    objMasterBO.ReleaseResources();
+                    objMasterBO = null;
+                    objCommonBO.ReleaseResources();
+                    objCommonBO = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+            }
+        }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

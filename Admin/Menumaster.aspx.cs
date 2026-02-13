@@ -11,7 +11,7 @@ namespace Admin
 {
     public partial class Menumaster : System.Web.UI.Page
     {
-        private readonly AdminBO objAdminBO = new AdminBO();
+        AdminBO objAdminBO = new AdminBO();
         private string[] lblErrorMsg = new string[20];
         int intAdminUserID;
 
@@ -96,25 +96,32 @@ namespace Admin
                 ShowToastr(lblErrorMsg[9] + ": " + ex.Message, "error");
             }
         }
- 
         private int GetNextSequenceNo(int parentMenuID)
         {
-            DataTable dt = objAdminBO.MenuMaster("SELECT_CHILD", 0, "", "", parentMenuID, true, false, 0, true, intAdminUserID).Tables[0];
+            using (DataSet ds = objAdminBO.MenuMaster(
+                "SELECT_CHILD", 0, "", "", parentMenuID, true, false, 0, true, intAdminUserID))
+            {
+                DataTable dt = ds.Tables[0];
 
-            if (dt.Rows.Count == 0)
-                return 1;
+                if (dt.Rows.Count == 0)
+                    return 1;
 
-            return dt.Rows.Count + 1;
+                return dt.Rows.Count + 1;
+            }
         }
 
         private int GetNextParentSequence()
         {
-            DataTable dt = objAdminBO.MenuMaster("SELECT_PARENT", 0, "", "", 0, false, false, 0, true, intAdminUserID).Tables[0];
+            using (DataSet ds = objAdminBO.MenuMaster(
+                "SELECT_PARENT", 0, "", "", 0, false, false, 0, true, intAdminUserID))
+            {
+                DataTable dt = ds.Tables[0];
 
-            if (dt.Rows.Count == 0)
-                return 1;
+                if (dt.Rows.Count == 0)
+                    return 1;
 
-            return dt.Rows.Count + 1;
+                return dt.Rows.Count + 1;
+            }
         }
 
 
@@ -152,50 +159,37 @@ namespace Admin
                 string searchBy = ddlSearchBy.SelectedValue;
                 string searchValue = txtSearchValue.Text.Trim();
 
-                DataTable dt = null;
-
-                // ---------- SEARCH OR LOAD ----------
-                if (!string.IsNullOrEmpty(searchBy) && !string.IsNullOrEmpty(searchValue))
+                using (DataSet ds =
+                    (!string.IsNullOrEmpty(searchBy) && !string.IsNullOrEmpty(searchValue))
+                        ? objAdminBO.SearchMenuMaster(searchBy, searchValue)
+                        : objAdminBO.GetMenuMasterGrid()
+                )
                 {
-                    dt = objAdminBO.SearchMenuMaster(searchBy, searchValue);
-                }
-                else
-                {
-                    dt = objAdminBO.GetMenuMasterGrid();
-                }
-
-                // ---------- SHOW / HIDE CARD ----------
-                if (dt != null && dt.Rows.Count > 0)
-                {
-                    gvMenu.DataSource = dt;
-                    gvMenu.DataBind();
-
-                    divGrid.Visible = true;   // ✅ SHOW CARD
-                    lblRecordCount.Text =  "No. of Records" + dt.Rows.Count;
-
-                    int totalRecords = dt.Rows.Count;
-                    int pageSize = gvMenu.PageSize;
-                    int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
-
-                    if (dt.Rows.Count > gvMenu.PageSize)
+                    if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
-                        BuildPager(totalPages, gvMenu.PageIndex);
-                        rptPager.Visible = true;
+                        gvMenu.DataSource = ds.Tables[0];
+                        gvMenu.DataBind();
+
+                        divGrid.Visible = true;
+                        lblRecordCount.Text = "No. of Records: " + ds.Tables[0].Rows.Count;
+
+                        int totalRecords = ds.Tables[0].Rows.Count;
+                        int pageSize = gvMenu.PageSize;
+                        int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+
+                        rptPager.Visible = totalRecords > pageSize;
+                        if (rptPager.Visible)
+                            BuildPager(totalPages, gvMenu.PageIndex);
                     }
                     else
                     {
+                        gvMenu.DataSource = null;
+                        gvMenu.DataBind();
+
+                        divGrid.Visible = false;
+                        lblRecordCount.Text = "0 Records found";
                         rptPager.Visible = false;
                     }
-                }
-                else
-                {
-                    gvMenu.DataSource = null;
-                    gvMenu.DataBind();
-
-                    divGrid.Visible = false;  // ✅ HIDE CARD
-                    lblRecordCount.Text = "0 Records found";
-
-                    BuildPager(0, 0);
                 }
             }
             catch (Exception ex)
@@ -433,30 +427,39 @@ namespace Admin
                 {
                     int menuId = Convert.ToInt32(e.CommandArgument);
 
-                    DataTable dt = objAdminBO.GetMenuByID(menuId);
-                    if (dt != null && dt.Rows.Count > 0)
+                    using (DataSet ds = objAdminBO.GetMenuByID(menuId))
                     {
-                        DataRow dr = dt.Rows[0];
+                        if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                        {
+                            DataRow dr = ds.Tables[0].Rows[0];
 
-                        hfMenuID.Value = dr["MenuID"].ToString();
-                        txtMenuName.Text = dr["MenuName"].ToString();
-                        txtPageName.Text = dr["PageName"].ToString();
+                            hfMenuID.Value = dr["MenuID"].ToString();
+                            txtMenuName.Text = dr["MenuName"].ToString();
+                            txtPageName.Text = dr["PageName"].ToString();
 
-                        chkIsChild.Checked = Convert.ToBoolean(dr["IsChildMenu"]);
-                        IsDefault.Checked = Convert.ToBoolean(dr["IsDefaultPage"]);
-                        parentMenuDiv.Visible = chkIsChild.Checked;
+                            chkIsChild.Checked = Convert.ToBoolean(dr["IsChildMenu"]);
+                            IsDefault.Checked = Convert.ToBoolean(dr["IsDefaultPage"]);
+                            parentMenuDiv.Visible = chkIsChild.Checked;
 
-                        string parentValue = dr["ParentMenuID"] != DBNull.Value ? dr["ParentMenuID"].ToString() : "0";
-                        if (ddlParentMenu.Items.FindByValue(parentValue) != null)
-                            ddlParentMenu.SelectedValue = parentValue;
-                        else
-                            ddlParentMenusFallbackSelect(parentValue);
+                            // ✅ PARENT MENU FALLBACK HANDLING
+                            string parentValue = dr["ParentMenuID"] != DBNull.Value
+                                ? dr["ParentMenuID"].ToString()
+                                : "0";
 
-                        chkIsActive.Checked = Convert.ToBoolean(dr["IsActive"]);
+                            if (ddlParentMenu.Items.FindByValue(parentValue) != null)
+                            {
+                                ddlParentMenu.SelectedValue = parentValue;
+                            }
+                            else
+                            {
+                                ddlParentMenusFallbackSelect(parentValue);
+                            }
 
+                            chkIsActive.Checked = Convert.ToBoolean(dr["IsActive"]);
 
-                        btnSubmit.Visible = false;
-                        btnUpdate.Visible = true;
+                            btnSubmit.Visible = false;
+                            btnUpdate.Visible = true;
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -466,6 +469,7 @@ namespace Admin
                 }
             }
         }
+
 
         protected void gvMenu_RowDeleting(object sender, GridViewDeleteEventArgs e)
         {
@@ -613,17 +617,23 @@ namespace Admin
         }
 
         private void ddlParentMenusFallbackSelect(string value)
+{
+    try
+    {
+        if (!string.IsNullOrEmpty(value))
         {
-            try
-            {
-                if (!string.IsNullOrEmpty(value))
-                {
-                    ddlParentMenu.Items.Add(new ListItem("Parent (ID:" + value + ")", value));
-                    ddlParentMenu.SelectedValue = value;
-                }
-            }
-            catch { }
+            ddlParentMenu.Items.Add(
+                new ListItem("Parent (ID: " + value + ")", value)
+            );
+            ddlParentMenu.SelectedValue = value;
         }
+    }
+    catch (Exception ex)
+    {
+        MyExceptionLogger.Publish(ex);
+    }
+}
+
 
         private void BuildPager(int totalPages, int currentPage)
         {
@@ -685,6 +695,21 @@ namespace Admin
         {
             message = (message ?? "").Replace("'", "\\'").Replace("\"", "\\\"").Replace(Environment.NewLine, " ").Trim();
             ScriptManager.RegisterStartupScript(this.Page, GetType(), Guid.NewGuid().ToString(), "$(function(){AlertMessage('" + message + "','" + type.ToLower() + "')});", true);
+        }
+        protected void Page_Unload(object sender, EventArgs e)
+        {
+            try
+            {
+                if (objAdminBO != null)
+                {
+                    objAdminBO.ReleaseResources();
+                    objAdminBO = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+            }
         }
     }
 }

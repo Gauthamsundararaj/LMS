@@ -3,7 +3,6 @@ using Library;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -658,8 +657,63 @@ namespace Admin
             gvBookMaster.PageIndex = 0;
             BindBookGrid();
         }
+        //protected void btnDownloadCSV_Click(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        using (DataSet ds = objMasterBO.BookMaster("SELECT"))
+        //        {
+        //            if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+        //            {
+        //                ShowAlert("No data available for export.", "warning");
+        //                return;
+        //            }
+
+
+        //            DataTable sourceTable = ds.Tables[0];
+        //            if (sourceTable.Columns.Contains("ISBN"))
+        //            {
+        //                foreach (DataRow row in sourceTable.Rows)
+        //                {
+        //                    row["ISBN"] = "\t" + row["ISBN"].ToString();
+        //                }
+        //            }
+        //            string removeColumns = hfRemoveColumnsCSV.Value;
+
+        //            if (!string.IsNullOrWhiteSpace(removeColumns))
+        //            {
+        //                string[] columnsToRemove = removeColumns.Split(',');
+
+        //                foreach (string col in columnsToRemove)
+        //                {
+        //                    if (ds.Tables[0].Columns.Contains(col))
+        //                        ds.Tables[0].Columns.Remove(col);
+        //                }
+        //            }
+        //            StringBuilder sb = CommonFunction.CSVFileGenerationWithoutHeader(sourceTable, "BookMaster");
+
+        //            Response.Clear();
+        //            Response.Buffer = true;
+        //            Response.AddHeader("content-disposition", "attachment;filename=BookMaster.csv");
+        //            Response.Charset = "";
+        //            Response.ContentType = "text/csv";
+        //            Response.Write(sb.ToString());
+        //            Response.Flush();
+        //            Response.End();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MyExceptionLogger.Publish(ex);
+        //        ShowAlert("Failed to download CSV.", "error");
+        //    }
+        //}
+
         protected void btnDownloadCSV_Click(object sender, EventArgs e)
         {
+            DataTable sourceTable = null;
+            StringBuilder sb = null;
+
             try
             {
                 using (DataSet ds = objMasterBO.BookMaster("SELECT"))
@@ -670,37 +724,43 @@ namespace Admin
                         return;
                     }
 
+                    // ✅ WORK ON A COPY (you own it)
+                    sourceTable = ds.Tables[0].Copy();
 
-                    DataTable sourceTable = ds.Tables[0];
+                    // ✅ ISBN FIX (preserve leading zeros in Excel)
                     if (sourceTable.Columns.Contains("ISBN"))
                     {
                         foreach (DataRow row in sourceTable.Rows)
                         {
-                            row["ISBN"] = "\t" + row["ISBN"].ToString();
+                            row["ISBN"] = "\t" + row["ISBN"];
                         }
                     }
-                    string removeColumns = hfRemoveColumnsCSV.Value;
 
+                    // ✅ REMOVE HIDDEN COLUMNS
+                    string removeColumns = hfRemoveColumnsCSV.Value;
                     if (!string.IsNullOrWhiteSpace(removeColumns))
                     {
-                        string[] columnsToRemove = removeColumns.Split(',');
-
-                        foreach (string col in columnsToRemove)
+                        foreach (string col in removeColumns.Split(','))
                         {
-                            if (ds.Tables[0].Columns.Contains(col))
-                                ds.Tables[0].Columns.Remove(col);
+                            string colName = col.Trim();
+                            if (sourceTable.Columns.Contains(colName))
+                                sourceTable.Columns.Remove(colName);
                         }
                     }
-                    StringBuilder sb = CommonFunction.CSVFileGenerationWithoutHeader(sourceTable, "BookMaster");
+
+                    // ✅ GENERATE CSV
+                    sb = CommonFunction.CSVFileGenerationWithoutHeader(sourceTable, "BookMaster");
 
                     Response.Clear();
                     Response.Buffer = true;
                     Response.AddHeader("content-disposition", "attachment;filename=BookMaster.csv");
-                    Response.Charset = "";
                     Response.ContentType = "text/csv";
                     Response.Write(sb.ToString());
+
+                    // ✅ SAFER RESPONSE TERMINATION (no ThreadAbortException)
                     Response.Flush();
-                    Response.End();
+                    Response.SuppressContent = true;
+                    HttpContext.Current.ApplicationInstance.CompleteRequest();
                 }
             }
             catch (Exception ex)
@@ -708,7 +768,13 @@ namespace Admin
                 MyExceptionLogger.Publish(ex);
                 ShowAlert("Failed to download CSV.", "error");
             }
+            finally
+            {
+                sourceTable = null; // ✅ enough
+                sb = null;          // ✅ enough
+            }
         }
+
 
         private void BuildPager(int totalPages, int currentPage)
         {
@@ -767,6 +833,20 @@ namespace Admin
             gvBookMaster.PageIndex = newIndex;
             BindBookGrid();
         }
-
+        protected void Page_Unload(object sender, EventArgs e)
+        {
+            try
+            {
+                if (objMasterBO != null)
+                {
+                    objMasterBO.ReleaseResources();
+                    objMasterBO = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+            }
+        }
     }
 }

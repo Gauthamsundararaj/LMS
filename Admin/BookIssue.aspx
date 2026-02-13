@@ -11,6 +11,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Issue Books</title>
     <link rel="stylesheet" href="../assets/css/bootstrap-multiselect.min.css" />
+    <link rel="stylesheet" href="../assets/css/vendors/flatpickr/flatpickr.min.css" />
+
     <style>
         .select2-container .select2-selection--single {
             height: 40px !important;
@@ -64,6 +66,11 @@
             margin-bottom: 10px;
             accent-color: #308e87; /* Bootstrap primary color */
         }
+
+        .required {
+            color: red;
+            margin-left: 5px;
+        }
     </style>
 </head>
 <body>
@@ -85,7 +92,7 @@
                             <!-- Select Type -->
                             <div class="row mb-2">
                                 <div class="col-md-4">
-                                    <label class="form-label fw-bold">Issue To</label>
+                                    <label class="form-label fw-bold">Issue To<span class="required">*</span></label>
                                     <asp:RadioButtonList ID="rblIssueType" runat="server" RepeatDirection="Horizontal" AutoPostBack="true" OnSelectedIndexChanged="rblIssueType_SelectedIndexChanged">
                                         <asp:ListItem Text="Student ID&nbsp;&nbsp;" Value="Student" CssClass="me-5"></asp:ListItem>
                                         <asp:ListItem Text="Staff ID&nbsp;&nbsp;" Value="Staff" CssClass="ms-5"></asp:ListItem>
@@ -117,17 +124,20 @@
                                 </div>
 
                                 <!-- Issue Date -->
-
                                 <div class="col-md-3">
                                     <label class="form-label">Issue Date <span class="text-danger">*</span></label>
-                                    <input type="date" id="issueDate" runat="server" class="form-control" onkeydown="return false;" onpaste="return false;" />
+                                    <asp:TextBox ID="issueDate" runat="server"
+                                        CssClass="form-control flatpickr-date"
+                                        onkeydown="return false;" onpaste="return false;" />
                                 </div>
 
-                                <!-- Due Date -->
                                 <div class="col-md-3">
                                     <label class="form-label">Due Date <span class="text-danger">*</span></label>
-                                    <input type="date" id="dueDate" runat="server" class="form-control" onkeydown="return false;" onpaste="return false;" />
+                                    <asp:TextBox ID="dueDate" runat="server"
+                                        CssClass="form-control flatpickr-date"
+                                        onkeydown="return false;" onpaste="return false;" />
                                 </div>
+
 
                             </div>
                             <div class="card-footer text-end mt-0">
@@ -193,6 +203,8 @@
     <uc:footer id="Footer1" runat="server" />
 
     <script src="../assets/js/bootstrap-multiselect.min.js"></script>
+    <script src="../assets/js/flat-pickr/flatpickr.js"></script>
+
 
     <script>
         $(document).ready(function () {
@@ -201,6 +213,18 @@
                 buttonTextAlignment: 'left',
 
             });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            flatpickr(".flatpickr-date", {
+                dateFormat: "d-M-Y",
+                allowInput: false,
+                minDate: "today",
+                onChange: function (selectedDates, dateStr, instance) {
+                    instance.input.value = dateStr.toUpperCase();
+                }
+            });
+
         });
 
         function validateBookIssue() {
@@ -244,10 +268,6 @@
             var dueDate = document.getElementById('<%= dueDate.ClientID %>').value;
             if (dueDate === "")
                 return showErr("Due Date is required.", '<%= dueDate.ClientID %>');
-
-            // DATE VALIDATION
-            if (new Date(dueDate) < new Date(issueDate))
-                return showErr("Due Date must be greater than Issue Date.", '<%= dueDate.ClientID %>');
 
             return true;
         }

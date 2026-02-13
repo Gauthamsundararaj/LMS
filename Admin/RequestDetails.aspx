@@ -9,6 +9,8 @@
     <title>Renewal Requests</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="../assets/css/CustomPagination.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/flatpickr/flatpickr.min.css" />
+
     <style>
         .summary-card {
             border-radius: 12px;
@@ -39,19 +41,19 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color:white;
+            color: white;
             /* keeps black icons clean */
         }
-/*        .summary-card {
+        /*        .summary-card {
     transition: all 0.3s ease;
     cursor: pointer;
 }*/
 
-.summary-card.selected-card {
-    opacity: 0.6;
-    transform: scale(0.98);
-    box-shadow: inset 0 0 0 2px #00000030;
-}
+        .summary-card.selected-card {
+            opacity: 0.6;
+            transform: scale(0.98);
+            box-shadow: inset 0 0 0 2px #00000030;
+        }
 
 
 
@@ -176,7 +178,7 @@
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <asp:LinkButton runat="server" OnClick="CardNewRequests_Click">
                             <div class="card summary-card bg-requests shadow-sm" id="cardNew" runat="server">
-                                <div class="card-body d-flex align-items-center justify-content-between " >
+                                <div class="card-body d-flex align-items-center justify-content-between ">
                                     <div class="text-start">
                                         <h4 class="mb-1">Yet To Be Process</h4>
                                         <h2 class="fw-bold mb-0">
@@ -447,17 +449,16 @@
 
 
                                         <asp:TemplateField HeaderText="Approve Till">
-                                            <HeaderStyle CssClass="wrap-header" />
                                             <ItemTemplate>
                                                 <asp:TextBox ID="txtApprovedDueDate"
                                                     runat="server"
-                                                    CssClass="form-control form-control-sm"
-                                                    Text='<%# Eval("Requested Due Date", "{0:yyyy-MM-dd}") %>'
-                                                    TextMode="Date"
-                                                    Visible='<%# (int)Eval("RequestStatus") == 1 %>' />
+                                                    CssClass="form-control form-control-sm flatpickr-date wrap-header"
+                                                    Text='<%# Eval("Requested Due Date", "{0:dd-MMM-yyyy}") %>'
+                                                    Visible='<%# (int)Eval("RequestStatus") == 1 %>'
+                                                    onkeydown="return false;"
+                                                    onpaste="return false;" />
                                             </ItemTemplate>
                                         </asp:TemplateField>
-
 
                                         <asp:TemplateField HeaderText="Action">
                                             <HeaderStyle CssClass="wrap-header" />
@@ -583,7 +584,17 @@
             </div>
         </div>
     </form>
+    <script src="../assets/js/flat-pickr/flatpickr.js"></script>
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            flatpickr(".flatpickr-date", {
+                dateFormat: "d-M-Y",
+                allowInput: false,
+                onChange: function (selectedDates, dateStr, instance) {
+                    instance.input.value = dateStr.toUpperCase();
+                }
+            });
+        });
 
         function validateRejectReason() {
             var reason = document.getElementById('<%= ddlRejectReason.ClientID %>').value.trim();
@@ -700,10 +711,6 @@
             // show/hide overall clear filter icon
             toggleClearFilterIcon();
         }
-
-    
-
-
 
     </script>
     <uc:footer id="Footer1" runat="server" />

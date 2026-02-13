@@ -80,5 +80,20 @@ namespace Admin
             ScriptManager.RegisterStartupScript(this, GetType(), "ToastrMsg",
                 $"toastr['{type}']('{msg}');", true);
         }
+        protected void Page_Unload(object sender, EventArgs e)
+        {
+            try
+            {
+                if (objBO != null)
+                {
+                    objBO.ReleaseResources();
+                    objBO = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+            }
+        }
     }
 }

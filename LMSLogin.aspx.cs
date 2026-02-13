@@ -197,7 +197,21 @@ namespace LMS
             txtAdminID.Text="";
             txtAdminPwd.Text="";
         }
-
+        protected void Page_Unload(object sender, EventArgs e)
+        {
+            try
+            {
+                if (objLoginBo != null)
+                {
+                    objLoginBo.ReleaseResources();
+                    objLoginBo = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+            }
+        }
         private void ShowAlert(string message, string alertType = "error")
         {
             ScriptManager.RegisterStartupScript(this, GetType(), Guid.NewGuid().ToString(),

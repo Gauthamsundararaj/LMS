@@ -11,7 +11,7 @@ namespace Admin
 {
     public partial class RoleMaster : System.Web.UI.Page
     {
-        private readonly AdminBO objAdminBO = new AdminBO();
+        AdminBO objAdminBO = new AdminBO();
         private string[] lblErrorMsg = new string[15];
         int intAdminUserID;
         protected void Page_Load(object sender, EventArgs e)
@@ -432,6 +432,20 @@ namespace Admin
             message = (message ?? "").Replace("'", "\\'").Replace("\"", "\\\"").Replace(Environment.NewLine, " ").Trim();
             ScriptManager.RegisterStartupScript(this.Page, GetType(), Guid.NewGuid().ToString(), "$(function(){AlertMessage('" + message + "','" + type.ToLower() + "')});", true);
         }
-
+        protected void Page_Unload(object sender, EventArgs e)
+        {
+            try
+            {
+                if (objAdminBO != null)
+                {
+                    objAdminBO.ReleaseResources();
+                    objAdminBO = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+            }
+        }
     }
 }

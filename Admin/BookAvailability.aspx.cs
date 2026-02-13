@@ -247,8 +247,85 @@ namespace Admin
                 ViewState["Publisher"]?.ToString();
         }
 
+        //protected void btnDownloadCSV_Click(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        var selectedCategories = ddlCategory.Items.Cast<ListItem>()
+        //            .Where(i => i.Selected)
+        //            .Select(i => i.Text)
+        //            .ToList();
+
+        //        if (selectedCategories.Count == 0)
+        //        {
+        //            ShowToastr(lblErrorMsg[0], "error");
+        //            return;
+        //        }
+
+        //        string categoryNames = string.Join(",", selectedCategories);
+
+        //        string isbn = ViewState["ISBN"]?.ToString();
+        //        string bookTitle = ViewState["BookTitle"]?.ToString();
+        //        string authorName = ViewState["Author"]?.ToString();
+        //        string publisherName = ViewState["Publisher"]?.ToString();
+
+        //        int? yearPublished = null;
+        //        int y;
+        //        if (int.TryParse(Convert.ToString(ViewState["Year"]), out y))
+        //        {
+        //            yearPublished = y;
+        //        }
+
+        //        using (DataSet ds = objCommonBO.GetBookAvailability(
+        //            categoryNames, isbn, bookTitle, authorName, yearPublished, publisherName))
+        //        {
+        //            if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+        //            {
+        //                ShowToastr(lblErrorMsg[8], "warning");
+        //                return;
+        //            }
+
+        //            DataTable sourceTable = ds.Tables[0];
+
+        //            if (sourceTable.Columns.Contains("ISBN"))
+        //            {
+        //                foreach (DataRow row in sourceTable.Rows)
+        //                {
+        //                    row["ISBN"] = "\t" + row["ISBN"];
+        //                }
+        //            }
+
+        //            string removeColumns = hfRemoveColumnsCSV.Value;
+        //            if (!string.IsNullOrWhiteSpace(removeColumns))
+        //            {
+        //                foreach (string col in removeColumns.Split(','))
+        //                {
+        //                    if (sourceTable.Columns.Contains(col))
+        //                        sourceTable.Columns.Remove(col);
+        //                }
+        //            }
+
+        //            StringBuilder sb = CommonFunction.CSVFileGenerationWithoutHeader(sourceTable, "BookAvailability");
+
+        //            Response.Clear();
+        //            Response.Buffer = true;
+        //            Response.AddHeader("content-disposition", "attachment;filename=BookAvailability.csv");
+        //            Response.Charset = "";
+        //            Response.ContentType = "text/csv";
+        //            Response.Write(sb.ToString());
+        //            Response.End();
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MyExceptionLogger.Publish(ex);
+        //        ShowToastr("Failed to download CSV.", "error");
+        //    }
+        //}
         protected void btnDownloadCSV_Click(object sender, EventArgs e)
         {
+            DataTable sourceTable = null;   // ✅ declare outside
+
             try
             {
                 var selectedCategories = ddlCategory.Items.Cast<ListItem>()
@@ -276,8 +353,7 @@ namespace Admin
                     yearPublished = y;
                 }
 
-                using (DataSet ds = objCommonBO.GetBookAvailability(
-                    categoryNames, isbn, bookTitle, authorName, yearPublished, publisherName))
+                using (DataSet ds = objCommonBO.GetBookAvailability(categoryNames, isbn, bookTitle, authorName, yearPublished, publisherName))
                 {
                     if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
                     {
@@ -285,7 +361,7 @@ namespace Admin
                         return;
                     }
 
-                    DataTable sourceTable = ds.Tables[0];
+                    sourceTable = ds.Tables[0]; // ✅ reference
 
                     if (sourceTable.Columns.Contains("ISBN"))
                     {
@@ -305,7 +381,8 @@ namespace Admin
                         }
                     }
 
-                    StringBuilder sb = CommonFunction.CSVFileGenerationWithoutHeader(sourceTable, "BookAvailability");
+                    StringBuilder sb =
+                        CommonFunction.CSVFileGenerationWithoutHeader(sourceTable, "BookAvailability");
 
                     Response.Clear();
                     Response.Buffer = true;
@@ -321,7 +398,18 @@ namespace Admin
                 MyExceptionLogger.Publish(ex);
                 ShowToastr("Failed to download CSV.", "error");
             }
+            //finally
+            //{
+            //    // ✅ MANUAL DATATABLE CLEANUP
+            //    if (sourceTable != null)
+            //    {
+            //        sourceTable.Clear();          // remove rows
+            //        sourceTable.Columns.Clear(); // remove schema
+            //        sourceTable = null;          // release reference
+            //    }
+            //}
         }
+
 
 
         protected void gvbookA_PageIndexChanging(object sender, GridViewPageEventArgs e)
@@ -506,6 +594,23 @@ namespace Admin
 
             gvbookA.PageIndex = newIndex;
             BindBookAvailability(false);
+        }
+        protected void Page_Unload(object sender, EventArgs e)
+        {
+            try
+            {
+                if (objMasterBO != null & objCommonBO!=null)
+                {                    
+                    objMasterBO.ReleaseResources();
+                    objMasterBO = null;
+                    objCommonBO.ReleaseResources();
+                    objCommonBO=null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+            }
         }
     }
 }

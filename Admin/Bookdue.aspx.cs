@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Globalization;
 
 namespace Admin
 {
@@ -20,7 +21,6 @@ namespace Admin
 
             try
             {
-              
                 InitializeErrorMessages();
 
                 if (!IsPostBack)
@@ -200,11 +200,28 @@ namespace Admin
                 DateTime selectedReturnDate;
 
                 // Validate return date
-                if (!DateTime.TryParse(txtDate.Text.Trim(), out selectedReturnDate))
+                //if (!DateTime.TryParse(txtDate.Text.Trim(), out selectedReturnDate))
+                //{
+                //    ShowToastr(lblErrorMsg[9], "warning"); // Please select a valid return date.
+                //    return;
+                //}
+                if (string.IsNullOrWhiteSpace(txtDate.Text))
+                {
+                    ShowToastr(lblErrorMsg[9], "warning");
+                    return;
+                }
+
+                if (!DateTime.TryParseExact(
+                     txtDate.Text.Trim(),
+                    "d-MMM-yyyy",
+                     CultureInfo.InvariantCulture,
+                     DateTimeStyles.None,
+                     out selectedReturnDate))
                 {
                     ShowToastr(lblErrorMsg[9], "warning"); // Please select a valid return date.
                     return;
                 }
+
 
                 bool anySelected = false;
 
@@ -216,7 +233,12 @@ namespace Admin
                     {
                         anySelected = true;
 
-                        DateTime issueDate = Convert.ToDateTime(row.Cells[5].Text);
+                        //DateTime issueDate = Convert.ToDateTime(row.Cells[5].Text);
+                        DateTime issueDate = DateTime.ParseExact(
+                            row.Cells[5].Text.Trim(),
+                             "dd-MMM-yyyy",
+                            CultureInfo.InvariantCulture
+                        );
 
                         // Return date cannot be earlier than issue date
                         if (selectedReturnDate < issueDate)
@@ -272,11 +294,28 @@ namespace Admin
                 DateTime renewalDate;
 
                 // Validate entered renewal date
-                if (!DateTime.TryParse(txtDate.Text, out renewalDate))
+                //if (!DateTime.TryParse(txtDate.Text, out renewalDate))
+                //{
+                //    ShowToastr(lblErrorMsg[14], "warning");  //Please select a valid renewal date.
+                //    return;
+                //}
+                if (string.IsNullOrWhiteSpace(txtDate.Text))
                 {
-                    ShowToastr(lblErrorMsg[14], "warning");  //Please select a valid renewal date.
+                    ShowToastr(lblErrorMsg[14], "warning");
                     return;
                 }
+
+                if (!DateTime.TryParseExact(
+                    txtDate.Text.Trim(),
+                    "d-MMM-yyyy",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out renewalDate))
+                {
+                    ShowToastr(lblErrorMsg[14], "warning"); // Please select a valid renewal date.
+                    return;
+                }
+
 
                 if (renewalDate < DateTime.Now.Date)
                 {
@@ -295,7 +334,13 @@ namespace Admin
                         anySelected = true;
 
                         // Get Due Date (Column index of DueDate)
-                        DateTime dueDate = Convert.ToDateTime(row.Cells[6].Text);
+                        //DateTime dueDate = Convert.ToDateTime(row.Cells[6].Text);
+                        DateTime dueDate = DateTime.ParseExact(
+                            row.Cells[6].Text.Trim(),
+                             "dd-MMM-yyyy",
+                            CultureInfo.InvariantCulture
+                        );
+
 
                         // VALIDATIONS
                         if (renewalDate <= dueDate)
@@ -405,7 +450,6 @@ namespace Admin
             rptPager.DataBind();
         }
 
-
         protected void rptPager_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int newIndex = Convert.ToInt32(e.CommandArgument);
@@ -413,6 +457,23 @@ namespace Admin
             gvBookDues.PageIndex = newIndex;
             LoadBookDues();
         }
+
+        protected void Page_Unload(object sender, EventArgs e)
+        {
+            try
+            {
+                if (objBO != null)
+                {
+                    objBO.ReleaseResources();
+                    objBO = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+            }
+        }
+
         private void ShowToastr(string message, string alertType = "error")
         {
             ScriptManager.RegisterStartupScript(
@@ -421,6 +482,5 @@ namespace Admin
                 true
             );
         }
-
     }
 }

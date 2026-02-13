@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -78,25 +79,8 @@ namespace Admin
                 if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                 {
                     ApplyFiltersUsingViewState(ref ds);
-                    ViewState["GridData"] = ds.Tables[0].DefaultView.ToTable();
-                    gvBooks.DataSource = ds.Tables[0].DefaultView;
-                    gvBooks.DataBind();
-                    if (resetPageIndex)
-                        gvBooks.PageIndex = 0;
 
-                    int intRowCount = ds.Tables[0].Rows.Count;
-
-                    // ✅ hide pager + CSV when empty
-                    divPager.Visible = lnkDownloadCSV.Visible = true;
-
-                    // ✅ custom pager
-                    if (intRowCount > gvBooks.PageSize)
-                    {
-                        BuildPager(gvBooks.PageCount, gvBooks.PageIndex);
-                        rptPager.Visible = true;
-                    }
-                    else
-                        rptPager.Visible = false;
+                    // 🔥 SET GRID TITLE + COLUMN VISIBILITY FIRST
                     if (type.ToUpper() == "TOTAL_GRID")
                     {
                         lblGridTitle.InnerText = "Book Details";
@@ -122,111 +106,60 @@ namespace Admin
                     {
                         lblGridTitle.InnerText = "Returned Book Details";
                         gvBooks.Columns[9].Visible = false;
-                        gvBooks.Columns[10].Visible = true;
+                        gvBooks.Columns[10].Visible = true;  
                         gvBooks.Columns[11].Visible = false;
                     }
 
+                    // 🔥 NOW bind
+                    ViewState["GridData"] = ds.Tables[0].DefaultView.ToTable();
+                    gvBooks.DataSource = ds.Tables[0].DefaultView;
+                    gvBooks.DataBind();
+
+                    if (resetPageIndex)
+                        gvBooks.PageIndex = 0;
+
+                    int intRowCount = ds.Tables[0].Rows.Count;
+
+                    divPager.Visible = lnkDownloadCSV.Visible = true;
+
+                    if (intRowCount > gvBooks.PageSize)
+                    {
+                        BuildPager(gvBooks.PageCount, gvBooks.PageIndex);
+                        rptPager.Visible = true;
+                    }
+                    else
+                    {
+                        rptPager.Visible = false;
+                    }
                     RestoreGridFilters();
                 }
-
             }
         }
-            /*
-
-            DataSet ds = null;
-
-            switch (type)
-            {
-                case "TOTAL":
-                    ds = objCommonBO.GetBookIssueDashboard("TOTAL_GRID");
-                    lblGridTitle.InnerText = "Book Details";
-                    lblGridTitle.InnerText = "Book Details"; 
-                    gvBooks.Columns[9].Visible = true; 
-                    gvBooks.Columns[10].Visible = true; 
-                    gvBooks.Columns[11].Visible = true; 
-                    break;
-
-                case "ISSUED":
-                    ds = objCommonBO.GetBookIssueDashboard("ISSUED_GRID");
-                    lblGridTitle.InnerText = "Issued Book Details";
-                    gvBooks.Columns[9].Visible = false; 
-                    gvBooks.Columns[10].Visible = false; 
-                    gvBooks.Columns[11].Visible = false; 
-                    break;
-
-                case "DUE":
-                    ds = objCommonBO.GetBookIssueDashboard("DUE_GRID");
-                    lblGridTitle.InnerText = "Due Book Details";
-                    gvBooks.Columns[9].Visible = false; 
-                    gvBooks.Columns[10].Visible = false; 
-                    gvBooks.Columns[11].Visible = false; 
-                    break;
-
-                case "RETURNED":
-                    ds = objCommonBO.GetBookIssueDashboard("RETURNED_GRID");
-                    lblGridTitle.InnerText = "Returned Book Details";
-                    gvBooks.Columns[9].Visible = false; 
-                    gvBooks.Columns[10].Visible = true; 
-                    gvBooks.Columns[11].Visible = false; 
-                    break;
-            }
-
-            if (resetPageIndex)
-                gvBooks.PageIndex = 0;
-
-            ApplyFiltersUsingViewState(ref ds);
-
-            // store filtered data for CSV
-            ViewState["GridData"] = ds.Tables[0].DefaultView.ToTable();
-
-            gvBooks.DataSource = ds.Tables[0].DefaultView;
-            gvBooks.DataBind();
-            gvBooks.DataSource = ds.Tables[0].DefaultView;
-            gvBooks.DataBind();
-
-            int filteredCount = ds.Tables[0].DefaultView.Count;
-
-            // ✅ hide pager + CSV when empty
-            divPager.Visible = filteredCount > 0;
-            lnkDownloadCSV.Visible = filteredCount > 0;
-
-            // ✅ custom pager
-            if (filteredCount > gvBooks.PageSize)
-            {
-                BuildPager(gvBooks.PageCount, gvBooks.PageIndex);
-                rptPager.Visible = true;
-            }
-            else
-            {
-                rptPager.Visible = false;
-            }
-            RestoreGridFilters();
-            */
-
 
         protected void CardTotalBooks_Click(object sender, EventArgs e)
         {
-            CurrentGridType = "TOTAL";
-            BindGrid("TOTAL_GRID", true);
+            CurrentGridType = "TOTAL_GRID";
+            BindGrid(CurrentGridType, true);
         }
 
         protected void CardIssuedBooks_Click(object sender, EventArgs e)
         {
-            CurrentGridType = "ISSUED";
-            BindGrid("ISSUED_GRID", true);
+            CurrentGridType = "ISSUED_GRID";
+            BindGrid(CurrentGridType, true);
         }
 
         protected void CardDueBooks_Click(object sender, EventArgs e)
         {
-            CurrentGridType = "DUE";
-            BindGrid("DUE_GRID", true);
+            CurrentGridType = "DUE_GRID";
+            BindGrid(CurrentGridType, true);
         }
 
         protected void CardReturnedBooks_Click(object sender, EventArgs e)
         {
-            CurrentGridType = "RETURNED";
-            BindGrid("RETURNED_GRID", true);
+            CurrentGridType = "RETURNED_GRID";
+            BindGrid(CurrentGridType, true);
         }
+
 
         private string FilterISBN
         {
@@ -370,9 +303,10 @@ namespace Admin
 
         private string CurrentGridType
         {
-            get { return ViewState["CurrentGridType"]?.ToString() ?? "TOTAL"; }
+            get { return ViewState["CurrentGridType"]?.ToString() ?? "TOTAL_GRID"; }
             set { ViewState["CurrentGridType"] = value; }
         }
+
         private bool IsRefresh
         {
             get
@@ -387,26 +321,27 @@ namespace Admin
 
         private void SetCSVHiddenColumns(string gridType)
         {
-            switch (gridType)
+            gridType = gridType.ToUpper();
+
+            if (gridType == "TOTAL_GRID")
             {
-                case "TOTAL":
-                    hfRemoveColumnsCSV.Value =
-                        "IssueID,BookID";
-                    break;
-
-                case "ISSUED":
-                    hfRemoveColumnsCSV.Value =
-                        "IssueID,BookID,Returned Date,Status";
-                    break;
-                case "DUE":
-                    hfRemoveColumnsCSV.Value =
-                        "IssueID,BookID,Returned Date,Status";
-                    break;
-
-                case "RETURNED":
-                    hfRemoveColumnsCSV.Value =
-                        "IssueID,BookID,Status,RenewalCount";
-                    break;
+                hfRemoveColumnsCSV.Value = "IssueID,BookID";
+            }
+            else if (gridType == "ISSUED_GRID")
+            {
+                hfRemoveColumnsCSV.Value = "IssueID,BookID,Returned Date,Status";
+            }
+            else if (gridType == "DUE_GRID")
+            {
+                hfRemoveColumnsCSV.Value = "IssueID,BookID,Returned Date,Status";
+            }
+            else if (gridType == "RETURNED_GRID")
+            {
+                hfRemoveColumnsCSV.Value = "IssueID,BookID,Status,RenewalCount";
+            }
+            else
+            {
+                hfRemoveColumnsCSV.Value = "";
             }
         }
 
@@ -424,51 +359,50 @@ namespace Admin
 
                 // ✅ CLONE STRUCTURE + DATA
                 DataTable csvTable = gridData.Copy();
+
                 DataColumn snoCol = new DataColumn("S.No", typeof(int));
                 csvTable.Columns.Add(snoCol);
-                snoCol.SetOrdinal(0); // Make it first column
+                snoCol.SetOrdinal(0);
 
-                // ✅ FILL S.NO VALUES
                 int index = 1;
                 foreach (DataRow row in csvTable.Rows)
-                {
                     row["S.No"] = index++;
-                }
+
                 if (csvTable.Columns.Contains("ISBN"))
                 {
                     foreach (DataRow row in csvTable.Rows)
-                    {
-                        row["ISBN"] = "\t" + row["ISBN"].ToString();
-                    }
+                        row["ISBN"] = "\t" + row["ISBN"];
                 }
-                // ✅ REMOVE UNWANTED COLUMNS USING DATATABLE
-                string removeColumns = hfRemoveColumnsCSV.Value;
 
-                if (!string.IsNullOrWhiteSpace(removeColumns))
+                if (!string.IsNullOrWhiteSpace(hfRemoveColumnsCSV.Value))
                 {
-                    string[] cols = removeColumns
-                        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    foreach (string col in cols)
+                    foreach (string col in hfRemoveColumnsCSV.Value.Split(','))
                     {
                         string colName = col.Trim();
-
                         if (csvTable.Columns.Contains(colName))
-                        {
                             csvTable.Columns.Remove(colName);
-                        }
                     }
                 }
 
-                // ✅ GENERATE CSV
                 StringBuilder sb = CommonFunction.CSVFileGeneration(csvTable, "");
 
                 Response.Clear();
                 Response.Buffer = true;
-                Response.AddHeader("content-disposition", "attachment;filename=BookDetails.csv");
+                Response.AddHeader(
+                    "content-disposition",
+                    "attachment;filename=BookDetails.csv"
+                );
                 Response.ContentType = "text/csv";
                 Response.Write(sb.ToString());
-                Response.End();
+
+                // ✅ SAFER TERMINATION
+                Response.Flush();
+                Response.SuppressContent = true;
+                HttpContext.Current.ApplicationInstance.CompleteRequest();
+
+                // ✅ CORRECT CLEANUP
+                csvTable.Dispose();                 // you own this
+                ViewState.Remove("GridData");       // release reference
             }
             catch (Exception ex)
             {
@@ -476,6 +410,7 @@ namespace Admin
                 ShowToastr("Failed to download CSV.", "error");
             }
         }
+
 
         private void BuildPager(int totalPages, int currentPage)
         {
@@ -526,14 +461,23 @@ namespace Admin
         }
 
 
+        //protected void rptPager_ItemCommand(object source, RepeaterCommandEventArgs e)
+        //{
+        //    int newIndex = Convert.ToInt32(e.CommandArgument);
+
+        //    gvBooks.PageIndex = newIndex;
+        //    string type = ViewState["CurrentGridType"]?.ToString() ?? "TOTAL";
+        //    BindGrid(CurrentGridType, false);
+        //}
+
         protected void rptPager_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int newIndex = Convert.ToInt32(e.CommandArgument);
 
             gvBooks.PageIndex = newIndex;
-            string type = ViewState["CurrentGridType"]?.ToString() ?? "TOTAL";
-            BindGrid(CurrentGridType, false);
 
+            // CurrentGridType already stores *_GRID values
+            BindGrid(CurrentGridType, false);
         }
 
         private void ClearGrid()
@@ -556,6 +500,21 @@ namespace Admin
                 $"$(function(){{ AlertMessage('{message.Replace("'", "\\'")}', '{alertType.ToLower()}'); }});",
                 true
             );
+        }
+        protected void Page_Unload(object sender, EventArgs e)
+        {
+            try
+            {
+                if (objCommonBO != null)
+                {
+                    objCommonBO.ReleaseResources();
+                    objCommonBO = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+            }
         }
     }
 }

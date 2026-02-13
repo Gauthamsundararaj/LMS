@@ -189,6 +189,7 @@
                                     AutoGenerateColumns="false"
                                     CssClass="table table-bordered table-striped table-hover text-center"
                                     GridLines="None" OnPageIndexChanging="gvBooks_PageIndexChanging" OnRowCommand="gvBooks_RowCommand"
+                                    OnRowDataBound="gvBooks_RowDataBound"
                                     EmptyDataText="No records found" AllowPaging="True" PageSize="5" PagerSettings-Visible="false">
 
                                     <Columns>
@@ -246,12 +247,12 @@
 
                                             <ItemTemplate>
                                                 <span class='badge
-<%# Eval("Last Renewal Status").ToString() == "Approved" ? "bg-success" :
-    Eval("Last Renewal Status").ToString() == "Rejected" ? "bg-danger" :
-    Eval("Last Renewal Status").ToString() == "Pending" ? "bg-warning" :
-    Eval("Last Renewal Status").ToString() == "Returned" ? "bg-primary" :
+                                            <%# Eval("Last Renewal Status").ToString() == "Approved" ? "bg-success" :
+                                                Eval("Last Renewal Status").ToString() == "Rejected" ? "bg-danger" :
+                                                Eval("Last Renewal Status").ToString() == "Pending" ? "bg-warning" :
+                                                Eval("Last Renewal Status").ToString() == "Returned" ? "bg-primary" :
 
-    "bg-secondary" %>'>
+                                                "bg-secondary" %>'>
                                                     <%# Eval("Last Renewal Status") %>
                                                 </span>
                                             </ItemTemplate>
@@ -377,51 +378,51 @@
                     </div>
                 </div>
                 <!-- Renewal Expired Warning Modal -->
-<div class="modal fade" id="renewalExpiredModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content shadow">
+                <div class="modal fade" id="renewalExpiredModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content shadow">
 
-            <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    Renewal Time Expired
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
+                            <div class="modal-header bg-warning text-dark">
+                                <h5 class="modal-title">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    Renewal Time Expired
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
 
-            <div class="modal-body text-center p-4">
-                <i class="bi bi-exclamation-circle text-warning fs-1 mb-3"></i>
+                            <div class="modal-body text-center p-4">
+                                <i class="bi bi-exclamation-circle text-warning fs-1 mb-3"></i>
 
-                <p class="fw-bold mb-2">
-                    Renewal period has expired.
-                </p>
+                                <p class="fw-bold mb-2">
+                                    Renewal period has expired.
+                                </p>
 
-                <p class="mb-0">
-                    Books can be renewed only within
+                                <p class="mb-0">
+                                    Books can be renewed only within
                     <strong>
                         <asp:Label ID="lblMaxRenewDays" runat="server"></asp:Label>
                         days after the due date
                     </strong>.
                     <br />
-                    Please return the book to the library.
-                </p>
+                                    Please return the book to the library.
+                                </p>
 
-                <p class="text-danger mt-2">
-                    Overdue fine will be applicable.
-                </p>
-            </div>
+                                <p class="text-danger mt-2">
+                                    Overdue fine will be applicable.
+                                </p>
+                            </div>
 
-            <div class="modal-footer justify-content-center">
-                <button type="button"
-                        class="btn btn-warning"
-                        data-bs-dismiss="modal">
-                    OK
-                </button>
-            </div>
+                            <div class="modal-footer justify-content-center">
+                                <button type="button"
+                                    class="btn btn-warning"
+                                    data-bs-dismiss="modal">
+                                    OK
+                                </button>
+                            </div>
 
-        </div>
-    </div>
-</div>
+                        </div>
+                    </div>
+                </div>
 
             </div>
         </div>

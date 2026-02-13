@@ -1,8 +1,6 @@
 ﻿using DAL;
-using Microsoft.ApplicationBlocks.Data;
 using System;
 using System.Data;
-using System.Data.SqlClient;
 namespace BLL
 {
     public class AdminBO
@@ -32,8 +30,6 @@ namespace BLL
         {
             return objAdminDAO.RoleMasterCRUD(action, roleID, roleName, DefaultPage, active, adminUserID);
         }
-
-
 
         public DataSet UserMaster(string Action, int UserID = 0, string LoginId = "", string EmpCode = "",
           string UserName = "", string Gender = "", string Email = "", string AltEmail = "",
@@ -147,7 +143,7 @@ namespace BLL
        int adminUserID = 0,
        string searchBy = "",
        string searchValue = ""
-   )
+       )
         {
             return objAdminDAO.MenuMaster(
                 action,
@@ -164,29 +160,51 @@ namespace BLL
                 searchValue
             );
         }
+        // LOAD GRID
+        public DataSet GetMenuMasterGrid()
+        {
+            return MenuMaster("SELECT");
+        }
+
+        // SEARCH GRID
+        public DataSet SearchMenuMaster(string searchBy, string searchValue)
+        {
+            return MenuMaster(
+                "SEARCH",
+                searchBy: searchBy,
+                searchValue: searchValue
+            );
+        }
+
+        // GET BY ID
+        public DataSet GetMenuByID(int menuID)
+        {
+            return MenuMaster("SELECT_BY_ID", menuID);
+        }
 
         // GRID
-        public DataTable GetMenuMasterGrid()
-        {
-            DataSet ds = objAdminDAO.MenuMaster("SELECT");
-            return ds.Tables[0];
-        }
+        //public DataTable GetMenuMasterGrid()
+        //{
+        //    DataSet ds = objAdminDAO.MenuMaster("SELECT");
+        //    return ds.Tables[0];
+        //}
 
-        public DataTable SearchMenuMaster(string searchBy, string searchValue)
-        {
-            DataSet ds = objAdminDAO.MenuMaster("SEARCH", searchBy: searchBy, searchValue: searchValue);
-            return ds.Tables[0];
-        }
-        public DataTable GetMenuByID(int menuId)
-        {
-            DataSet ds = objAdminDAO.MenuMaster("SELECT_BY_ID", menuId);
-            return ds.Tables[0];
-        }
+        //public DataTable SearchMenuMaster(string searchBy, string searchValue)
+        //{
+        //    DataSet ds = objAdminDAO.MenuMaster("SEARCH", searchBy: searchBy, searchValue: searchValue);
+        //    return ds.Tables[0];
+        //}
+        //public DataTable GetMenuByID(int menuId)
+        //{
+        //    DataSet ds = objAdminDAO.MenuMaster("SELECT_BY_ID", menuId);
+        //    return ds.Tables[0];
+        //}
 
         public DataSet GetMenusByRole(int RoleID)
         {
             return objAdminDAO.GetMenusByRole(RoleID);
         }
+
         public DataSet GetDashboardData(DateTime fromDate, DateTime toDate)
         {
             return objAdminDAO.GetDashboardData(fromDate, toDate);

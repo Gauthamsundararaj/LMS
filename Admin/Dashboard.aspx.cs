@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -12,8 +13,7 @@ namespace Admin
 {
     public partial class Dashboard : System.Web.UI.Page
     {
-        private readonly AdminBO objAdminBO = new AdminBO();
-
+        AdminBO objAdminBO = new AdminBO();
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -125,10 +125,10 @@ namespace Admin
                     labels.Add($"{current:dd MMM} - {end:dd MMM}");
 
                     int issued = dtDayWise.AsEnumerable()
-          .Where(r => r.Field<string>("Status") == "Issued"
+                    .Where(r => r.Field<string>("Status") == "Issued"
                    && r.Field<DateTime>("ActionDate") >= current
                    && r.Field<DateTime>("ActionDate") <= end)
-          .Sum(r => r.Field<int>("Total"));
+                    .Sum(r => r.Field<int>("Total"));
 
                     int returned = dtDayWise.AsEnumerable()
                         .Where(r => r.Field<string>("Status") == "Returned"
@@ -215,9 +215,6 @@ namespace Admin
             ShowModal();
         }
 
-        /* ===============================
-           BUILD PAGER
-        =============================== */
         private void BuildPager(int totalPages, int currentPage)
         {
             // ❌ NO PAGINATION WHEN 0 OR 1 PAGE
@@ -268,29 +265,50 @@ namespace Admin
             rptPager.DataBind();
         }
 
-
-        /* ===============================
-           DOWNLOAD CSV
-        =============================== */
         protected void btnDownload_Click(object sender, EventArgs e)
         {
-            DataTable dt = ViewState[""] as DataTable;
-            string reportName = ViewState["GridData"]?.ToString() ?? "Report";
-
-            if (dt == null || dt.Rows.Count == 0)
+            try
             {
-                ShowAlert("No data available for export.", "warning");
-                return;
+                // ✅ GET DATA FROM VIEWSTATE
+                DataTable dt = ViewState["GridData"] as DataTable;
+                string reportName = ViewState["ReportName"]?.ToString() ?? "Report";
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    ShowAlert("No data available for export.", "warning");
+                    return;
+                }
+
+                // ✅ GENERATE CSV CONTENT
+                StringBuilder sb =
+                    CommonFunction.CSVFileGenerationWithoutHeader(dt, reportName);
+
+                // ✅ WRITE RESPONSE
+                Response.Clear();
+                Response.Buffer = true;
+                Response.AddHeader(
+                    "Content-Disposition",
+                    $"attachment;filename={reportName}.csv"
+                );
+                Response.ContentType = "text/csv";
+                Response.Write(sb.ToString());
+
+                // ✅ SAFE REQUEST TERMINATION
+                Response.Flush();
+                Response.SuppressContent = true;
+                HttpContext.Current.ApplicationInstance.CompleteRequest();
+
+                // ✅ CORRECT CLEANUP
+                ViewState.Remove("GridData");   // release reference
             }
-
-            StringBuilder sb = CommonFunction.CSVFileGenerationWithoutHeader(dt, reportName);
-
-            Response.Clear();
-            Response.AddHeader("Content-Disposition", $"attachment;filename={reportName}.csv");
-            Response.ContentType = "text/csv";
-            Response.Write(sb.ToString());
-            Response.End();
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+                ShowAlert("Failed to download CSV.", "error");
+            }
         }
+
+
 
         private void ShowModal()
         {
@@ -303,5 +321,21 @@ namespace Admin
                 this, GetType(), Guid.NewGuid().ToString(),
                 $"AlertMessage('{msg}','{type}');", true);
         }
+        protected void Page_Unload(object sender, EventArgs e)
+        {
+            try
+            {
+                if (objAdminBO != null)
+                {
+                    objAdminBO.ReleaseResources();
+                    objAdminBO = null; 
+                }
+            }
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+            }
+        }
+
     }
 }

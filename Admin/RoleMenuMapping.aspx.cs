@@ -264,6 +264,20 @@ namespace Admin
             message = (message ?? "").Replace("'", "\\'").Replace("\"", "\\\"").Replace(Environment.NewLine, " ").Trim();
             ScriptManager.RegisterStartupScript(this.Page, GetType(), Guid.NewGuid().ToString(), "$(function(){AlertMessage('" + message + "','" + type.ToLower() + "')});", true);
         }
-
+        protected void Page_Unload(object sender, EventArgs e)
+        {
+            try
+            {
+                if (objBO != null)
+                {
+                    objBO.ReleaseResources();
+                    objBO = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+            }
+        }
     }
 }
