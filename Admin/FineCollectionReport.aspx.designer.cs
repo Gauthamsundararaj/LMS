@@ -11,7 +11,7 @@ namespace Admin
 {
 
 
-    public partial class BookIssue
+    public partial class FineCollectionReport
     {
 
         /// <summary>
@@ -33,156 +33,102 @@ namespace Admin
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// divForm control.
+        /// hfRemoveColumnsCSV control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divForm;
+        protected global::System.Web.UI.WebControls.HiddenField hfRemoveColumnsCSV;
 
         /// <summary>
-        /// rblIssueType control.
+        /// lblUnpaidCount control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButtonList rblIssueType;
+        protected global::System.Web.UI.WebControls.Label lblUnpaidCount;
 
         /// <summary>
-        /// divStudent control.
+        /// lblPaidCount control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divStudent;
+        protected global::System.Web.UI.WebControls.Label lblPaidCount;
 
         /// <summary>
-        /// txtStudentID control.
+        /// divGrid control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtStudentID;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divGrid;
 
         /// <summary>
-        /// divStaff control.
+        /// lblGridTitle control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divStaff;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl lblGridTitle;
 
         /// <summary>
-        /// txtStaffID control.
+        /// lnkDownloadCSV control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtStaffID;
+        protected global::System.Web.UI.WebControls.LinkButton lnkDownloadCSV;
 
         /// <summary>
-        /// divIssueDetails control.
+        /// imgDownload control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divIssueDetails;
+        protected global::System.Web.UI.WebControls.Image imgDownload;
 
         /// <summary>
-        /// lstIsbn control.
+        /// gvFine control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ListBox lstIsbn;
+        protected global::System.Web.UI.WebControls.GridView gvFine;
 
         /// <summary>
-        /// issueDate control.
+        /// divPager control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox issueDate;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl divPager;
 
         /// <summary>
-        /// dueDate control.
+        /// rptPager control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox dueDate;
+        protected global::System.Web.UI.WebControls.Repeater rptPager;
 
         /// <summary>
-        /// btnSave control.
+        /// Footer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSave;
-
-        /// <summary>
-        /// btnClear control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnClear;
-
-        /// <summary>
-        /// btnCancel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCancel;
-
-        /// <summary>
-        /// gvSelectedBooks control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvSelectedBooks;
-
-        /// <summary>
-        /// lblIssueError control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblIssueError;
-
-        /// <summary>
-        /// btnConfirm control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnConfirm;
-
-        /// <summary>
-        /// Footer1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UserControl Footer1;
+        protected global::System.Web.UI.UserControl Footer;
     }
 }

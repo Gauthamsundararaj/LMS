@@ -72,12 +72,12 @@ namespace BLL
         }
 
         public DataSet RenewalRequestAction(
-     string action,               // APPROVE / REJECT
-     int renewalRequestId,
-     DateTime? approvedDueDate,   // Used for APPROVE
-     string rejectReason,         // Used for REJECT
-     int adminId
- )
+             string action,               // APPROVE / REJECT
+             int renewalRequestId,
+             DateTime? approvedDueDate,   // Used for APPROVE
+             string rejectReason,         // Used for REJECT
+             int adminId
+         )
         {
             return objCommonDAO.RenewalRequestAction(
                 action,
@@ -91,10 +91,21 @@ namespace BLL
         {
             return objCommonDAO.GetBookIssueDashboard(action);
         }
+        public DataSet UpdateFineAmount(string action, int issueId, decimal fineAmount, int AdminUserID)
+        {
+            return objCommonDAO.UpdateFineAmount(action, issueId, fineAmount, AdminUserID);
+        }
+
 
         public DataSet GetBookAvailability(string categoryNames, string isbn, string bookTitle, string authorName, int? yearPublished, string publisherName)
         {
             return objCommonDAO.GetBookAvailability(categoryNames, isbn, bookTitle, authorName, yearPublished, publisherName);
         }
+
+        public DataSet FineAmount(string action)
+        {
+            return objCommonDAO.FineAmount(action);
+        }
+
     }
 }

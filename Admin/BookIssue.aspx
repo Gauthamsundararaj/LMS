@@ -184,6 +184,13 @@
                             </div>
 
                             <div class="modal-footer">
+                                <!-- Error Label -->
+                                <asp:Label ID="lblIssueError"
+                                    runat="server"
+                                    CssClass="text-danger fw-bold me-auto"
+                                    Visible="false">
+                                </asp:Label>
+
                                 <asp:Button ID="btnConfirm" runat="server"
                                     Text="Issue Books"
                                     CssClass="btn btn-success"
@@ -208,12 +215,32 @@
 
     <script>
         $(document).ready(function () {
-            $('#lstIsbn').multiselect({
+            $('#<%= lstIsbn.ClientID %>').multiselect({
                 enableFiltering: true,
                 buttonTextAlignment: 'left',
+                maxSelections: 3,  
+                onChange: function (option, checked) {
 
-            });
+                    var selectedOptions = $('#<%= lstIsbn.ClientID %> option:selected');
+
+            if (selectedOptions.length > 3) {
+                // Uncheck the last selected option
+                $(option).prop('selected', false);
+                $('#<%= lstIsbn.ClientID %>').multiselect('refresh');
+
+                AlertMessage("You can select maximum 3 books only.", "error");
+            }
+        }
+    });
         });
+
+        //$(document).ready(function () {
+        //    $('#lstIsbn').multiselect({
+        //        enableFiltering: true,
+        //        buttonTextAlignment: 'left',
+
+        //    });
+        //});
 
         document.addEventListener("DOMContentLoaded", function () {
             flatpickr(".flatpickr-date", {

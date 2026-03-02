@@ -265,6 +265,20 @@
                                                 <%# Eval("RejectReason") %>
                                             </ItemTemplate>
                                         </asp:TemplateField>
+
+                                     <asp:TemplateField HeaderText="Fine">
+                                        <ItemTemplate>
+                                            <asp:LinkButton ID="lnkPayFine"
+                                                runat="server"
+                                                CommandName="PayFine"
+                                                CommandArgument='<%# Eval("BookIssueID") %>'
+                                                CssClass="btn btn-sm btn-danger"
+                                                ToolTip="Pay Fine">
+                                                Pay Fine
+                                            </asp:LinkButton>
+                                        </ItemTemplate>
+                                    </asp:TemplateField>
+
                                     </Columns>
                                 </asp:GridView>
 

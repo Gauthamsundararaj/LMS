@@ -263,12 +263,14 @@
                         <asp:GridView
                             ID="gvBooks"
                             runat="server"
+                            DataKeyNames="IssueID,Book Title,MemberID,Due Date, OverdueDays, Price"
                             AutoGenerateColumns="false"
                             CssClass="table table-bordered table-striped table-hover"
                             EmptyDataText="No records found"
                             AllowPaging="true"
                             PageSize="10"
                             PagerSettings-Visible="false"
+                            OnRowCommand="gvBooks_RowCommand"
                             ClientIDMode="Static">
 
                             <EmptyDataTemplate>
@@ -422,12 +424,27 @@
                                     HeaderText="Returned On"
                                     DataFormatString="{0:dd-MMM-yyyy}" />
 
+
+
                                 <asp:TemplateField HeaderText="Status">
                                     <ItemTemplate>
                                         <asp:Label runat="server"
                                             CssClass='<%# GetStatusCssClass(Container.DataItem) %>'
                                             Text='<%# DataBinder.Eval(Container.DataItem, "Status") %>'>
                                         </asp:Label>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+
+                                <asp:TemplateField HeaderText="Fine Amount">
+                                    <ItemTemplate>
+                                        <asp:LinkButton ID="lnkFine"
+                                            runat="server"
+                                            CommandName="Fine"
+                                            CommandArgument='<%# Eval("IssueID") %>'
+                                            CssClass="btn btn-sm btn-secondary me-2"
+                                            ToolTip="Fine">
+                                        <span>Collect Fine</span>
+                                        </asp:LinkButton>
                                     </ItemTemplate>
                                 </asp:TemplateField>
 
@@ -450,8 +467,89 @@
                     </div>
 
 
-                </div>
 
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="FineModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">Enter Fine Amount</h5>
+                        <button type="button" class="btn-close btn-close-white"
+                            data-bs-dismiss="modal">
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <div class="card mb-3">
+                            <div class="row mt-2">
+                                <div class="col-6">
+                                    <h4 class="fw-bold">
+                                        <asp:Label ID="lblFineBookTitle" runat="server" />
+                                    </h4>
+                                    <h5>
+                                        <asp:Label ID="lblOverdueDays"
+                                            runat="server"
+                                            CssClass="text-danger fw-bold" /></h5>
+                                </div>
+                                <div class="col-3">
+                                    <strong>Member ID</strong><br />
+                                    <asp:Label ID="lblFineMemberID" runat="server" />
+                                </div>
+
+                                <div class="col-3">
+                                    <strong>Due Date</strong><br />
+                                    <asp:Label ID="lblFineDueDate" runat="server" />
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <label class="form-label fw-semibold">
+                                    Fine Amount (₹)
+                                </label>
+
+                                <asp:TextBox ID="txtFineAmount"
+                                    runat="server"
+                                    CssClass="form-control"
+                                    placeholder="Enter fine amount"
+                                    MaxLength="5"
+                                    onkeypress="return allowOnlyNumbers(event);" />
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>Book Price</strong><br />
+                                <asp:Label ID="lblBookPrice" runat="server"></asp:Label>
+                            </div>
+                        </div>
+
+                        <asp:HiddenField ID="hfBookIssueID" runat="server" />
+                        <asp:HiddenField ID="hfBookPrice" runat="server" />
+
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="modal-footer">
+                        <button type="button"
+                            class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <asp:Button ID="btnCollectFine"
+                            runat="server"
+                            Text="Collect Fine"
+                            CssClass="btn btn-danger"
+                            OnClick="btnCollectFine_Click" 
+                            OnClientClick="return validateFineAmount();"/>
+                    </div>
+
+                </div>
             </div>
         </div>
     </form>
@@ -548,7 +646,7 @@
             clearFilterBtn.style.display = hasValue ? 'inline-block' : 'none';
         }
 
-        /* Restore icons after postback */
+
         function restoreClearIcons() {
 
             var grid = document.getElementById('gvBooks');
@@ -568,6 +666,24 @@
             }
 
             toggleClearFilterIcon();
+        }
+
+        function validateFineAmount() {
+
+            var fineAmount = parseFloat(document.getElementById('<%= txtFineAmount.ClientID %>').value);
+            var bookPrice = parseFloat(document.getElementById('<%= hfBookPrice.ClientID %>').value);
+
+            if (isNaN(fineAmount)) {
+                AlertMessage("Please enter fine amount.", "warning");
+                return false;
+            }
+
+            if (fineAmount > bookPrice) {
+                AlertMessage("Fine amount cannot be greater than Book Price.", "error");
+                return false; 
+            }
+
+            return true; 
         }
 
     </script>

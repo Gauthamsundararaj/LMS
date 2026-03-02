@@ -14,16 +14,17 @@ namespace Admin
 
     {
         CommonBO objCommonBO = new CommonBO();
+        int AdminUserID;
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            AdminUserID = Convert.ToInt32(Session["AdminUserID"]);
             if (!IsPostBack)
             {
                 LoadDashboard();
             }
         }
 
-        /* ================= LOAD COUNTS ================= */
         private void LoadDashboard()
         {
             try
@@ -80,37 +81,33 @@ namespace Admin
                 {
                     ApplyFiltersUsingViewState(ref ds);
 
-                    // 🔥 SET GRID TITLE + COLUMN VISIBILITY FIRST
+                    gvBooks.Columns[10].Visible = true;  // Returned Date
+                    gvBooks.Columns[12].Visible = false; // Fine
+                    gvBooks.Columns[11].Visible = false;
+
                     if (type.ToUpper() == "TOTAL_GRID")
                     {
                         lblGridTitle.InnerText = "Book Details";
-                        gvBooks.Columns[9].Visible = true;
-                        gvBooks.Columns[10].Visible = true;
                         gvBooks.Columns[11].Visible = true;
                     }
                     else if (type.ToUpper() == "ISSUED_GRID")
                     {
                         lblGridTitle.InnerText = "Issued Book Details";
-                        gvBooks.Columns[9].Visible = false;
-                        gvBooks.Columns[10].Visible = false;
-                        gvBooks.Columns[11].Visible = false;
+                        gvBooks.Columns[10].Visible = false; // hide Returned Date
+
                     }
                     else if (type.ToUpper() == "DUE_GRID")
                     {
                         lblGridTitle.InnerText = "Due Book Details";
-                        gvBooks.Columns[9].Visible = false;
-                        gvBooks.Columns[10].Visible = false;
-                        gvBooks.Columns[11].Visible = false;
+                        gvBooks.Columns[10].Visible = false; // hide Returned Date
+                        gvBooks.Columns[12].Visible = true;  // show Fine
                     }
                     else if (type.ToUpper() == "RETURNED_GRID")
                     {
                         lblGridTitle.InnerText = "Returned Book Details";
-                        gvBooks.Columns[9].Visible = false;
-                        gvBooks.Columns[10].Visible = true;  
-                        gvBooks.Columns[11].Visible = false;
+                        gvBooks.Columns[12].Visible = false; // hide Fine
                     }
 
-                    // 🔥 NOW bind
                     ViewState["GridData"] = ds.Tables[0].DefaultView.ToTable();
                     gvBooks.DataSource = ds.Tables[0].DefaultView;
                     gvBooks.DataBind();
@@ -133,6 +130,79 @@ namespace Admin
                     }
                     RestoreGridFilters();
                 }
+            }
+        }
+
+        protected void gvBooks_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "Fine")
+            {
+                int rowIndex = ((GridViewRow)((LinkButton)e.CommandSource).NamingContainer).RowIndex;
+
+                int bookIssueId = Convert.ToInt32(e.CommandArgument);
+                hfBookIssueID.Value = bookIssueId.ToString();
+
+                hfBookPrice.Value = gvBooks.DataKeys[rowIndex]["Price"].ToString();
+
+                lblFineBookTitle.Text = gvBooks.DataKeys[rowIndex]["Book Title"].ToString();
+                lblFineMemberID.Text  = gvBooks.DataKeys[rowIndex]["MemberID"].ToString();
+                lblFineDueDate.Text   = Convert.ToDateTime(gvBooks.DataKeys[rowIndex]["Due Date"]).ToString("dd-MMM-yyyy");
+                lblBookPrice.Text = "₹ " + Convert.ToDecimal(gvBooks.DataKeys[rowIndex]["Price"]).ToString("0");
+
+                int overdueDays = Convert.ToInt32(gvBooks.DataKeys[rowIndex]["OverdueDays"]);
+
+                if (overdueDays > 0)
+                {
+                    lblOverdueDays.Text = "Book is overdue by " + overdueDays + " days";
+                }
+                else
+                {
+                    lblOverdueDays.Text = "";
+                }
+
+                txtFineAmount.Text = "";
+
+                ScriptManager.RegisterStartupScript(
+                      Page,
+                      Page.GetType(),
+                      "ShowModal",
+                      "$(document).ready(function(){ $('#FineModal').modal('show'); });",
+                      true);
+            }
+        }
+
+        protected void btnCollectFine_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(txtFineAmount.Text))
+                {
+                    ShowToastr("Please enter fine amount.", "warning");
+                    return;
+                }
+
+                int bookIssueId = Convert.ToInt32(hfBookIssueID.Value);
+                decimal fineAmount = Convert.ToDecimal(txtFineAmount.Text);
+                decimal bookPrice = Convert.ToDecimal(hfBookPrice.Value);
+
+                if (fineAmount > bookPrice)
+                {
+                    ShowToastr("Fine amount cannot be greater than Book Price.", "error");
+                    return;
+                }
+
+                using (DataSet ds = objCommonBO.UpdateFineAmount("UPDATE_FINE", bookIssueId, fineAmount, AdminUserID))
+                {
+                        ShowToastr("Fine collected successfully.", "success");
+                        txtFineAmount.Text = "";
+                }
+
+                BindGrid(CurrentGridType, false);
+            }
+            catch (Exception ex)
+            {
+                MyExceptionLogger.Publish(ex);
+                ShowToastr("Failed to collect fine.", "error");
             }
         }
 
@@ -223,16 +293,10 @@ namespace Admin
         }
         protected void btnRefresh_Click(object sender, EventArgs e)
         {
-            // 🔥 FORCE CLEAR FILTERS FIRST
             IsRefresh = true;
             ClearAllFilters();
-
-            // 🔥 RESET PAGE
             gvBooks.PageIndex = 0;
-
-            // 🔥 REBIND GRID WITHOUT FILTERS
             BindGrid(CurrentGridType, true);
-
             IsRefresh = false;
         }
 
@@ -253,8 +317,6 @@ namespace Admin
         private void ApplyFiltersUsingViewState(ref DataSet ds)
         {
             if (ds == null || ds.Tables.Count == 0) return;
-
-            // 🚫 NO FILTERS → SHOW ALL
             if (string.IsNullOrWhiteSpace(FilterISBN) &&
                 string.IsNullOrWhiteSpace(FilterBookTitle) &&
                 string.IsNullOrWhiteSpace(FilterMemberID) &&
@@ -430,10 +492,9 @@ namespace Admin
                 Text = "« Previous",
                 Command = "Page",
                 Enabled = currentPage > 0,
-                IsActive = false   // ✅ REQUIRED
+                IsActive = false
             });
 
-            // Page Numbers
             for (int i = startPage; i <= endPage; i++)
             {
                 pages.Add(new
@@ -442,41 +503,27 @@ namespace Admin
                     Text = (i + 1).ToString(),
                     Command = "Page",
                     Enabled = true,
-                    IsActive = (i == currentPage) // ✅ ONLY true for active page
+                    IsActive = (i == currentPage)
                 });
             }
 
-            // Next
             pages.Add(new
             {
                 PageIndex = currentPage + 1,
                 Text = "Next »",
                 Command = "Page",
                 Enabled = currentPage < totalPages - 1,
-                IsActive = false   // ✅ REQUIRED
+                IsActive = false
             });
 
             rptPager.DataSource = pages;
             rptPager.DataBind();
         }
 
-
-        //protected void rptPager_ItemCommand(object source, RepeaterCommandEventArgs e)
-        //{
-        //    int newIndex = Convert.ToInt32(e.CommandArgument);
-
-        //    gvBooks.PageIndex = newIndex;
-        //    string type = ViewState["CurrentGridType"]?.ToString() ?? "TOTAL";
-        //    BindGrid(CurrentGridType, false);
-        //}
-
         protected void rptPager_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             int newIndex = Convert.ToInt32(e.CommandArgument);
-
             gvBooks.PageIndex = newIndex;
-
-            // CurrentGridType already stores *_GRID values
             BindGrid(CurrentGridType, false);
         }
 
@@ -489,7 +536,6 @@ namespace Admin
             lblIssuedBooks.Text = "0";
             lblDueBooks.Text = "0";
             lblReturnedBooks.Text = "0";
-
             lblGridTitle.InnerText = "Books";
         }
 
@@ -501,6 +547,7 @@ namespace Admin
                 true
             );
         }
+
         protected void Page_Unload(object sender, EventArgs e)
         {
             try

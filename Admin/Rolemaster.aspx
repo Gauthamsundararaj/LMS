@@ -96,8 +96,8 @@
 
                         <div class="table-responsive">
                             <asp:GridView
-                                ID="gvRoleMaster" runat="server"  AutoGenerateColumns="False"  AllowPaging="true"
-                                PagerSettings-Visible="false" PageSize="5"  OnPageIndexChanging="gvMenu_PageIndexChanging"
+                                ID="gvRoleMaster" runat="server"  AutoGenerateColumns="False" AllowPaging="false"
+
                                 DataKeyNames="RoleID" OnRowCommand="gvRoleMaster_RowCommand"  OnRowDeleting="gvRoleMaster_RowDeleting"
                                 CssClass="table table-bordered table-striped" EmptyDataText="No records found">
                             <Columns>
@@ -155,6 +155,88 @@
         </div>
     </form>
     <uc:footer id="Footer2" runat="server" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            var rowsPerPage = 5; // change page size here
+            var table = $('#<%= gvRoleMaster.ClientID %>');
+        var rows = table.find("tbody tr");
+        var totalRows = rows.length;
+        var totalPages = Math.ceil(totalRows / rowsPerPage);
+
+        if (totalRows === 0) return;
+
+        rows.hide();
+        rows.slice(0, rowsPerPage).show();
+
+        // Create pager container
+        var pager = $('<nav><ul class="pagination justify-content-center mt-3"></ul></nav>');
+        var pagination = pager.find('ul');
+
+        // Previous button
+        pagination.append('<li class="page-item disabled" id="prevBtn"><a class="page-link" href="#">Previous</a></li>');
+
+        // Page numbers
+        for (var i = 0; i < totalPages; i++) {
+            pagination.append('<li class="page-item"><a class="page-link" href="#">' + (i + 1) + '</a></li>');
+        }
+
+        // Next button
+        pagination.append('<li class="page-item" id="nextBtn"><a class="page-link" href="#">Next</a></li>');
+
+        table.after(pager);
+
+        var currentPage = 0;
+        updatePagination();
+
+        function updatePagination() {
+
+            rows.hide();
+            var start = currentPage * rowsPerPage;
+            rows.slice(start, start + rowsPerPage).show();
+
+            $('.page-item').removeClass('active');
+            $('.page-item').eq(currentPage + 1).addClass('active');
+
+            if (currentPage === 0)
+                $('#prevBtn').addClass('disabled');
+            else
+                $('#prevBtn').removeClass('disabled');
+
+            if (currentPage === totalPages - 1)
+                $('#nextBtn').addClass('disabled');
+            else
+                $('#nextBtn').removeClass('disabled');
+        }
+
+        // Page number click
+        $('.page-item').not('#prevBtn, #nextBtn').click(function (e) {
+            e.preventDefault();
+            currentPage = $(this).index() - 1;
+            updatePagination();
+        });
+
+        // Previous click
+        $('#prevBtn').click(function (e) {
+            e.preventDefault();
+            if (currentPage > 0) {
+                currentPage--;
+                updatePagination();
+            }
+        });
+
+        // Next click
+        $('#nextBtn').click(function (e) {
+            e.preventDefault();
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                updatePagination();
+            }
+        });
+
+    });
+    </script>
 
     <script type="text/javascript">
         function validateRoleMaster() {

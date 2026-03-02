@@ -151,6 +151,7 @@ namespace Admin
             {
                 if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                 {
+                    
                     gvSelectedBooks.DataSource = ds.Tables[0];
                     gvSelectedBooks.DataBind();
                     //pnlConfirm.Visible = true;
@@ -178,7 +179,6 @@ namespace Admin
                 string bookIdsCsv = "";
                 string MemberID = "";
 
-                // Collect Selected Books
                 foreach (ListItem li in lstIsbn.Items)
                 {
                     if (li.Selected)
@@ -202,6 +202,12 @@ namespace Admin
                         txtStudentID.Focus();
                         return;
                     }
+                    if (lstIsbn.GetSelectedIndices().Length > 3)
+                    {
+                        lblIssueError.Text = "You can issue maximum 3 books only.";
+                        lblIssueError.Visible = true;
+                        return;
+                    }
 
                     MemberID = ValidateMemberFromDB(action, studentId, "Student");
 
@@ -222,6 +228,12 @@ namespace Admin
                     {
                         ShowAlert(lblErrorMsg[5], "error");
                         txtStaffID.Focus();
+                        return;
+                    }
+                    if (lstIsbn.GetSelectedIndices().Length > 3)
+                    {
+                        lblIssueError.Text = "You can issue maximum 3 books only.";
+                        lblIssueError.Visible = true;
                         return;
                     }
 
@@ -265,23 +277,6 @@ namespace Admin
                     return;
                 }
 
-                //DateTime issueDt;
-                //if (string.IsNullOrWhiteSpace(issueDate.Value)
-                //    || !DateTime.TryParse(issueDate.Value, out issueDt))
-                //{
-                //    ShowAlert(lblErrorMsg[8], "error");
-                //    return;
-                //}
-
-
-                //DateTime dueDt;
-                //if (string.IsNullOrWhiteSpace(dueDate.Value)
-                //    || !DateTime.TryParse(dueDate.Value, out dueDt))
-                //{
-                //    ShowAlert(lblErrorMsg[9], "error");
-                //    return;
-                //}
-
                 if (dueDt <= issueDt)
                 {
                     ShowAlert(lblErrorMsg[10], "error");
@@ -294,10 +289,63 @@ namespace Admin
                 ViewState["DueDate"] = dueDt;
                 ViewState["bookIdsCsv"] = bookIdsCsv;
 
+
+                // 🔍 CALL CHECK ACTION BEFORE OPENING MODAL
+                using (DataSet dsCheck = objCommonBO.BookIssue(
+                    "CHECK", 0, MemberID, issueType,
+                    issueDt, dueDt, bookIdsCsv,
+                    intAdminUserID, true))
+                {
+                    if (dsCheck != null && dsCheck.Tables.Count > 0 && dsCheck.Tables[0].Rows.Count > 0)
+                    {
+                        int msgCode = Convert.ToInt32(dsCheck.Tables[0].Rows[0]["MsgCode"]);
+
+                        //// 🔴 BOOK ALREADY ISSUED
+                        //if (msgCode == 2)
+                        //{
+                        //    string bookName = dsCheck.Tables[0].Rows[0]["BookTitle"].ToString();
+
+                        //    lblIssueError.Text =
+                        //        $"The book - {bookName} is already issued. Please return to issue again.";
+
+                        //    lblIssueError.Visible = true;
+                        //    btnConfirm.Enabled = false;
+                        //}
+                        if (msgCode == 2)
+                        {
+                            DataTable dtBooks = dsCheck.Tables[0];
+
+                            string message = "";
+
+                            foreach (DataRow row in dtBooks.Rows)
+                            {
+                                message += "- " + row["BookTitle"].ToString() + "<br/>";
+                            }
+
+                            message += "are already issued, return them to issue again.";
+
+
+                            lblIssueError.Text = message;
+                            lblIssueError.Visible = true;
+                            btnConfirm.Enabled = false;
+                        }
+
+                        else
+                        {
+                            lblIssueError.Visible = false;
+                            lblIssueError.Text = "";
+                            btnConfirm.Enabled = true;
+                        }
+                    }
+                }
+
                 BindSelectedBooksGrid();
-                ScriptManager.RegisterStartupScript(Page, Page.GetType(), "ShowModal",
-                    "$(document).ready(function()" +
-                    "{ $('#selectedBooksModal').modal('show')  });", true);
+
+                ScriptManager.RegisterStartupScript(Page, Page.GetType(),
+                    "ShowModal",
+                    "$(document).ready(function(){ $('#selectedBooksModal').modal('show'); });",
+                    true);
+
             }
 
 
@@ -307,44 +355,55 @@ namespace Admin
 
             }
         }
-
         protected void btnConfirm_Click(object sender, EventArgs e)
         {
             try
             {
-
                 if (ViewState["MemberID"] == null ||
-                   ViewState["IssueType"] == null ||
-                   ViewState["IssueDate"] == null ||
-                   ViewState["DueDate"] == null||
-                   ViewState["bookIdsCsv"]==null)
+                    ViewState["IssueType"] == null ||
+                    ViewState["IssueDate"] == null ||
+                    ViewState["DueDate"] == null ||
+                    ViewState["bookIdsCsv"] == null)
                 {
                     ShowAlert(lblErrorMsg[11], "warning");
                     return;
                 }
+
                 string MemberID = ViewState["MemberID"].ToString();
                 string issueType = ViewState["IssueType"].ToString();
                 DateTime issueDt = (DateTime)ViewState["IssueDate"];
                 DateTime dueDt = (DateTime)ViewState["DueDate"];
-                string bookIdsCsv = ViewState["bookIdsCsv"].ToString(); ;
+                string bookIdsCsv = ViewState["bookIdsCsv"].ToString();
 
-
-
-                using (DataSet ds = objCommonBO.BookIssue( "INSERT",0,MemberID,issueType, issueDt,  dueDt, bookIdsCsv, intAdminUserID, true))
+                using (DataSet ds = objCommonBO.BookIssue(
+                    "INSERT", 0, MemberID, issueType,
+                    issueDt, dueDt, bookIdsCsv,
+                    intAdminUserID, true))
                 {
                     if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                     {
                         int msgCode = Convert.ToInt32(ds.Tables[0].Rows[0]["MsgCode"]);
 
+                        // ✅ SUCCESS
                         if (msgCode == 1)
                         {
+                            lblIssueError.Text = "";
+                            lblIssueError.Visible = false;
+
                             ShowAlert(lblErrorMsg[13], "success");
                             ClearFormFields();
                         }
                         else
                         {
-                            ShowAlert(lblErrorMsg[12], "error");
+                            lblIssueError.Text = lblErrorMsg[12];
+                            lblIssueError.Visible = true;
+
+                            ScriptManager.RegisterStartupScript(Page, Page.GetType(),
+                                "ShowModal",
+                                "$(document).ready(function(){ $('#selectedBooksModal').modal('show'); });",
+                                true);
                         }
+
                     }
                 }
             }
@@ -353,18 +412,16 @@ namespace Admin
                 MyExceptionLogger.Publish(ex);
             }
 
-           
             btnSave.Visible = true;
             btnClear.Visible = true;
             btnCancel.Visible = true;
         }
 
+
         protected void btnCancel_Click1(object sender, EventArgs e)
         {
             gvSelectedBooks.DataSource = null;
             gvSelectedBooks.DataBind();
-            //pnlConfirm.Visible = false;
-            //divGrid.Visible=false;
             ClearFormFields();
             btnSave.Visible = true;
             btnClear.Visible = true;
@@ -374,7 +431,6 @@ namespace Admin
 
         private void ClearFormFields()
         {
-            //rblIssueType.ClearSelection();
             if (rblIssueType.SelectedValue=="Student")
             {
                 txtStudentID.Text = "";
@@ -417,7 +473,7 @@ namespace Admin
         {
             try
             {
-                if (objMasterBO != null & objCommonBO!=null)
+                if (objMasterBO != null && objCommonBO!=null)
                 {
                     objMasterBO.ReleaseResources();
                     objMasterBO = null;

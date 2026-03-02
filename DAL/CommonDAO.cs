@@ -146,6 +146,24 @@ namespace DAL
                 param
             );
         }
+        public DataSet UpdateFineAmount(string action, int issueId, decimal fineAmount, int AdminUserID)
+        {
+            SqlParameter[] param =
+            {
+                new SqlParameter("@Action", action),
+                new SqlParameter("@IssueID", issueId),
+                new SqlParameter("@FineAmount", (object)fineAmount ?? DBNull.Value),
+                new SqlParameter("@AdminUserID", AdminUserID)
+            };
+
+            return SqlHelper.ExecuteDataset(
+                objSqlConnection,
+                CommandType.StoredProcedure,
+                "AdminDashboard",
+                param
+            );
+        }
+
         public DataSet GetBookAvailability(
          string categoryNames,
          string isbn,
@@ -167,5 +185,19 @@ namespace DAL
             return SqlHelper.ExecuteDataset(objSqlConnection, CommandType.StoredProcedure, "CheckBookAvailability", param);
         }
 
+        public DataSet FineAmount(string action)
+        {
+            SqlParameter[] param =
+            {
+                new SqlParameter("@Action", action)
+            };
+
+            return SqlHelper.ExecuteDataset(
+                objSqlConnection,
+                CommandType.StoredProcedure,
+                "FineCollectionReport",
+                param
+            );
+        }
     }
 }

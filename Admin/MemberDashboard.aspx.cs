@@ -143,6 +143,7 @@ namespace Admin
             int renewalRequestCol = 11;
             int status = 12;
             int rejectReason = 13;
+            int payFineCol = 14;
 
             // Hide optional columns first
             gvBooks.Columns[issueDateCol].Visible = false;
@@ -152,7 +153,7 @@ namespace Admin
             gvBooks.Columns[renewalRequestCol].Visible = false;
             gvBooks.Columns[status].Visible = false;
             gvBooks.Columns[rejectReason].Visible = false;
-
+            gvBooks.Columns[payFineCol].Visible = false;
 
 
             if (mode == "BORROWED") // Default
@@ -178,7 +179,7 @@ namespace Admin
                 gvBooks.Columns[renewalRequestCol].Visible = true;
                 gvBooks.Columns[status].Visible = true;
                 gvBooks.Columns[rejectReason].Visible = true;
-
+                gvBooks.Columns[payFineCol].Visible = true;
             }
         }
 
@@ -293,11 +294,17 @@ namespace Admin
 
         protected void gvBooks_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            if (e.CommandName == "RenewalRequest")
-
+            if (e.CommandName == "PayFine")
             {
+                int bookIssueId;
+                if (!int.TryParse(e.CommandArgument.ToString(), out bookIssueId))
+                    return;
 
+                ShowAlert("Redirecting to payment...", "info");
+            }
 
+            if (e.CommandName == "RenewalRequest")
+            {
                 // 1️⃣ Get BookIssueID from CommandArgument
                 int bookIssueId;
                 if (!int.TryParse(e.CommandArgument.ToString(), out bookIssueId))
@@ -358,6 +365,7 @@ namespace Admin
                 );
             }
         }
+
         protected void gvBooks_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (e.Row.RowType == DataControlRowType.DataRow)
@@ -365,7 +373,6 @@ namespace Admin
                 DataRowView drv = (DataRowView)e.Row.DataItem;
 
                 string lastStatus = drv["Last Renewal Status"]?.ToString();
-
                 LinkButton btnRenew = (LinkButton)e.Row.FindControl("lnkRenewal");
 
                 if (btnRenew != null &&
@@ -373,6 +380,27 @@ namespace Admin
                     lastStatus.Equals("Rejected", StringComparison.OrdinalIgnoreCase))
                 {
                     btnRenew.Visible = false;
+                }
+
+                LinkButton btnPayFine = (LinkButton)e.Row.FindControl("lnkPayFine");
+
+                decimal fineAmount = 0;
+                string fineStatus = drv["FineStatus"]?.ToString();
+
+                if (drv["FineAmount"] != DBNull.Value)
+                    fineAmount = Convert.ToDecimal(drv["FineAmount"]);
+
+                if (btnPayFine != null)
+                {
+                    if (fineAmount > 0 && fineStatus == "Unpaid")
+                    {
+                        btnPayFine.Visible = true;
+                        btnPayFine.Text = "Pay ₹" + fineAmount.ToString("0.00");
+                    }
+                    else
+                    {
+                        btnPayFine.Visible = false;
+                    }
                 }
             }
         }

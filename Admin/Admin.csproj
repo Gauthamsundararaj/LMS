@@ -97,6 +97,7 @@
     <Content Include="CategoryMaster.aspx" />
     <Content Include="ChangePassword.aspx" />
     <Content Include="Dashboard.aspx" />
+    <Content Include="FineCollectionReport.aspx" />
     <Content Include="IssueDashboard.aspx" />
     <Content Include="MemberDashboard.aspx" />
     <Content Include="Menumaster.aspx" />
@@ -172,6 +173,13 @@
     </Compile>
     <Compile Include="Dashboard.aspx.designer.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FineCollectionReport.aspx.cs">
+      <DependentUpon>FineCollectionReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FineCollectionReport.aspx.designer.cs">
+      <DependentUpon>FineCollectionReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="IssueDashboard.aspx.cs">
       <DependentUpon>IssueDashboard.aspx</DependentUpon>

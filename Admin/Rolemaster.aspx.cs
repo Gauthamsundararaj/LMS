@@ -74,7 +74,7 @@ namespace Admin
                 {
                     ddlDefaultPage.Items.Clear();
 
-                    if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                    if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0 )
                     {
                         ddlDefaultPage.DataSource = ds.Tables[0];
                         ddlDefaultPage.DataTextField = "MenuName";
@@ -82,7 +82,7 @@ namespace Admin
                         ddlDefaultPage.DataBind();
                     }
 
-                    ddlDefaultPage.Items.Insert(0, new ListItem("Select PageName", ""));
+                    ddlDefaultPage.Items.Insert(0, new ListItem("Select PageName", "")) ;
                 }
             }
             catch (Exception ex)
@@ -97,7 +97,6 @@ namespace Admin
                 string strRoleName = txtRoleName.Text.Trim();
                 string strDefaultPage = ddlDefaultPage.SelectedValue.Trim();
 
-                // Validation
                 if (string.IsNullOrWhiteSpace(strRoleName))
                 {
                     ShowToastr(lblErrorMsg[0], "error");
@@ -449,3 +448,4 @@ namespace Admin
         }
     }
 }
+

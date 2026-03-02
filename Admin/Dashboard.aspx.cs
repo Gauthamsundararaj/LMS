@@ -308,8 +308,6 @@ namespace Admin
             }
         }
 
-
-
         private void ShowModal()
         {
             ScriptManager.RegisterStartupScript(Page, Page.GetType(), "ShowModal", "$(document).ready(function(){ $('#dataModal').modal('show');initPagination();  });", true);

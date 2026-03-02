@@ -86,6 +86,7 @@ namespace Admin
             divActionButtons.Visible = false;
             gvBookDues.DataSource = null;
             gvBookDues.DataBind();
+            rptPager.Visible = false;
 
             // Set focus back to MemberID textbox
             txtMemberID.Focus();
